@@ -5,6 +5,7 @@ void memo_test();
 void offline_test();
 void pow_test();
 void segtree_test();
+void modulo_test();
 
 
 #endif

@@ -8,4 +8,5 @@ int main(){
     offline_test();
     pow_test();
     segtree_test();
+    modulo_test();
 }
