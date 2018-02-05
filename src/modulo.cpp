@@ -3,25 +3,28 @@
 using namespace std;
 using ll = long long;
 
+
 //STARTCOPY
 namespace mytl{
-    template<ll MOD>
     struct Modulo{
-        using Self = Modulo<MOD>;
     private:
         ll val;
-
     public:
-        static constexpr Modulo unit = 1;
+        const ll MOD;
+        Modulo(ll initMOD, ll initVal) : MOD{initMOD}, val{initVal} {
+            val %= MOD;
+            if(val < 0) val += MOD;
+        };
+
         static Modulo inverse(Modulo x){// asserting MOD is prime
-            return power(x, MOD-2, Modulo::unit);
+            return power(x, x.MOD-2, x.unit());
         };
-        Modulo(ll initVal){
-            initVal %= MOD;
-            if(val < 0) initVal += MOD;
-            val = initVal;
+        Modulo unit() const{
+            return Modulo(MOD, 1);
+        }
+        Modulo& operator=(const Modulo& operand){
+            val = operand.val;
         };
-        Modulo& operator=(const Modulo&) = default;
 
         ll get() const{ // no type cast operator to prevent accidentally turning into ordinary number
             return val;
@@ -29,47 +32,48 @@ namespace mytl{
 
         //Unary operators
         Modulo operator-() const{
-            return Modulo(-val);
+            return Modulo(MOD, -val);
         };
         Modulo operator+() const{
-            return Modulo(+val);
+            return Modulo(MOD, +val);
         };
 
         //Binary operators on ordinary numbers
         Modulo operator-(const ll& operand) const{
-            return Modulo(val-operand);
+            return Modulo(MOD, val-operand);
         };
         Modulo operator+(const ll& operand) const{
-            return Modulo(val+operand);
+            return Modulo(MOD, val+operand);
         };
         Modulo operator*(const ll& operand) const{
-            return Modulo(val*operand);
+            return Modulo(MOD, val*operand);
         };
         Modulo operator/(const ll& operand) const{ //asserting MOD is prime
-            return Modulo(val * inverse(operand));
+            return Modulo(MOD, val * inverse(Modulo(MOD, operand)).get());
         };
 
         //Binary operators on Modulo
         Modulo operator-(const Modulo& operand) const{
-            return Modulo(val-operand.get());
+            return Modulo(MOD, val-operand.get());
         };
         Modulo operator+(const Modulo& operand) const{
-            return Modulo(val+operand.get());
+            return Modulo(MOD, val+operand.get());
         };
         Modulo operator*(const Modulo& operand) const{
-            return Modulo(val*operand.get());
+            return Modulo(MOD, val*operand.get());
         };
         Modulo operator/(const Modulo& operand) const{ //asserting MOD is prime
-            return Modulo(val * inverse(operand));
+            return Modulo(MOD, val * inverse(operand).get());
         };
+
     };
 
-    using Mod107 = Modulo<1000000007LL>;
-
-    template<ll MOD>
-    ostream& operator<<(ostream& os, Modulo<MOD> x){
-        return os<<"("<<x.get()<<"%"<<MOD<<")";
+    /*Modulo mod107(int x){
+        return Modulo(1000000007LL, x);
     }
+    ostream& operator<<(ostream& os, Modulo x){
+        return os<<"("<<x.get()<<"%"<<x.MOD<<")";
+    }*/
 
 
 }
