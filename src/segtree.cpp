@@ -17,7 +17,7 @@ struct Node : Op::Range{
     Node *left_child=NULL, *right_child=NULL;
 
     T partial;
-    Change pending = Op::identity;
+    Change pending = Op::identity();
 
     Node(Range range) : Range(range), partial{Op::initial(range)} {};
 
@@ -37,7 +37,7 @@ struct Node : Op::Range{
             right_child->add(pending);
         }
         partial = Op::apply(*this, partial, pending);
-        pending = Op::identity;
+        pending = Op::identity();
     }
 
     pair<T,T> query_(Range range, Change change){
@@ -46,11 +46,11 @@ struct Node : Op::Range{
         if(inside(range)){
             add(change);
             prepare();
-            return {partial, Op::zero};
+            return {partial, Op::zero()};
         }
         if(!intersect(range)){
             //cout<<"n"<<range<<" "<<*this<<endl;
-            return {Op::zero, partial};
+            return {Op::zero(), partial};
         }
 
         auto from_left = left_child->query_(range, change);
@@ -110,8 +110,13 @@ struct Custom_Op{
     using T = _;
     using Change = _;
 
-    static constexpr Change identity = _;
-    static constexpr T zero = _;
+    static Change identity(){
+        return _;
+    }
+
+    static T zero(){
+        return _;
+    }
 
     static T initial(Range r){
         return _;
@@ -130,8 +135,6 @@ struct Custom_Op{
     }
 
 };
-constexpr Custom_Op::T Custom_Op::zero;
-constexpr Custom_Op::Change Custom_Op::identity;
 */
 
 }
