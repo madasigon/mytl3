@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
-
+#ifndef MEMO_CPP
+#define MEMO_CPP
 
 //STARTCOPY
 namespace mytl{
@@ -48,3 +49,5 @@ namespace mytl{
     }
 }
 //ENDCOPY
+
+#endif

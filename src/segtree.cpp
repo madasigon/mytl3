@@ -1,6 +1,9 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+#ifndef SEGTREE_CPP
+#define SEGTREE_CPP
+
 //STARTCOPY
 namespace mytl{
 template<class Op>
@@ -139,3 +142,5 @@ struct Custom_Op{
 
 }
 
+
+#endif

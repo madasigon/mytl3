@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
-
+#ifndef POW_CPP
+#define POW_CPP
 
 //STARTCOPY
 namespace mytl{
@@ -16,3 +17,5 @@ T power(T base, P exponential, T unit){
 }
 }
 //ENDCOPY
+
+#endif

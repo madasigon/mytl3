@@ -2,6 +2,9 @@
 using namespace std;
 using ll = long long;
 
+#ifndef GEOM_CPP
+#define GEOM_CPP
+
 //STARTCOPY
 namespace mytl{
 
@@ -51,3 +54,5 @@ struct Point{
 
 }
 //ENDCOPY
+
+#endif

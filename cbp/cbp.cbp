@@ -33,29 +33,53 @@
 			<Add option="-fexceptions" />
 		</Compiler>
 		<Unit filename="../src/geom.cpp">
+			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
 		<Unit filename="../src/memo.cpp">
+			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
 		<Unit filename="../src/modulo.cpp">
+			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
 		<Unit filename="../src/offline.cpp">
+			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
 		<Unit filename="../src/pow.cpp">
+			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
 		<Unit filename="../src/segtree.cpp">
+			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
-		<Unit filename="../test/geom_test.cpp" />
-		<Unit filename="../test/memo_test.cpp" />
-		<Unit filename="../test/modulo_test.cpp" />
-		<Unit filename="../test/offline_test.cpp" />
-		<Unit filename="../test/pow_test.cpp" />
-		<Unit filename="../test/segtree_test.cpp" />
+		<Unit filename="../test/geom_test.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../test/memo_test.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../test/modulo_test.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../test/offline_test.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../test/pow_test.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../test/segtree_test.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
 		<Unit filename="main.cpp" />
 		<Unit filename="test.h" />
 		<Extensions>

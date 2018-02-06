@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
-
+#ifndef OFFLINE_CPP
+#define OFFLINE_CPP
 
 //STARTCOPY
 namespace mytl{
@@ -28,3 +29,4 @@ template<class Q>
 //ENDCOPY
 
 
+#endif
