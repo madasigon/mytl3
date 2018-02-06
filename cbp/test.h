@@ -6,6 +6,7 @@ void offline_test();
 void pow_test();
 void segtree_test();
 void modulo_test();
+void geom_test();
 
 
 #endif

@@ -9,4 +9,5 @@ int main(){
     pow_test();
     segtree_test();
     modulo_test();
+    geom_test();
 }
