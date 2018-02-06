@@ -63,7 +63,7 @@ struct Node : Op::Range{
 
     T build_from(const function<T(int)>& getter){
         prepare();
-        pending = Op::identity;
+        pending = Op::identity();
         if(singleton()) partial = getter(this->first);
         else partial = Op::reduce(left_child->build_from(getter), right_child->build_from(getter));
         return partial;
