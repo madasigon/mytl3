@@ -4,13 +4,13 @@
 using namespace std;
 using namespace mytl;
 
-UnionFind un(10);
+vector<UnionFind> un(10);
 
 void unionfind_test(){
-    /*while(1){
+    while(1){
         int a,b;
         cin>>a>>b;
-        cout<<un.together(a, b)<<endl;
-        un.unite(a,b);
-    }*/
+        cout<<UnionFind::together(&un[a], &un[b])<<endl;
+        UnionFind::unite(&un[a],&un[b]);
+    }
 }

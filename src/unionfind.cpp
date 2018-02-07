@@ -7,25 +7,30 @@ using ll = long long;
 
 namespace mytl{
     struct UnionFind{
-        vector<int> t, mysize;
-        UnionFind(int n) : t(n+1, -2), mysize{n+1, 1} {};
+        UnionFind *father = nullptr;
+        int mysize = 1;
+        UnionFind(){};
 
-        int anc(int x){
-            if(t[x] == -2) return x;
+        UnionFind* anc(){
+            if(father == nullptr) return this;
             else{
-                t[x] = anc(t[x]);
-                return t[x];
+                father = father->anc();
+                return father;
             }
         }
-        bool together(int a, int b){
-            return anc(a) == anc(b);
+        static bool together(UnionFind *a, UnionFind *b){
+            return a->anc() == b->anc();
         }
-        void unite(int a, int b){
-            int anca = anc(a), ancb = anc(b);
+        static void unite(UnionFind *a, UnionFind *b){
+            UnionFind *anca = a->anc(), *ancb = b->anc();
             if(anca != ancb){
-                if(mysize[anca] > mysize[ancb]){
-                    t[ancb] = anca;
-                    mysize[anca] += mysize[ancb];
+                if(anca->mysize > ancb->mysize){
+                    ancb->father = anca;
+                    anca->mysize += ancb->mysize;
+                }
+                else{
+                    anca->father = ancb;
+                    ancb->mysize += anca->mysize;
                 }
             }
         }
