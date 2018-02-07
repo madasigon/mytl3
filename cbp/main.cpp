@@ -8,6 +8,7 @@ using namespace std;
 #include "../test/offline_test.cpp"
 #include "../test/pow_test.cpp"
 #include "../test/segtree_test.cpp"
+#include "../test/RMQ_test.cpp"
 
 int main(){
     memo_test();
@@ -16,4 +17,5 @@ int main(){
     segtree_test();
     modulo_test();
     geom_test();
+    RMQ_test();
 }
