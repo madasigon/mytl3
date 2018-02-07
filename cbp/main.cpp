@@ -19,4 +19,5 @@ int main(){
     modulo_test();
     geom_test();
     RMQ_test();
+    unionfind_test();
 }
