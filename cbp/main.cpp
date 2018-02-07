@@ -9,6 +9,7 @@ using namespace std;
 #include "../test/pow_test.cpp"
 #include "../test/segtree_test.cpp"
 #include "../test/RMQ_test.cpp"
+#include "../test/unionfind_test.cpp"
 
 int main(){
     memo_test();

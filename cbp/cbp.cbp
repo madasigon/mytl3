@@ -56,6 +56,10 @@
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
+		<Unit filename="../src/unionfind.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
 		<Unit filename="../test/geom_test.cpp">
 			<Option compile="0" />
 			<Option link="0" />
@@ -77,6 +81,10 @@
 			<Option link="0" />
 		</Unit>
 		<Unit filename="../test/segtree_test.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../test/unionfind_test.cpp">
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
