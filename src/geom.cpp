@@ -52,6 +52,25 @@ struct Point{
     };
 };
 
+typedef vector<Point> Poly;
+
+bool inside(const Poly& poly, const Point& point, bool strict){
+    set<int> dirs;
+    for(int i=0; i<poly.size(); i++){
+        int nexdindex = (i+1)%poly.size();
+        int dir = poly[i].direction(poly[nexdindex], point);
+        if(dir == 0){
+            if(strict) return false;
+        }
+        else{
+            dirs.insert(dir);
+            if(dirs.size() > 1) return false;
+        }
+
+    }
+    return true;
+}
+
 }
 //ENDCOPY
 
