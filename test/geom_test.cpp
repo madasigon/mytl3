@@ -3,6 +3,17 @@
 #include "../src/geom.cpp"
 using namespace std;
 
+template <typename R, typename Arg>
+function<R (Arg)> natural_memo(R (*fn)(Arg)) {
+    vector<pair<bool, R> > table;
+    return [fn, table](Arg arg) mutable -> R {
+        if(table.size() <= arg) table.resize(arg+1, {false, R()});
+        if(!table[arg].first) {
+            table[arg] = {true, fn(arg)};
+        }
+        return table[arg].second;
+    };
+}
 
 
 

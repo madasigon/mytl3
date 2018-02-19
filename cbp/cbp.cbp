@@ -44,6 +44,7 @@
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
+		<Unit filename="../src/modulo_typesafe.cpp" />
 		<Unit filename="../src/offline.cpp">
 			<Option compile="0" />
 			<Option link="0" />
@@ -72,6 +73,7 @@
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
+		<Unit filename="../test/modulo_typesafe_test.cpp" />
 		<Unit filename="../test/offline_test.cpp">
 			<Option compile="0" />
 			<Option link="0" />
