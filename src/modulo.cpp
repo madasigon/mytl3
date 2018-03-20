@@ -25,6 +25,7 @@ namespace mytl{
         }
         Modulo& operator=(const Modulo& operand){
             val = operand.val;
+            return *this;
         };
 
         ll get() const{ // no type cast operator to prevent accidentally turning into ordinary number
