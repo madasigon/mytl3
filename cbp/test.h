@@ -7,6 +7,7 @@ void pow_test();
 void segtree_test();
 void modulo_test();
 void geom_test();
+void graph_test();
 
 
 #endif
