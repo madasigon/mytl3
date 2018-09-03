@@ -2,3 +2,11 @@ cbp/cbp.depend
 cbp/cbp.layout
 cbp/obj/
 cbp/bin/
+
+
+*.pyx
+*/*.pyc
+__pycache__
+geckodriver.log
+
+instance/secret.py
