@@ -32,6 +32,7 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="../src/base.cpp" />
 		<Unit filename="../src/geom.cpp">
 			<Option compile="0" />
 			<Option link="0" />

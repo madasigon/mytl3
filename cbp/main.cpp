@@ -15,7 +15,7 @@ using namespace std;
 #include "../test/instant_zero_test.cpp"
 #include "../test/reduce_test.cpp"
 
-int main(){
+MAIN main(){
     memo_test();
     offline_test();
     pow_test();
