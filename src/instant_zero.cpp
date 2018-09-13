@@ -33,7 +33,7 @@ struct Resetter {
         Variable();
         Variable(T value) : state{global_resetter<T>.state.first, value} {}
         Variable(State st) : state{st} {}
-        Variable(T value, State& parent) : state{parent.state.first, value} {};
+        Variable(T value, State& parent) : state{parent.first, value} {};
 
         bool fresh(){
             return state.first >= parent.first;
