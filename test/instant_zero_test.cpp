@@ -2,29 +2,16 @@
 #include "../src/instant_zero.cpp"
 using namespace std;
 
-struct My{
-    using T = int;
-    int zero(){
-        return 0;
-    }
-};
+
 
 void instant_zero_test(){
-    /*mytl::ZFactory<My> F;
+    mytl::Resetter<ll>::Variable x = 5;
 
-    mytl::Zeroable<My> a = F.create(5);
+    x = 7;
+    cout<<x.get()<<endl;
 
-    cout<<endl;
-    cout<<a.get()<<endl;
+    mytl::global_resetter<ll>.reset(0);
 
-    F.reset();
-    mytl::Zeroable<My> b = F.create(9);
-
-    b.set(b.get() + a.get());
-    F.reset();
-    b.freshen();;
-
-    cout<<"---->"<<b.get()<<endl;*/ //TODO
-
+    cout<<x.get()<<endl;
 
 }

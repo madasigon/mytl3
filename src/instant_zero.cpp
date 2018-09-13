@@ -1,66 +1,69 @@
-#include <bits/stdc++.h>
-using namespace std;
-using ll = long long;
+#include "base.cpp"
 
 #ifndef INSTANT_ZERO_CPP
 #define INSTANT_ZERO_CPP
 
 //STARTCOPY
-namespace mytl{
+namespace mytl {
 
-template<class Q>
-struct Zeroable{
-    using T = typename Q::T;
-    T _value;
-    const ll& latest;
-    ll freshness;
+template<class T>
+struct Resetter;
 
-    void freshen(){
-        freshness = latest;
+template<class T>
+Resetter<T> global_resetter;
+
+template<class T>
+struct Resetter {
+    using State = pair<ll, T>;
+
+    State state;
+
+    Resetter(){}
+    Resetter(T value) : state{0, value} {};
+
+    void reset(T value){
+        state = {state.first+1, value};
     }
 
-    T get(){
-        if(freshness < latest){
-            _value = Q::zero(); //TODO
-            freshen();
+    struct Variable{
+
+        State state;
+        State& parent = global_resetter<T>.state;
+
+        Variable();
+        Variable(T value) : state{global_resetter<T>.state.first, value} {}
+        Variable(State st) : state{st} {}
+        Variable(T value, State& parent) : state{parent.state.first, value} {};
+
+        bool fresh(){
+            return state.first >= parent.first;
         }
-        return _value;
-    }
-    void set(T to_what){
-        _value = to_what;
-        freshen();
-    }
-    void set(Zeroable<T> to_what){
-        set(to_what.get());
-    }
-    void operator=(T to_what){
-        set(to_what);
-    }
-    void operator=(Zeroable<T> to_what){
-        set(to_what);
-    }
 
-    Zeroable(const ll& latest) : latest(latest), freshness{latest}, _value{T::zero()} {}
-    Zeroable(const ll& latest, T init) : latest(latest), freshness{latest}, _value{init} {}
+        void overwrite(){
+            state = parent;
+        }
+
+        bool refresh(){
+            if(!fresh()) overwrite();
+        }
+
+        T get(){
+            refresh();
+            return state.second;
+        }
+
+        void survive(){
+            state.first = parent.first;
+        }
+
+        void operator=(T new_value){
+            state.second = new_value;
+            survive();
+        }
+
+    };
+
 };
-
-template<class Q>
-struct ZFactory{
-    using Zeroable = Zeroable<Q>;
-    using T = typename Q::T;
-    ll latest = 0;
-
-    Zeroable create(){
-        return Zeroable(latest);
-    }
-    Zeroable create(T init){
-        return Zeroable(latest, init);
-    }
-    void reset(){
-        latest++;
-    }
-};
-
 }
 //ENDCOPY
 
