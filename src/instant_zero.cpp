@@ -10,30 +10,37 @@ template<class T>
 struct Resetter;
 
 template<class T>
-Resetter<T> global_resetter;
+Resetter<T>* global_resetter = new Resetter<T>;
 
 template<class T>
 struct Resetter {
-    using State = pair<ll, T>;
 
-    State state;
+    using State = pair<counter_type, T>;
+
+    State* state = new State{0, T()};
 
     Resetter(){}
-    Resetter(T value) : state{0, value} {};
+    Resetter(T value){
+        state = new State{0, value};
+    }
+
+    void activate(){
+        global_resetter<T> = this;
+    }
 
     void reset(T value){
-        state = {state.first+1, value};
+        *state = State{state->first+1, value};
     }
 
     struct Variable{
 
         State state;
-        State& parent = global_resetter<T>.state;
+        State& parent = *global_resetter<T>->state;
 
-        Variable();
-        Variable(T value) : state{global_resetter<T>.state.first, value} {}
+        Variable() : state{*global_resetter<T>->state} {}
+        Variable(T value) : state{global_resetter<T>->state->first, value} {}
         Variable(State st) : state{st} {}
-        Variable(T value, State& parent) : state{parent.first, value} {};
+        Variable(T value, State& parent) : state{parent->first, value} {};
 
         bool fresh(){
             return state.first >= parent.first;

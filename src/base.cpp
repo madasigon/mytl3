@@ -6,6 +6,7 @@
 #include<bits/stdc++.h>
 using namespace std;
 
+using counter_type = int;
 using MAIN = int;
 #define int DontUseIntÉ
 using ll = long long;
