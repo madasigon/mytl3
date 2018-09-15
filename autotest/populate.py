@@ -10,8 +10,12 @@ def extract(content):
 
 @curried(2)
 def populate(library, content):
-    assert(content.count(MAGICWORD) == 1)
-    return content.replace(MAGICWORD, library)
+    lines = content.split("\n")
+    where = first_good(is_start, lines)+1
+    end = first_good(is_end, lines)-1
+    del lines[where:end+1]
+    lines.insert(where, library)
+    return "\n".join(lines)
 
 @curried(3)
 def emplace(library, src, dest):
