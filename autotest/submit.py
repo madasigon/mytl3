@@ -32,7 +32,7 @@ class Codeforces(webdriver.Firefox):
     
     @at("/problemset/problem/{}/{}")
     def submit_solution(self, number, letter, path):
-        self.by_css("select[name=\"programTypeId\"] > option[value=\"42\"]").click()
+        self.by_css("select[name=\"programTypeId\"] > option[value=\"50\"]").click()
         self.by_css("input[name=\"sourceFile\"]").send_keys(path)
         self.by_css("input.submit[value=\"Submit\"]").click()
 
