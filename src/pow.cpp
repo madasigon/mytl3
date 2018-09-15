@@ -1,5 +1,6 @@
-#include <bits/stdc++.h>
-using namespace std;
+#include "base.cpp"
+
+
 #ifndef POW_CPP
 #define POW_CPP
 

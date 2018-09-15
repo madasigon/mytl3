@@ -1,5 +1,5 @@
-#include <bits/stdc++.h>
-using namespace std;
+#include "base.cpp"
+
 
 #ifndef REDUCE_CPP
 #define REDUCE_CPP

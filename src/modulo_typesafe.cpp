@@ -1,5 +1,6 @@
-#include <bits/stdc++.h>
-using namespace std;
+#include "base.cpp"
+
+
 #ifndef MODULO_TYPESAFE_CPP
 #define MODULO_TYPESAFE_CPP
 

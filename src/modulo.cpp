@@ -1,7 +1,7 @@
-#include <bits/stdc++.h>
+#include "base.cpp"
 #include "pow.cpp"
-using namespace std;
-using ll = long long;
+
+
 #ifndef MODULO_CPP
 #define MODULO_CPP
 
@@ -70,7 +70,7 @@ namespace mytl{
 
     };
 
-    Modulo mod107(int x){
+    Modulo mod107(ll x){
         return Modulo(1000000007LL, x);
     }
     ostream& operator<<(ostream& os, Modulo x){

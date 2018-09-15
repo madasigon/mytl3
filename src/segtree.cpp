@@ -1,5 +1,4 @@
-#include <bits/stdc++.h>
-using namespace std;
+#include "base.cpp"
 
 #ifndef SEGTREE_CPP
 #define SEGTREE_CPP
@@ -64,7 +63,7 @@ struct Node : Op::Range{
         return {needed, rest};
     }
 
-    T build_from(const function<T(int)>& getter){
+    T build_from(const function<T(ll)>& getter){
         prepare();
         pending = Op::identity();
         if(singleton()) partial = getter(this->first);
@@ -74,10 +73,10 @@ struct Node : Op::Range{
 
 };
 
-struct Range1D : pair<int,int>{
-    using pair<int,int>::pair;
+struct Range1D : pair<ll,ll>{
+    using pair<ll,ll>::pair;
 
-    int span() const {
+    ll span() const {
         return second-first+1;
     }
     bool singleton() const {

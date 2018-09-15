@@ -1,5 +1,6 @@
-#include <bits/stdc++.h>
-using namespace std;
+#include "base.cpp"
+
+
 #ifndef OFFLINE_CPP
 #define OFFLINE_CPP
 

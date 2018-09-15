@@ -3,22 +3,22 @@
 #include "../src/memo.cpp"
 using namespace std;
 
-int lassu_f(int i){
+ll lassu_f(ll i){
     if(i < 3) return i;
     return max(lassu_f(i-1), lassu_f(i-2));
 }
 
 
-int um_f(int i);
+ll um_f(ll i);
 auto nat_f = mytl::natural_memo(um_f);
-int um_f(int i){
+ll um_f(ll i){
     if(i < 3) return i;
     return max(nat_f(i-1), nat_f(i-2));
 }
 
-int um_unor_f(int i);
+ll um_unor_f(ll i);
 auto unordered_f = mytl::unordered_memo(um_unor_f);
-int um_unor_f(int i){
+ll um_unor_f(ll i){
     if(i < 3) return i;
     return max(unordered_f(i-1), unordered_f(i-2));
 }

@@ -1,6 +1,4 @@
-#include <bits/stdc++.h>
-using namespace std;
-using ll = long long;
+#include "base.cpp"
 
 #ifndef UNIONFIND_CPP
 #define UNIONFIND_CPP
@@ -8,7 +6,7 @@ using ll = long long;
 namespace mytl{
     struct UnionFind{
         UnionFind *father = nullptr;
-        int mysize = 1;
+        ll mysize = 1;
         UnionFind(){};
 
         UnionFind* anc(){

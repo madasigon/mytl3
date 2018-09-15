@@ -1,5 +1,5 @@
-#include <bits/stdc++.h>
-using namespace std;
+#include "base.cpp"
+
 #ifndef MEMO_CPP
 #define MEMO_CPP
 

@@ -5,7 +5,7 @@
 using namespace std;
 using namespace mytl;
 
-int MOD=8;
+ll MOD=8;
 
 struct Custom_Op{
     using Range = Range1D;
@@ -38,11 +38,11 @@ struct Custom_Op{
 };
 
 
-Modulo mke(int x){
+Modulo mke(ll x){
     return Modulo(MOD, x);
 }
 
-int n;
+ll n;
 
 vector<Modulo> kum;
 

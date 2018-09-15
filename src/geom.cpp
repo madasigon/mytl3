@@ -1,6 +1,4 @@
-#include <bits/stdc++.h>
-using namespace std;
-using ll = long long;
+#include "base.cpp"
 
 #ifndef GEOM_CPP
 #define GEOM_CPP
@@ -55,10 +53,10 @@ struct Point{
 typedef vector<Point> Poly;
 
 bool inside(const Poly& poly, const Point& point, bool strict){
-    set<int> dirs;
-    for(int i=0; i<poly.size(); i++){
-        int nexdindex = (i+1)%poly.size();
-        int dir = poly[i].direction(poly[nexdindex], point);
+    set<ll> dirs;
+    for(ll i=0; i<poly.size(); i++){
+        ll nexdindex = (i+1)%poly.size();
+        ll dir = poly[i].direction(poly[nexdindex], point);
         if(dir == 0){
             if(strict) return false;
         }
