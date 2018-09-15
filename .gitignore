@@ -15,3 +15,5 @@ codeforces_tests/*
 !codeforces_tests/*.cpp
 
 instance/secret.py
+
+venv/
