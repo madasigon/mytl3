@@ -43,9 +43,5 @@ def collect_dir(directory):
         del graph[removable]
         
         order.append(removable)
-    
-        
-    print(order)    
+      
     return "\n".join(map(compose(extract, read_file), order))    
-
-
