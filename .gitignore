@@ -9,4 +9,9 @@ cbp/bin/
 __pycache__
 geckodriver.log
 
+codeforces_temp/
+
+codeforces_tests/*
+!codeforces_tests/*.cpp
+
 instance/secret.py
