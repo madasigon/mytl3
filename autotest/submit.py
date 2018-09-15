@@ -25,7 +25,9 @@ class Codeforces(webdriver.Firefox):
         self.handle = handle
         self.by_css("#handleOrEmail").send_keys(handle)
         self.by_css("#password").send_keys(pw)
-        self.by_css("input.submit[value=\"Login\"]").click()
+        sleep(1)
+        self.by_css("#password").send_keys(u'\ue007')
+        sleep(1)
     
     
     @at("/problemset/problem/{}/{}")
@@ -60,6 +62,7 @@ class Codeforces(webdriver.Firefox):
         for (task_id, path) in solutions:
             self.submit_solution(*task_id, path)
         
+        sleep(1)
         self.get_("/submissions/{}".format(self.handle))
         self.sleep_until(lambda: not self.waiting())
         return [self.current_status(a,b) for ((a, b), _) in solutions]
