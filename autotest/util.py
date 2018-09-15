@@ -27,9 +27,9 @@ def first_good(pred, l):
 
 
 def read_file(path):
-    with open(path, "r") as file:
+    with open(path, "rb") as file:
         res = file.read()
-    return res
+    return res.decode("utf-8")
 
 @curried(2)
 def write_file(path, content):
@@ -39,10 +39,10 @@ def write_file(path, content):
         file.write(content)
 
 def transform(f, src, dst):
-    write_file(dst)(f(read_file(src)).encode("utf-8"))
+    write_file(dst)(f(read_file(src)))
 
 def filename_list(directory):
-    return  list(next(os.walk(directory))[2])
+    return  filter(lambda s: s.split(".")[-1] == "cpp", list(next(os.walk(directory))[2]))
 
 def abs_list(directory):
     return [os.path.join(os.path.abspath(directory), filename) for filename in filename_list(directory)]
