@@ -1,5 +1,5 @@
 #include "base.cpp"
-
+#include "pow.cpp"
 
 #ifndef MODULO_TYPESAFE_CPP
 #define MODULO_TYPESAFE_CPP
@@ -23,6 +23,7 @@ namespace mytl{
             if(val < 0) initVal += MOD;
             val = initVal;
         };
+        TSModulo() : TSModulo(0) {}
         TSModulo& operator=(const TSModulo&) = default;
 
         ll get() const{ // no type cast operator to prevent accidentally turning into ordinary number
