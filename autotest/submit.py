@@ -65,6 +65,7 @@ class Codeforces(webdriver.Firefox):
         sleep(1)
         self.get_("/submissions/{}".format(self.handle))
         self.sleep_until(lambda: not self.waiting())
+        sleep(2)
         return [self.current_status(a,b) for ((a, b), _) in solutions]
 
     @staticmethod
