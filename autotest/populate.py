@@ -1,5 +1,6 @@
 from .util import *
 from instance.config import STARTCOPY, ENDCOPY, MAGICWORD
+import os
 
 is_start = contains(STARTCOPY)
 is_end = contains(ENDCOPY)
@@ -21,8 +22,30 @@ def populate(library, content):
 def emplace(library, src, dest):
     transform(populate(library), src, dest)
 
+def dependencies(filepath):
+    filepath = os.path.abspath(filepath)
+    def include(line):
+        if "#include" not in line or "\"" not in line:
+            return None
+        return os.path.join(os.path.dirname(filepath), line.split("\"")[1])
+    return list(filter(lambda x: x is not None, map(include, read_file(filepath).split("\n"))))      
 
 def collect_dir(directory):
-    return "\n".join(map(compose(extract, read_file), abs_list(directory)))
+    graph = dict((filepath, dependencies(filepath)) for filepath in abs_list(directory))
+    order = []
+    while graph:
+        removable = list(graph.keys())[0]
+        while graph[removable]:
+            removable = graph[removable][0]
+        
+        for _, val in graph.items():
+            if removable in val: val.remove(removable)
+        del graph[removable]
+        
+        order.append(removable)
+    
+        
+    print(order)    
+    return "\n".join(map(compose(extract, read_file), order))    
 
 
