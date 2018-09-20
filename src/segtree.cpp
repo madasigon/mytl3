@@ -73,8 +73,8 @@ struct Node : Op::Range{
 
 };
 
-struct Range1D : pair<ll,ll>{
-    using pair<ll,ll>::pair;
+struct Range1D : PairOf<ll>{
+    using PairOf<ll>::pair;
 
     ll span() const {
         return second-first+1;
@@ -101,10 +101,73 @@ struct Range1D : pair<ll,ll>{
 
 
 }
-//ENDCOPY
+
+namespace mytl{
+template<typename T_>
+struct Add_Sum{
+    using Range = Range1D;
+    using T = T_;
+    using Change = T_;
+
+    static Change identity(){
+        return 0;
+    }
+
+    static T zero(){
+        return 0;
+    }
+
+    static T initial(Range r){
+        return zero();
+    }
+
+    static T reduce(T a, T b){
+        return a + b;
+    }
+
+    static T apply(Range r, T a, Change c){
+        return a + r.span()*c;
+    }
+
+    static Change push(Change a, Change b){
+        return a + b;
+    }
+};
+
+template<typename T_>
+struct Multiply_Sum{
+    using Range = Range1D;
+    using T = T_;
+    using Change = T_;
+
+    static Change identity(){
+        return 1;
+    }
+
+    static T zero(){
+        return 0;
+    }
+
+    static T initial(Range r){
+        return r.span()*1;
+    }
+
+    static T reduce(T a, T b){
+        return a + b;
+    }
+
+    static T apply(Range r, T a, Change c){
+        return a*c;
+    }
+
+    static Change push(Change a, Change b){
+        return a*b;
+    }
+};
 
 
-//STARTCOPY: predef opsets
+};
+
 namespace mytl{
 /*
 struct Custom_Op{
@@ -140,6 +203,6 @@ struct Custom_Op{
 */
 
 }
-
+//ENDCOPY
 
 #endif
