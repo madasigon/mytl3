@@ -11,7 +11,7 @@ using namespace std;
 #include "../test/segtree_test.cpp"
 #include "../test/RMQ_test.cpp"
 #include "../test/unionfind_test.cpp"
-#include "../test/graph_test.cpp"
+//#include "../test/graph_test.cpp"
 #include "../test/instant_zero_test.cpp"
 #include "../test/reduce_test.cpp"
 
@@ -25,7 +25,6 @@ MAIN main(){
     RMQ_test();
     unionfind_test();
     modulo_typesafe_test();
-    graph_test();
     instant_zero_test();
     reduce_test();
 }
