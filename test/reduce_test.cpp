@@ -1,10 +1,10 @@
-#include <bits/stdc++.h>
+#include "../src/base.cpp"
 #include "../src/reduce.cpp"
-using namespace std;
+
 
 
 struct Q{
-    using T = int;
+    using T = ll;
     static T reduce(T a, T b){
         return min(a,b);
     }
