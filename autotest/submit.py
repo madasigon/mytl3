@@ -1,6 +1,6 @@
 from selenium import webdriver
 from time import sleep
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import ElementClickInterceptedException, NoSuchElementException
 from functools import wraps
 from .util import *
 
@@ -32,7 +32,12 @@ class Codeforces(webdriver.Firefox):
     
     @at("/problemset/problem/{}/{}")
     def submit_solution(self, number, letter, path):
-        self.by_css("select[name=\"programTypeId\"] > option[value=\"50\"]").click()
+        while 1:
+            try:
+                self.by_css("select[name=\"programTypeId\"] > option[value=\"50\"]").click()
+                break
+            except ElementClickInterceptedException:
+                pass
         self.by_css("input[name=\"sourceFile\"]").send_keys(path)
         self.by_css("input.submit[value=\"Submit\"]").click()
 
