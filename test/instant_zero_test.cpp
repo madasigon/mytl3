@@ -9,18 +9,18 @@ void instant_zero_test(){
     mytl::Resetter<ll>::Variable x = 5;
 
     x = 7;
-    cout<<x.get()<<endl;
+    assert(x.get() == 7);
 
     mytl::global_resetter<ll>->reset(0);
 
-    cout<<x.get()<<endl;
+    assert(x.get() == 0);
 
     m[5] = "apple";
-    cout<<m[5].get()<<endl;
+    assert(m[5].get() == "apple");
     r.activate();
     r.reset("resetted to this");
-    cout<<m[5].get()<<endl;
-    cout<<m[6].get()<<endl;
+    assert(m[5].get() == "resetted to this");
+    assert(m[6].get() == "resetted to this");
 
 
 
