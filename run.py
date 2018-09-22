@@ -1,8 +1,38 @@
-from autotest import Codeforces, run_test
+from autotest import Codeforces, run_test, collect_dir
 import instance.config as config
 import instance.secret as secret
+import os
+from autotest.util import write_file
 
 
-cf = Codeforces(*secret.credentials)
+def test(*args):
+    cf = Codeforces(*secret.credentials)
+    all_accepted = True
+    for file, result in list(run_test(cf, config.LIBRARY_PATH, config.SRC_PATH, config.DST_PATH)):
+        print(file.split("/")[-1], "->", result)
+        all_accepted = all_accepted and result == "Accepted"
+    
+    if all_accepted:
+        print("Great! All accepted.")
+    else:
+        print("Not great! Not all accepted.")
 
-print(run_test(cf, config.LIBRARY_PATH, config.SRC_PATH, config.DST_PATH))
+def extract_to_file(*args):
+    content = """//{}\n{}\n//{}""".format(config.STARTCOPY, collect_dir(config.LIBRARY_PATH), config.ENDCOPY)
+    write_file(os.path.join(config.LIBRARY_PATH, "extracted.cpp"), content)
+
+def before_commit(*args):
+    extract_to_file()
+    test()
+
+available_operations = {
+    "test": test,
+    "extract": extract_to_file,
+    "precommit": before_commit
+}
+
+def main():
+    import sys
+    available_operations[sys.argv[1]](sys.argv[2:])
+
+main()
