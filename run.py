@@ -19,7 +19,7 @@ def test(*args):
 
 def extract_to_file(*args):
     content = """//{}\n{}\n//{}""".format(config.STARTCOPY, collect_dir(config.LIBRARY_PATH), config.ENDCOPY)
-    write_file(os.path.join(config.LIBRARY_PATH, "extracted.cpp"), content)
+    write_file("extracted.cpp", content)
 
 def before_commit(*args):
     extract_to_file()
