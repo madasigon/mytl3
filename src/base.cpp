@@ -4,8 +4,11 @@
 
 //STARTCOPY
 #include<bits/stdc++.h>
+#include<variant>
+#include<optional>
 using namespace std;
 
+using u_counter_type = unsigned int;
 using counter_type = int;
 using MAIN = int;
 #define int DontUseIntÉ
