@@ -6,4 +6,4 @@ For example if the given file is a solution to Codeforces challenge 1000A and it
 
 The autotest will insert the newest version of the library between the `//STARTCOPY` and `//ENDCOPY` lines. The generated result will go with the same name to the `codeforces_temp` directory, then uploaded and tested for correctnes at Codeforces.
 
-Currently they are being tested with the `c++14` option at Codeforces.
+Currently they are being tested with the `c++17` option at Codeforces.
