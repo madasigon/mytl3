@@ -8,6 +8,7 @@
 //STARTCOPY
 namespace mytl{
     struct Modulo{
+        static ll global_mod;
     private:
         ll val;
     public:
@@ -16,6 +17,7 @@ namespace mytl{
             val %= MOD;
             if(val < 0) val += MOD;
         };
+        Modulo() : Modulo(global_mod, 0) {};
 
         static Modulo inverse(Modulo x){// asserting MOD is prime
             return power(x, x.MOD-2, x.unit());
@@ -69,6 +71,8 @@ namespace mytl{
         };
 
     };
+
+    ll Modulo::global_mod = 1000000007LL;
 
     Modulo mod107(ll x){
         return Modulo(1000000007LL, x);

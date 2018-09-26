@@ -6,11 +6,11 @@
 
 //STARTCOPY
 namespace mytl{
-template<typename T, typename P>
-T power(T base, P exponential, T unit){
+template<typename T>
+T power(T base, ll exponential, T unit=1){
     T res = unit;
     while(exponential > 0){
-        if(exponential%2 == P(1)) res = res * base;
+        if(exponential%2 == 1) res = res * base;
         base = base * base;
         exponential = exponential / 2;
     }

@@ -14,6 +14,7 @@ using namespace std;
 //#include "../test/graph_test.cpp"
 #include "../test/instant_zero_test.cpp"
 #include "../test/reduce_test.cpp"
+#include "../test/convenience_test.cpp"
 
 MAIN main(){
     memo_test();
@@ -27,4 +28,5 @@ MAIN main(){
     modulo_typesafe_test();
     instant_zero_test();
     reduce_test();
+    convenience_test();
 }

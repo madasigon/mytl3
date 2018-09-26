@@ -13,11 +13,11 @@ using ll = long long;
 template<typename T>
 using PairOf = pair<T,T>;
 namespace mytl{
-template<typename T, typename P>
-T power(T base, P exponential, T unit){
+template<typename T>
+T power(T base, ll exponential, T unit=1){
     T res = unit;
     while(exponential > 0){
-        if(exponential%2 == P(1)) res = res * base;
+        if(exponential%2 == 1) res = res * base;
         base = base * base;
         exponential = exponential / 2;
     }
@@ -31,11 +31,8 @@ namespace mytl{
         ll val;
 
     public:
-        static TSModulo unit(){
-            return 1;
-        }
         static TSModulo inverse(TSModulo x){// asserting MOD is prime
-            return power(x, MOD-2, unit());
+            return power(x, MOD-2);
         };
         TSModulo(ll initVal){
             initVal %= MOD;
@@ -171,6 +168,7 @@ namespace mytl{
 }
 namespace mytl{
     struct Modulo{
+        static ll global_mod;
     private:
         ll val;
     public:
@@ -179,6 +177,7 @@ namespace mytl{
             val %= MOD;
             if(val < 0) val += MOD;
         };
+        Modulo() : Modulo(global_mod, 0) {};
 
         static Modulo inverse(Modulo x){// asserting MOD is prime
             return power(x, x.MOD-2, x.unit());
@@ -232,6 +231,8 @@ namespace mytl{
         };
 
     };
+
+    ll Modulo::global_mod = 1000000007LL;
 
     Modulo mod107(ll x){
         return Modulo(1000000007LL, x);
@@ -310,6 +311,7 @@ struct Resetter {
 
 };
 }
+
 namespace mytl{
 template<class Q>
     struct Offline{
@@ -332,6 +334,38 @@ template<class Q>
     };
 }
 
+namespace mytl{
+template<typename T>
+struct Tracker : optional<T>{
+    using optional<T>::operator=;
+    function<T(T,T)> f;
+
+    Tracker(function<T(T,T)> f) : f{f} {};
+
+    void update(T val){
+        if(this->has_value()){
+            *this = f(this->value(), val);
+        }
+        else{
+            *this = val;
+        }
+    }
+};
+
+template<typename T, typename Container>
+vector<PairOf<T&> > adjecent_pairs(Container& c){
+    vector<PairOf<T&> > res;
+    optional<T*> prev_elem;
+    for(auto& elem : c){
+        if(prev_elem.has_value()){
+            res.push_back({*prev_elem.value(), elem});
+        }
+        prev_elem = &elem;
+    }
+    return res;
+}
+
+}
 namespace mytl{
 
 struct Point{

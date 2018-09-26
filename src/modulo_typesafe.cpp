@@ -12,11 +12,8 @@ namespace mytl{
         ll val;
 
     public:
-        static TSModulo unit(){
-            return 1;
-        }
         static TSModulo inverse(TSModulo x){// asserting MOD is prime
-            return power(x, MOD-2, unit());
+            return power(x, MOD-2);
         };
         TSModulo(ll initVal){
             initVal %= MOD;
