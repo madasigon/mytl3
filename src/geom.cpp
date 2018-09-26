@@ -52,8 +52,8 @@ struct Point{
 
 typedef vector<Point> Poly;
 
-bool inside(const Poly& poly, const Point& point, bool strict){
-    set<ll> dirs;
+bool inside(const Poly& poly, const Point& point, bool strict){ //assuming Poly is weakly convex
+    ll prevdir = -2;
     for(ll i=0; i<poly.size(); i++){
         ll nexdindex = (i+1)%poly.size();
         ll dir = poly[i].direction(poly[nexdindex], point);
@@ -61,8 +61,8 @@ bool inside(const Poly& poly, const Point& point, bool strict){
             if(strict) return false;
         }
         else{
-            dirs.insert(dir);
-            if(dirs.size() > 1) return false;
+            if(dir != prevdir && prevdir != -2) return false;
+            prevdir = dir;
         }
 
     }
