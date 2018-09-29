@@ -27,6 +27,5 @@ MAIN main(){
     unionfind_test();
     modulo_typesafe_test();
     instant_zero_test();
-    reduce_test();
     convenience_test();
 }

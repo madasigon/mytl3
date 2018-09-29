@@ -40,10 +40,6 @@
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
-		<Unit filename="../src/graph.cpp">
-			<Option compile="0" />
-			<Option link="0" />
-		</Unit>
 		<Unit filename="../src/instant_zero.cpp">
 			<Option compile="0" />
 			<Option link="0" />
@@ -65,10 +61,6 @@
 			<Option link="0" />
 		</Unit>
 		<Unit filename="../src/pow.cpp">
-			<Option compile="0" />
-			<Option link="0" />
-		</Unit>
-		<Unit filename="../src/reduce.cpp">
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
@@ -109,10 +101,6 @@
 			<Option link="0" />
 		</Unit>
 		<Unit filename="../test/pow_test.cpp">
-			<Option compile="0" />
-			<Option link="0" />
-		</Unit>
-		<Unit filename="../test/reduce_test.cpp">
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
