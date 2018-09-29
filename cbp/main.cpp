@@ -13,7 +13,6 @@ using namespace std;
 #include "../test/unionfind_test.cpp"
 //#include "../test/graph_test.cpp"
 #include "../test/instant_zero_test.cpp"
-#include "../test/reduce_test.cpp"
 #include "../test/convenience_test.cpp"
 
 MAIN main(){
