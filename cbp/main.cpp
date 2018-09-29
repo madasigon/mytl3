@@ -3,7 +3,7 @@
 using namespace std;
 
 #include "../test/geom_test.cpp"
-#include "../test/memo_test.cpp"
+#include "../test/recursion_test.cpp"
 #include "../test/modulo_test.cpp"
 #include "../test/modulo_typesafe_test.cpp"
 #include "../test/offline_test.cpp"
@@ -16,7 +16,7 @@ using namespace std;
 #include "../test/convenience_test.cpp"
 
 MAIN main(){
-    memo_test();
+    recursion_test();
     offline_test();
     pow_test();
     segtree_test();

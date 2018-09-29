@@ -93,77 +93,6 @@ namespace mytl{
 
 }
 namespace mytl{
-    template<class Q>
-    struct Maybe{
-        using T = typename Q::T;
-        T *val=nullptr;
-        void update(T operand){
-            if(val == nullptr){
-                val = new T;
-                *val = operand;
-            }
-            else{
-                *val = Q::reduce(*val, operand);
-            }
-        }
-        T get(){
-            return *val;
-        }
-        static Maybe<Q> nothing(){
-            return Maybe<Q>();
-        }
-        static Maybe<Q> just(T value){
-            Maybe<Q> res;
-            res.val = new T(value);
-            return res;
-        }
-    };
-}
-namespace mytl{
-    template <typename R, typename... Args>
-    function<R (Args...)> memo(R (*fn)(Args...)) {
-        map<tuple<Args...>, R> table;
-        return [fn, table](Args... args) mutable -> R {
-            auto argt = make_tuple(args...);
-            auto memoized = table.find(argt);
-            if(memoized == table.end()) {
-                auto result = fn(args...);
-                table[argt] = result;
-                return result;
-            } else {
-                return memoized->second;
-            }
-        };
-    }
-
-    template <typename R, typename Arg>
-    function<R (Arg)> unordered_memo(R (*fn)(Arg)) {
-        unordered_map<Arg, R> table;
-        return [fn, table](Arg arg) mutable -> R {
-            auto memoized = table.find(arg);
-            if(memoized == table.end()) {
-                auto result = fn(arg);
-                table[arg] = result;
-                return result;
-            } else {
-                return memoized->second;
-            }
-        };
-    }
-
-    template <typename R, typename Arg>
-    function<R (Arg)> natural_memo(R (*fn)(Arg)) {
-        vector<pair<bool, R> > table;
-        return [fn, table](Arg arg) mutable -> R {
-            if(table.size() <= arg) table.resize(arg+1, {false, R()});
-            if(!table[arg].first) {
-                table[arg] = {true, fn(arg)};
-            }
-            return table[arg].second;
-        };
-    }
-}
-namespace mytl{
 
 }
 namespace mytl{
@@ -311,7 +240,6 @@ struct Resetter {
 
 };
 }
-
 namespace mytl{
 template<class Q>
     struct Offline{
@@ -364,6 +292,15 @@ vector<PairOf<T&> > adjecent_pairs(Container& c){
     }
     return res;
 }
+
+template<typename T>
+struct LazyVector : vector<T>{
+    T& operator[](counter_type i){
+        if(i >= this->size()) this->resize(i+1);
+        return vector<T>::operator[](i);
+    }
+};
+
 
 }
 namespace mytl{
@@ -629,6 +566,71 @@ struct Custom_Op{
 
 };
 */
+
+}
+namespace mytl{
+
+template <template<typename, typename...> typename Q, typename R, typename... Args>
+function<R (Args...)> memoize(R (*fn)(Args...)) {
+    Q<R, Args...> table = Q<R, Args...>();
+    return [fn, table](Args... args) mutable -> R {
+        auto res_ = table.get(args...);
+        if(res_.has_value()){
+            return res_.value();
+        }
+        else{
+            auto res = fn(args...);
+            table.set(args..., res);
+            return res;
+        }
+    };
+}
+namespace memo{
+template<typename R, typename Arg>
+struct UnorderedMap : unordered_map<Arg, R>{
+    optional<R> get(Arg arg){
+        auto found = this->find(arg);
+        if(found == this->end()){
+            return {};
+        }
+        else{
+            return (*this)[arg];
+        }
+    }
+
+    void set(Arg arg, R r){
+        (*this)[arg] = r;
+    }
+};
+
+template<typename R, typename Arg>
+struct Vector : mytl::LazyVector<optional<R> >{
+    optional<R> get(Arg arg){
+        return (*this)[arg];
+    }
+    void set(Arg arg, R res){
+        (*this)[arg] = res;
+    }
+};
+
+template<typename R, typename... Args>
+struct Map : map<tuple<Args...>, R> {
+    optional<R> get(Args... args){
+        auto argt = make_tuple(args...);
+        auto found = this->find(argt);
+        if(found == this->end()){
+            return {};
+        }
+        else{
+            return {found->second};
+        }
+    }
+
+    void set(Args... args, R r){
+        (*this)[make_tuple(args...)] = r;
+    }
+};
+}
 
 }
 //ENDCOPY
