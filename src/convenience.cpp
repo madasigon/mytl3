@@ -35,6 +35,15 @@ vector<PairOf<T&> > adjecent_pairs(Container& c){
     return res;
 }
 
+template<typename T>
+struct LazyVector : vector<T>{
+    T& operator[](counter_type i){
+        if(i >= this->size()) this->resize(i+1);
+        return vector<T>::operator[](i);
+    }
+};
+
+
 }
 //ENDCOPY
 
