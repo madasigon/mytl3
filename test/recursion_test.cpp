@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 //#include "../cbp/test.h"
-#include "../src/memo.cpp"
+#include "../src/recursion.cpp"
 using namespace std;
 
 
@@ -34,7 +34,7 @@ ll slow(ll i){
 }
 
 
-void memo_test(){
+void recursion_test(){
     assert(slow(30) == natural(30));
     assert(slow(30) == ordered(30));
     assert(slow(30) == unordered(30));
