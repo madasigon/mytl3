@@ -13,6 +13,7 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
+					<Add option="-std=c++17" />
 				</Compiler>
 			</Target>
 			<Target title="Release">
@@ -33,6 +34,10 @@
 			<Add option="-fexceptions" />
 		</Compiler>
 		<Unit filename="../src/base.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../src/convenience.cpp">
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
@@ -69,6 +74,10 @@
 			<Option link="0" />
 		</Unit>
 		<Unit filename="../src/unionfind.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../test/convenience_test.cpp">
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
