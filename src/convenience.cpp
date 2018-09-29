@@ -43,6 +43,16 @@ struct LazyVector : vector<T>{
     }
 };
 
+template<typename T>
+istream& operator>>(istream& os, optional<T>& x){
+    if(x.has_value()) return os;
+    else{
+        T val;
+        os>>val;
+        x = val;
+        return os;
+    }
+}
 
 }
 //ENDCOPY

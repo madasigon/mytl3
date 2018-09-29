@@ -45,11 +45,11 @@
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
-		<Unit filename="../src/instant_zero.cpp">
+		<Unit filename="../src/graph.cpp">
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
-		<Unit filename="../src/memo.cpp">
+		<Unit filename="../src/instant_zero.cpp">
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
@@ -85,11 +85,11 @@
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
-		<Unit filename="../test/instant_zero_test.cpp">
+		<Unit filename="../test/graph_test.cpp">
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
-		<Unit filename="../test/memo_test.cpp">
+		<Unit filename="../test/instant_zero_test.cpp">
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
