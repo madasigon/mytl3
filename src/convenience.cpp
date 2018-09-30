@@ -22,8 +22,8 @@ struct Tracker : optional<T>{
     }
 };
 
-template<typename T, typename Container>
-vector<PairOf<T&> > adjecent_pairs(Container& c){
+template<typename T, template<typename> typename Container>
+vector<PairOf<T&> > adjecent_pairs(Container<T>& c){
     vector<PairOf<T&> > res;
     optional<T*> prev_elem;
     for(auto& elem : c){
@@ -60,6 +60,24 @@ istream& operator>>(istream& os, optional<T>& x){
 istream& operator>>(istream& os, Void x){
     return os;
 }
+
+template<typename T>
+struct Lazy : optional<T>{
+
+    function<T()> f;
+
+    Lazy(function<T()> f) : f{f}, optional<T>() {};
+
+    T value(){
+        if(!this->has_value()){
+            optional<T>::operator=(f());
+        }
+        return optional<T>::value();
+    }
+
+};
+
+#define LAZY(val, tipe) Lazy<tipe>([&](){return (val);})
 
 }
 //ENDCOPY
