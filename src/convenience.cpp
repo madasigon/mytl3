@@ -43,6 +43,9 @@ struct LazyVector : vector<T>{
     }
 };
 
+template<typename K, typename T>
+using AssocVector = LazyVector<T>;
+
 template<typename T>
 istream& operator>>(istream& os, optional<T>& x){
     if(x.has_value()) return os;
@@ -52,6 +55,10 @@ istream& operator>>(istream& os, optional<T>& x){
         x = val;
         return os;
     }
+}
+
+istream& operator>>(istream& os, Void x){
+    return os;
 }
 
 }

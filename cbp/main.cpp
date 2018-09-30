@@ -27,5 +27,5 @@ MAIN main(){
     modulo_typesafe_test();
     instant_zero_test();
     convenience_test();
-
+    graph_test();
 }
