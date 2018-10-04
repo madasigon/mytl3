@@ -43,6 +43,7 @@ struct Container_Graph : Container<N, vector<pair<E, N> > >{
 
 };
 
+using NormalSimpleGraph = Container_Graph<ll, Void, AssocVector>;
 
 template<typename T>
 void readNeighbourList(T& g){
