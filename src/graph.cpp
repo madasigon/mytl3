@@ -7,10 +7,10 @@
 //STARTCOPY
 namespace mytl{
 
-template<typename Node, typename Edge, template<typename, typename> typename Container>
-struct Container_Graph : Container<Node, vector<pair<Edge, Node> > >{
-    using E = Edge;
-    using N = Node;
+template<typename N, typename E, template<typename, typename> typename Container>
+struct Container_Graph : Container<N, vector<pair<E, N> > >{
+    using Edge = E;
+    using Node = N;
     optional<ll> n;
     Container_Graph(ll n={}) : n{n}, Container<Node, vector<pair<Edge, Node> > >() {}
 
@@ -95,8 +95,8 @@ void graph_algorithm(typename Algo::Graph& g, vector<pair<typename Algo::Info, t
 
 template<typename G>
 struct BFS{
-    using Edge = typename G::E;
-    using Node = typename G::N;
+    using Edge = typename G::Edge;
+    using Node = typename G::Node;
     using Graph = G;
 
     using Info = ll;
@@ -112,8 +112,8 @@ struct BFS{
 
 template<typename G>
 struct Dijkstra{
-    using Edge = typename G::E;
-    using Node = typename G::N;
+    using Edge = typename G::Edge;
+    using Node = typename G::Node;
     using Graph = G;
 
     using Info = Edge;
