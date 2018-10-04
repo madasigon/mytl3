@@ -62,7 +62,7 @@ void readEdgeList(T& g, optional<ll> m, bool bidirectional=true){
     cin>>m;
     for(ll i=1; i<=m.value(); i++){
         ll u,v;
-        typename T::E edge;
+        typename T::Edge edge;
         cin>>u>>v>>edge;
         g.newEdge(u,v,edge);
         if(bidirectional){
