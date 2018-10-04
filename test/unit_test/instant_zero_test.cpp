@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-#include "../src/instant_zero.cpp"
+#include "../../src/instant_zero.cpp"
 using namespace std;
 
 
