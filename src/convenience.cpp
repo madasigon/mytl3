@@ -5,12 +5,11 @@
 
 //STARTCOPY
 namespace mytl{
-template<typename T>
+template<typename T, T(*f)(T,T)>
 struct Tracker : optional<T>{
     using optional<T>::operator=;
-    function<T(T,T)> f;
 
-    Tracker(function<T(T,T)> f) : f{f} {};
+    Tracker() : optional<T>() {};
 
     void update(T val){
         if(this->has_value()){
