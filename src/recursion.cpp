@@ -7,7 +7,7 @@
 //STARTCOPY
 namespace mytl{
 
-template <template<typename, typename> typename Q, typename R, typename Arg>
+template <template<typename, typename> typename Q, typename Arg, typename R>
 function<R (Arg)> memoize(R (*fn)(Arg)) {
     Q<Arg, optional<R> > table;
     return [fn, table](Arg arg) mutable -> R {
