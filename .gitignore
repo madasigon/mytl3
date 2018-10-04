@@ -1,7 +1,7 @@
-cbp/cbp.depend
-cbp/cbp.layout
-cbp/obj/
-cbp/bin/
+mytl3_cbp/cbp.depend
+mytl3_cbp/cbp.layout
+mytl3_cbp/obj/
+mytl3_cbp/bin/
 
 
 *.pyx
