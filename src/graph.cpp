@@ -36,7 +36,7 @@ struct Container_Graph : Container<N, vector<pair<E, N> > >{
     vector<Node > getNeighbours(Node node){
         vector<Node> res;
         for(auto& par : getEdges(node)){
-            res.push_back(par.first);
+            res.push_back(par.second);
         }
         return res;
     }
