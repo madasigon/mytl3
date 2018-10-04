@@ -1,7 +1,7 @@
-mytl3_cbp/cbp.depend
-mytl3_cbp/cbp.layout
-mytl3_cbp/obj/
-mytl3_cbp/bin/
+test/unit_test/cbp.depend
+test/unit_test/cbp.layout
+test/unit_test/obj/
+test/unit_test/bin/
 
 
 *.pyx
@@ -14,6 +14,6 @@ codeforces_temp/
 codeforces_tests/*
 !codeforces_tests/*.cpp
 
-instance/secret.py
+test/instance/secret.py
 
 venv/
