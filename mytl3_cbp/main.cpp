@@ -11,5 +11,13 @@
 #include "../test/segtree_test.cpp"
 
 MAIN main(){
-
+    convenience_test();
+    geom_test();
+    graph_test();
+    instant_zero_test();
+    modulo_test();
+    modulo_typesafe_test();
+    pow_test();
+    recursion_test();
+    segtree_test();
 }
