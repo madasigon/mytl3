@@ -2,22 +2,24 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="mytl3_cbp" />
+		<Option title="codeblocks_project_file" />
 		<Option pch_mode="2" />
 		<Option compiler="copy_of_gnu_gcc_compiler" />
 		<Build>
 			<Target title="Debug">
-				<Option output="bin/Debug/mytl3_cbp" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Debug/codeblocks_project_file" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="copy_of_gnu_gcc_compiler" />
 				<Compiler>
 					<Add option="-g" />
 					<Add option="-std=c++17" />
+					<Add directory="files" />
+					<Add directory="../../src" />
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output="bin/Release/mytl3_cbp" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Release/codeblocks_project_file" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="copy_of_gnu_gcc_compiler" />
@@ -73,46 +75,43 @@
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
-		<Unit filename="convenience_test.cpp">
+		<Unit filename="files/convenience_test.cpp">
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
-		<Unit filename="geom_test.cpp">
+		<Unit filename="files/geom_test.cpp">
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
-		<Unit filename="graph_test.cpp">
+		<Unit filename="files/graph_test.cpp">
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
-		<Unit filename="instant_zero_test.cpp">
+		<Unit filename="files/instant_zero_test.cpp">
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
-		<Unit filename="main.cpp">
+		<Unit filename="files/modulo_test.cpp">
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
-		<Unit filename="modulo_test.cpp">
+		<Unit filename="files/modulo_typesafe_test.cpp">
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
-		<Unit filename="modulo_typesafe_test.cpp">
+		<Unit filename="files/pow_test.cpp">
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
-		<Unit filename="pow_test.cpp">
+		<Unit filename="files/recursion_test.cpp">
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
-		<Unit filename="recursion_test.cpp">
+		<Unit filename="files/segtree_test.cpp">
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
-		<Unit filename="segtree_test.cpp">
-			<Option compile="0" />
-			<Option link="0" />
-		</Unit>
+		<Unit filename="main.cpp" />
 		<Extensions>
 			<envvars />
 			<code_completion />

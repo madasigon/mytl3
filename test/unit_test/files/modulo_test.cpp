@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 //#include "../cbp/test.h"
-#include "../../src/modulo.cpp"
+#include "modulo.cpp"
 using namespace std;
 
 

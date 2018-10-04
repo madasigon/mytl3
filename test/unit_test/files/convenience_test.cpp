@@ -1,4 +1,4 @@
-#include "../../src/convenience.cpp"
+#include "convenience.cpp"
 #include <optional>
 
 

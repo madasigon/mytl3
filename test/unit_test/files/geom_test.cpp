@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 //#include "../cbp/test.h"
-#include "../../src/geom.cpp"
+#include "geom.cpp"
 using namespace std;
 
 template <typename R, typename Arg>

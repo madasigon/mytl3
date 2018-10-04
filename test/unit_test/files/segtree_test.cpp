@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 //#include "../cbp/test.h"
-#include "../../src/modulo.cpp"
-#include "../../src/segtree.cpp"
+#include "modulo.cpp"
+#include "segtree.cpp"
 using namespace std;
 
 

@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 //#include "../cbp/test.h"
-#include "../../src/pow.cpp"
+#include "pow.cpp"
 using namespace std;
 
 
