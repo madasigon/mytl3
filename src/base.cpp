@@ -16,6 +16,8 @@ using ll = long long;
 
 template<typename T>
 using PairOf = pair<T,T>;
+
+using Void = tuple<>;
 //ENDCOPY
 
 
