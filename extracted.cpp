@@ -302,10 +302,10 @@ istream& operator>>(istream& os, Void x){
 }
 namespace mytl{
 
-template<typename Node, typename Edge, template<typename, typename> typename Container>
-struct Container_Graph : Container<Node, vector<pair<Edge, Node> > >{
-    using E = Edge;
-    using N = Node;
+template<typename N, typename E, template<typename, typename> typename Container>
+struct Container_Graph : Container<N, vector<pair<E, N> > >{
+    using Edge = E;
+    using Node = N;
     optional<ll> n;
     Container_Graph(ll n={}) : n{n}, Container<Node, vector<pair<Edge, Node> > >() {}
 
@@ -331,13 +331,14 @@ struct Container_Graph : Container<Node, vector<pair<Edge, Node> > >{
     vector<Node > getNeighbours(Node node){
         vector<Node> res;
         for(auto& par : getEdges(node)){
-            res.push_back(par.first);
+            res.push_back(par.second);
         }
         return res;
     }
 
 };
 
+using NormalSimpleGraph = Container_Graph<ll, Void, AssocVector>;
 
 template<typename T>
 void readNeighbourList(T& g){
@@ -357,7 +358,7 @@ void readEdgeList(T& g, optional<ll> m, bool bidirectional=true){
     cin>>m;
     for(ll i=1; i<=m.value(); i++){
         ll u,v;
-        typename T::E edge;
+        typename T::Edge edge;
         cin>>u>>v>>edge;
         g.newEdge(u,v,edge);
         if(bidirectional){
@@ -367,8 +368,9 @@ void readEdgeList(T& g, optional<ll> m, bool bidirectional=true){
 }
 
 
-template<typename Algo, typename Container>
-void graph_algorithm(typename Algo::Graph& g, vector<pair<typename Algo::Info, typename Algo::Node> > sources, Container& tav){
+template<typename G, template<typename> typename A, typename Container>
+void graph_algorithm(G& g, vector<pair<typename A<G>::Info, typename G::Node> > sources, Container& tav){
+    using Algo = A<G>;
     typename Algo::Queue qu;
     for(auto source : sources) qu.push(source);
 
@@ -390,8 +392,8 @@ void graph_algorithm(typename Algo::Graph& g, vector<pair<typename Algo::Info, t
 
 template<typename G>
 struct BFS{
-    using Edge = typename G::E;
-    using Node = typename G::N;
+    using Edge = typename G::Edge;
+    using Node = typename G::Node;
     using Graph = G;
 
     using Info = ll;
@@ -407,8 +409,8 @@ struct BFS{
 
 template<typename G>
 struct Dijkstra{
-    using Edge = typename G::E;
-    using Node = typename G::N;
+    using Edge = typename G::Edge;
+    using Node = typename G::Node;
     using Graph = G;
 
     using Info = Edge;
