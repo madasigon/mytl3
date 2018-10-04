@@ -2,10 +2,6 @@
 #include <optional>
 
 
-ll min_(ll a, ll b){
-    return min(a,b);
-}
-
 void convenience_test(){
 
     ll x = 1;
@@ -14,7 +10,8 @@ void convenience_test(){
     assert(y.value() == 2);
     assert(x == 2);
 
-    mytl::Tracker<ll, min_> t;
+
+    mytl::Tracker<ll, mytl::min> t;
 
 
 
