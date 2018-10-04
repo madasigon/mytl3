@@ -417,7 +417,7 @@ void graph_algorithm(G& g, vector<pair<typename A<G>::Info, typename G::Node> > 
 template<typename G>
 struct BFS{
     using Edge = typename G::Edge;
-    using Node = typename G::Edge;
+    using Node = typename G::Node;
     using Graph = G;
 
     using Info = ll;
