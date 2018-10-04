@@ -260,8 +260,8 @@ struct Tracker : optional<T>{
     }
 };
 
-template<typename T, typename Container>
-vector<PairOf<T&> > adjecent_pairs(Container& c){
+template<typename T, template<typename> typename Container>
+vector<PairOf<T&> > adjecent_pairs(Container<T>& c){
     vector<PairOf<T&> > res;
     optional<T*> prev_elem;
     for(auto& elem : c){
@@ -299,13 +299,31 @@ istream& operator>>(istream& os, Void x){
     return os;
 }
 
+template<typename T>
+struct Lazy : optional<T>{
+
+    function<T()> f;
+
+    Lazy(function<T()> f) : f{f}, optional<T>() {};
+
+    T value(){
+        if(!this->has_value()){
+            optional<T>::operator=(f());
+        }
+        return optional<T>::value();
+    }
+
+};
+
+#define LAZY(val, tipe) Lazy<tipe>([&](){return (val);})
+
 }
 namespace mytl{
 
-template<typename Node, typename Edge, template<typename, typename> typename Container>
-struct Container_Graph : Container<Node, vector<pair<Edge, Node> > >{
-    using E = Edge;
-    using N = Node;
+template<typename N, typename E, template<typename, typename> typename Container>
+struct Container_Graph : Container<N, vector<pair<E, N> > >{
+    using Edge = E;
+    using Node = N;
     optional<ll> n;
     Container_Graph(ll n={}) : n{n}, Container<Node, vector<pair<Edge, Node> > >() {}
 
@@ -390,8 +408,8 @@ void graph_algorithm(typename Algo::Graph& g, vector<pair<typename Algo::Info, t
 
 template<typename G>
 struct BFS{
-    using Edge = typename G::E;
-    using Node = typename G::N;
+    using Edge = typename G::Edge;
+    using Node = typename G::Edge;
     using Graph = G;
 
     using Info = ll;
@@ -407,8 +425,8 @@ struct BFS{
 
 template<typename G>
 struct Dijkstra{
-    using Edge = typename G::E;
-    using Node = typename G::N;
+    using Edge = typename G::Edge;
+    using Node = typename G::Node;
     using Graph = G;
 
     using Info = Edge;
