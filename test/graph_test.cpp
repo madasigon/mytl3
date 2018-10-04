@@ -21,8 +21,8 @@ void graph_test(){
     V x;
     mytl::LazyVector<optional<ll> > bfs;
 
-    mytl::graph_algorithm<mytl::Dijkstra<G>, V >(g, {{0,1}}, x);
-    mytl::graph_algorithm<mytl::BFS<G>, mytl::LazyVector<optional<ll> > >(g, {{0,1}}, bfs);
+    mytl::graph_algorithm<G, mytl::Dijkstra, V >(g, {{0,1}}, x);
+    mytl::graph_algorithm<G, mytl::BFS, mytl::LazyVector<optional<ll> > >(g, {{0,1}}, bfs);
 
     vector<pair<double, ll> > res;
 

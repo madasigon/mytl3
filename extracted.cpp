@@ -355,13 +355,14 @@ struct Container_Graph : Container<N, vector<pair<E, N> > >{
     vector<Node > getNeighbours(Node node){
         vector<Node> res;
         for(auto& par : getEdges(node)){
-            res.push_back(par.first);
+            res.push_back(par.second);
         }
         return res;
     }
 
 };
 
+using NormalSimpleGraph = Container_Graph<ll, Void, AssocVector>;
 
 template<typename T>
 void readNeighbourList(T& g){
@@ -381,7 +382,7 @@ void readEdgeList(T& g, optional<ll> m, bool bidirectional=true){
     cin>>m;
     for(ll i=1; i<=m.value(); i++){
         ll u,v;
-        typename T::E edge;
+        typename T::Edge edge;
         cin>>u>>v>>edge;
         g.newEdge(u,v,edge);
         if(bidirectional){
@@ -391,8 +392,9 @@ void readEdgeList(T& g, optional<ll> m, bool bidirectional=true){
 }
 
 
-template<typename Algo, typename Container>
-void graph_algorithm(typename Algo::Graph& g, vector<pair<typename Algo::Info, typename Algo::Node> > sources, Container& tav){
+template<typename G, template<typename> typename A, typename Container>
+void graph_algorithm(G& g, vector<pair<typename A<G>::Info, typename G::Node> > sources, Container& tav){
+    using Algo = A<G>;
     typename Algo::Queue qu;
     for(auto source : sources) qu.push(source);
 
