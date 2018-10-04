@@ -19,8 +19,6 @@ function<R (Arg)> memoize(R (*fn)(Arg)) {
     };
 }
 
-template<typename Arg, typename R>
-using MemoVector = LazyVector<R>;
 
 }
 //ENDCOPY

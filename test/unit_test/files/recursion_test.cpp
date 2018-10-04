@@ -6,7 +6,7 @@ using namespace std;
 
 
 ll natural_(ll x);
-auto natural = mytl::memoize<mytl::MemoVector, ll, ll>(natural_);
+auto natural = mytl::memoize<mytl::AssocVector, ll, ll>(natural_);
 ll natural_(ll x){
     if(x < 3) return 1;
     else return natural(x-1) + natural(x-2);
