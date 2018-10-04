@@ -243,12 +243,11 @@ struct Resetter {
 };
 }
 namespace mytl{
-template<typename T>
+template<typename T, T(*f)(T,T)>
 struct Tracker : optional<T>{
     using optional<T>::operator=;
-    function<T(T,T)> f;
 
-    Tracker(function<T(T,T)> f) : f{f} {};
+    Tracker() : optional<T>() {};
 
     void update(T val){
         if(this->has_value()){
@@ -259,6 +258,13 @@ struct Tracker : optional<T>{
         }
     }
 };
+
+template<typename T>
+T min(T a, T b){return std::min(a,b);};
+template<typename T>
+T max(T a, T b){return std::max(a,b);};
+template<typename T>
+T __gcd(T a, T b){return std::__gcd(a,b);};
 
 template<typename T, template<typename> typename Container>
 vector<PairOf<T&> > adjecent_pairs(Container<T>& c){
@@ -315,7 +321,7 @@ struct Lazy : optional<T>{
 
 };
 
-#define LAZY(val, tipe) Lazy<tipe>([&](){return (val);})
+#define LAZY(val, tipe) mytl::Lazy<tipe>([&](){return (val);})
 
 }
 namespace mytl{
