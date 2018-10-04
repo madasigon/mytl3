@@ -16,7 +16,7 @@ void graph_test(){
     g.newEdge(4,2,2);
 
 
-    using V = mytl::LazyVector<optional<typename Dijkstra<G>::Info> >;
+    using V = mytl::LazyVector<optional<typename mytl::Dijkstra<G>::Info> >;
 
     V x;
     mytl::LazyVector<optional<ll> > bfs;

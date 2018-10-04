@@ -69,6 +69,10 @@
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
+		<Unit filename="../src/recursion.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
 		<Unit filename="../src/segtree.cpp">
 			<Option compile="0" />
 			<Option link="0" />
@@ -106,6 +110,10 @@
 			<Option link="0" />
 		</Unit>
 		<Unit filename="../test/pow_test.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../test/recursion_test.cpp">
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
