@@ -53,78 +53,63 @@ template<typename K, typename T>
 using AssocVector = LazyVector<T>;
 
 template<typename T>
-istream& operator>>(istream& os, optional<T>& x){
-    if(x.has_value()) return os;
-    else{
-        T val;
-        os>>val;
-        x = val;
-        return os;
+istream& operator>>(istream& is, optional<T>& x){
+    if(!x.has_value()){
+        T x_;
+        is>>x_;
+        x = x_;
     }
-}
-
-istream& operator>>(istream& os, Void x){
-    return os;
+    return is;
 }
 
 template<typename P, typename Q>
 istream& operator>>(istream& is, pair<P,Q>& x){
-    return is>>x.first>>x.second;
+    is>>x.first>>x.second;
+    return is;
 }
 
-template<typename P, typename Q>
-ostream& operator<<(ostream& os, const pair<P,Q>& x){
-    return os<<"("<<x.first<<", "<<x.second<<")";
+istream& operator>>(istream& is, Void& x){
+    return is;
 }
 
 template<typename T>
-ostream& print_elements(const T& t, string open="", string separator=" ", string close="", ostream& os=cout){
-    os<<open;
-    bool first = true;
-    for(const auto& elem : t){
-        if(!first) os<<separator;
-        os<<elem;
-        first = false;
-    }
-    os<<close;
-    return os;
-}
-
-template<typename T=ll>
 T read(istream& is=cin){
-    T r;
-    is>>r;
-    return r;
+    T x;
+    is>>x;
+    return x;
 }
 
 template<typename T>
-vector<T> readValues(ll n){
+vector<T> readValues(ll n, istream& is=cin){
     vector<T> res;
-    for(ll i=1; i<=n; i++) res.push_back(read<T>());
+    for(ll i=1; i<=n; i++) res.push_back(read<T>(is));
     return res;
 }
 
-template<typename T>
-ostream& operator<<(ostream& os, const vector<T>& t){
-    return print_elements(t, "[", ", ", "]", os);
-}
-template<typename T>
-ostream& operator<<(ostream& os, const set<T>& t){
-    return print_elements(t, "{", ", ", "}", os);
-}
-template<typename T>
-ostream& operator<<(ostream& os, const unordered_set<T>& t){
-    return print_elements(t, "{", ", ", "}", os);
-}
+
 template<typename P, typename Q>
-ostream& operator<<(ostream& os, const map<P, Q>& t){
-    return print_elements(t, "{", ", ", "}", os);
-}
-template<typename P, typename Q>
-ostream& operator<<(ostream& os, const unordered_map<P, Q>& t){
-    return print_elements(t, "{", ", ", "}", os);
+ostream& operator<<(ostream& os, const pair<P,Q>& x){
+    os<<"("<<x.first<<", "<<x.second<<")";
+    return os;
 }
 
+template<typename T, template<typename> typename Container>
+ostream& operator<<(ostream& os, const Container<T>& x){
+    os<<"{";
+    bool first = true;
+    for(const auto& elem : x){
+        if(!first) os<<", ";
+        os<<elem;
+        first = false;
+    }
+    os<<"}";
+    return os;
+}
+
+template<typename T>
+void print(const T& x, ostream& os=cout){
+    os<<x;
+}
 
 template<typename T>
 struct Lazy : optional<T>{
@@ -133,7 +118,7 @@ struct Lazy : optional<T>{
 
     Lazy(function<T()> f) : f{f}, optional<T>() {};
 
-    inline T& value(){
+    T& value(){
         if(!this->has_value()){
             optional<T>::operator=(f());
         }

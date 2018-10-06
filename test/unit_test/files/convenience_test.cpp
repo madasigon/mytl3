@@ -13,8 +13,6 @@ void convenience_test(){
 
     mytl::Tracker<ll, mytl::min> t;
 
-
-
     t.update(2);
     t.update(3);
     t.update(1);
@@ -28,3 +26,5 @@ void convenience_test(){
     }
     assert((res == vector<ll>{1, 2, 2, 3, 3, 4}));
 }
+
+
