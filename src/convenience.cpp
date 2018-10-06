@@ -90,6 +90,19 @@ ostream& print_elements(const T& t, string open="", string separator=" ", string
     return os;
 }
 
+template<typename T=ll>
+T read(istream& is=cin){
+    T r;
+    is>>r;
+    return r;
+}
+
+template<typename T>
+vector<T> readValues(ll n){
+    vector<T> res;
+    for(ll i=1; i<=n; i++) res.push_back(read<T>());
+    return res;
+}
 
 template<typename T>
 ostream& operator<<(ostream& os, const vector<T>& t){
