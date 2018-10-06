@@ -50,6 +50,18 @@ struct Point{
     };
 };
 
+ll distance_squared(const Point& a, const Point& b){
+    return (a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y);
+}
+
+double distance(const Point& a, const Point& b){
+    return sqrt(distance_squared(a, b));
+}
+
+ll cartesian_distance(const Point& a, const Point& b){
+    return abs(a.x - b.x) + abs(a.y - b.y);
+}
+
 typedef vector<Point> Poly;
 
 bool inside(const Poly& poly, const Point& point, bool strict){ //assuming Poly is weakly convex

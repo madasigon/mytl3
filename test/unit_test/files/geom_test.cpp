@@ -25,4 +25,7 @@ void geom_test(){
          && mytl::inside({{0,0},{3,0},{0,3}}, {1,1}, true)
          && mytl::inside({{0,0},{3,0},{0,3}}, {2,1}, false));
 
+    assert(mytl::distance_squared(mytl::Point{0,0}, mytl::Point{1,1}) == 2
+         && mytl::cartesian_distance(mytl::Point{0,0}, mytl::Point{1,1}) == 2);
+
 }
