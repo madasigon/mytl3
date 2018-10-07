@@ -1,10 +1,3 @@
-test/unit_test/cbp.depend
-test/unit_test/cbp.layout
-test/unit_test/obj/
-test/unit_test/bin/
-test/unit_test/*.depend
-test/unit_test/*.layout
-
 *.pyx
 */*.pyc
 __pycache__
