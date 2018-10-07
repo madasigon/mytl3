@@ -1,6 +1,6 @@
 import sys
 
-sys.path.insert(0, "./test/")
+sys.path.insert(0, "./codeforces_tests/")
 from autotest import Codeforces, run_test, collect_dir
 import autotest.config as config
 import autotest.config.secret as secret
