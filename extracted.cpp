@@ -14,6 +14,13 @@ template<typename T>
 using PairOf = pair<T,T>;
 
 using Void = tuple<>;
+
+struct BasicInitialization{
+    BasicInitialization(){
+        ios_base::sync_with_stdio(false);
+    }
+};
+BasicInitialization __basic_initialization__;
 namespace mytl{
 template<typename T>
 T power(T base, ll exponential, T unit=1){
@@ -288,18 +295,72 @@ template<typename K, typename T>
 using AssocVector = LazyVector<T>;
 
 template<typename T>
-istream& operator>>(istream& os, optional<T>& x){
-    if(x.has_value()) return os;
-    else{
-        T val;
-        os>>val;
-        x = val;
-        return os;
+istream& operator>>(istream& is, optional<T>& x){
+    if(!x.has_value()){
+        T x_;
+        is>>x_;
+        x = x_;
     }
+    return is;
 }
 
-istream& operator>>(istream& os, Void x){
+template<typename P, typename Q, typename T>
+istream& operator>>(istream& is, T& x){
+    P a;
+    Q b;
+    is>>a>>b;
+    return T(a,b);
+}
+
+istream& operator>>(istream& is, Void& x){
+    return is;
+}
+
+template<typename T, typename P=T>
+T read(istream& is=cin){
+    P a;
+    is>>a;
+    return T(a);
+}
+
+template<typename T, typename P, typename Q>
+T read(istream& is=cin){
+    P a;
+    Q b;
+    is>>a>>b;
+    return T(a,b);
+}
+
+template<typename T, typename... Q>
+vector<T> readValues(ll n, istream& is=cin){
+    vector<T> res;
+    for(ll i=1; i<=n; i++) res.push_back(read<T, Q...>(is));
+    return res;
+}
+
+
+template<typename P, typename Q>
+ostream& operator<<(ostream& os, const pair<P,Q>& x){
+    os<<"("<<x.first<<", "<<x.second<<")";
     return os;
+}
+
+template<typename T, template<typename> typename Container>
+ostream& operator<<(ostream& os, const Container<T>& x){
+    os<<"{";
+    bool first = true;
+    for(const auto& elem : x){
+        if(!first) os<<", ";
+        os<<elem;
+        first = false;
+    }
+    os<<"}";
+    return os;
+}
+
+template<typename T>
+void print(const T& x, ostream& os=cout){
+    os<<x;
 }
 
 template<typename T>
@@ -309,7 +370,7 @@ struct Lazy : optional<T>{
 
     Lazy(function<T()> f) : f{f}, optional<T>() {};
 
-    T value(){
+    T& value(){
         if(!this->has_value()){
             optional<T>::operator=(f());
         }
@@ -319,7 +380,7 @@ struct Lazy : optional<T>{
 };
 
 #define LAZY(val, tipe) mytl::Lazy<tipe>([&](){return (val);})
-
+#define WATCH(x) cout << (#x) << " is " << (x) << endl
 }
 namespace mytl{
 
@@ -488,6 +549,18 @@ struct Point{
         return sgn((a - *this) * (b - *this));
     };
 };
+
+ll distance_squared(const Point& a, const Point& b){
+    return (a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y);
+}
+
+double distance(const Point& a, const Point& b){
+    return sqrt(distance_squared(a, b));
+}
+
+ll cartesian_distance(const Point& a, const Point& b){
+    return abs(a.x - b.x) + abs(a.y - b.y);
+}
 
 typedef vector<Point> Poly;
 
@@ -722,8 +795,6 @@ function<R (Arg)> memoize(R (*fn)(Arg)) {
     };
 }
 
-template<typename Arg, typename R>
-using MemoVector = LazyVector<R>;
 
 }
 //ENDCOPY
