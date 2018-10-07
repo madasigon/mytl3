@@ -14,5 +14,6 @@ codeforces_temp/
 
 codeforces_tests/*
 !codeforces_tests/*.cpp
+!codeforces_tests/autotest
 
 venv/
