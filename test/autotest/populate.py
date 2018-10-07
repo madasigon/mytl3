@@ -1,5 +1,5 @@
 from .util import *
-from instance.config import STARTCOPY, ENDCOPY, MAGICWORD
+from .config import STARTCOPY, ENDCOPY, MAGICWORD
 import os
 
 is_start = contains(STARTCOPY)

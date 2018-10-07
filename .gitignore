@@ -15,6 +15,4 @@ codeforces_temp/
 codeforces_tests/*
 !codeforces_tests/*.cpp
 
-test/instance/secret.py
-
 venv/

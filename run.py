@@ -2,8 +2,8 @@ import sys
 
 sys.path.insert(0, "./test/")
 from autotest import Codeforces, run_test, collect_dir
-import instance.config as config
-import instance.secret as secret
+import autotest.config as config
+import autotest.config.secret as secret
 import os
 from autotest.util import write_file
 
