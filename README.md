@@ -2,7 +2,7 @@
 Generic implementation of algorithms that are often used at programming competitions
 
 
-mytl3 is a collection of C++11 implementations of commonly used algorithms for competitive programming.
+mytl3 is a collection of C++17 implementations of commonly used algorithms for competitive programming.
 It tries to be as generic as possible. For this it uses C++ templates.
 For example the implementation of the [Segment Tree](https://en.wikipedia.org/wiki/Segment_tree) has a template argument to specify the type of the elements and the corresponding operations on them.
 This means you can have a Segment Tree for querying the
