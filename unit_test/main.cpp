@@ -1,4 +1,4 @@
-#include "../../src/base.cpp"
+#include "base.cpp"
 
 #include "convenience_test.cpp"
 #include "geom_test.cpp"
@@ -20,4 +20,5 @@ MAIN main(){
     pow_test();
     recursion_test();
     segtree_test();
+
 }

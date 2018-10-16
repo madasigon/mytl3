@@ -12,10 +12,11 @@
 				<Option type="1" />
 				<Option compiler="copy_of_gnu_gcc_compiler" />
 				<Compiler>
+					<Add option="-std=c++14" />
 					<Add option="-g" />
 					<Add option="-std=c++17" />
 					<Add directory="files" />
-					<Add directory="../../src" />
+					<Add directory="../src" />
 				</Compiler>
 			</Target>
 			<Target title="Release">
@@ -35,43 +36,43 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
-		<Unit filename="../../src/base.cpp">
+		<Unit filename="../src/base.cpp">
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
-		<Unit filename="../../src/convenience.cpp">
+		<Unit filename="../src/convenience.cpp">
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
-		<Unit filename="../../src/geom.cpp">
+		<Unit filename="../src/geom.cpp">
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
-		<Unit filename="../../src/graph.cpp">
+		<Unit filename="../src/graph.cpp">
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
-		<Unit filename="../../src/instant_zero.cpp">
+		<Unit filename="../src/instant_zero.cpp">
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
-		<Unit filename="../../src/modulo.cpp">
+		<Unit filename="../src/modulo.cpp">
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
-		<Unit filename="../../src/modulo_typesafe.cpp">
+		<Unit filename="../src/modulo_typesafe.cpp">
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
-		<Unit filename="../../src/pow.cpp">
+		<Unit filename="../src/pow.cpp">
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
-		<Unit filename="../../src/recursion.cpp">
+		<Unit filename="../src/recursion.cpp">
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
-		<Unit filename="../../src/segtree.cpp">
+		<Unit filename="../src/segtree.cpp">
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
