@@ -74,7 +74,7 @@ void readEdgeList(T& g, optional<ll> m, bool bidirectional=true){
 
 
 template<typename G, template<typename> typename A, typename Container>
-void graph_algorithm(G& g, vector<pair<typename A<G>::Info, typename G::Node> > sources, Container& tav){
+void queue_graph_algorithm(G& g, vector<pair<typename A<G>::Info, typename G::Node> > sources, Container& tav){
     using Algo = A<G>;
     typename Algo::Queue qu;
     for(auto source : sources) qu.push(source);

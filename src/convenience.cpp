@@ -51,6 +51,9 @@ struct LazyVector : vector<T>{
 
 template<typename K, typename T>
 using AssocVector = LazyVector<T>;
+}
+
+namespace std{
 
 template<typename T>
 istream& operator>>(istream& is, optional<T>& x){
@@ -74,6 +77,30 @@ istream& operator>>(istream& is, Void& x){
     return is;
 }
 
+
+template<typename P, typename Q>
+ostream& operator<<(ostream& os, const pair<P,Q>& x){
+    os<<"("<<x.first<<", "<<x.second<<")";
+    return os;
+}
+
+template<typename T, template<typename> typename Container>
+ostream& operator<<(ostream& os, const Container<T>& x){
+    os<<"{";
+    bool first = true;
+    for(const auto& elem : x){
+        if(!first) os<<", ";
+        os<<elem;
+        first = false;
+    }
+    os<<"}";
+    return os;
+}
+
+}
+
+namespace mytl{
+
 template<typename T, typename P=T>
 T read(istream& is=cin){
     P a;
@@ -96,25 +123,10 @@ vector<T> readValues(ll n, istream& is=cin){
     return res;
 }
 
-
-template<typename P, typename Q>
-ostream& operator<<(ostream& os, const pair<P,Q>& x){
-    os<<"("<<x.first<<", "<<x.second<<")";
-    return os;
 }
 
-template<typename T, template<typename> typename Container>
-ostream& operator<<(ostream& os, const Container<T>& x){
-    os<<"{";
-    bool first = true;
-    for(const auto& elem : x){
-        if(!first) os<<", ";
-        os<<elem;
-        first = false;
-    }
-    os<<"}";
-    return os;
-}
+
+namespace mytl{
 
 template<typename T>
 void print(const T& x, ostream& os=cout){
