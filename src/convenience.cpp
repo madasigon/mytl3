@@ -62,27 +62,37 @@ istream& operator>>(istream& is, optional<T>& x){
     return is;
 }
 
-template<typename P, typename Q>
-istream& operator>>(istream& is, pair<P,Q>& x){
-    is>>x.first>>x.second;
-    return is;
+template<typename P, typename Q, typename T>
+istream& operator>>(istream& is, T& x){
+    P a;
+    Q b;
+    is>>a>>b;
+    return T(a,b);
 }
 
 istream& operator>>(istream& is, Void& x){
     return is;
 }
 
-template<typename T>
+template<typename T, typename P=T>
 T read(istream& is=cin){
-    T x;
-    is>>x;
-    return x;
+    P a;
+    is>>a;
+    return T(a);
 }
 
-template<typename T>
+template<typename T, typename P, typename Q>
+T read(istream& is=cin){
+    P a;
+    Q b;
+    is>>a>>b;
+    return T(a,b);
+}
+
+template<typename T, typename... Q>
 vector<T> readValues(ll n, istream& is=cin){
     vector<T> res;
-    for(ll i=1; i<=n; i++) res.push_back(read<T>(is));
+    for(ll i=1; i<=n; i++) res.push_back(read<T, Q...>(is));
     return res;
 }
 
