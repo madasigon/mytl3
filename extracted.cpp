@@ -307,12 +307,10 @@ istream& operator>>(istream& is, optional<T>& x){
     return is;
 }
 
-template<typename P, typename Q, typename T>
-istream& operator>>(istream& is, T& x){
-    P a;
-    Q b;
-    is>>a>>b;
-    return T(a,b);
+template<typename P, typename Q>
+istream& operator>>(istream& is, pair<P, Q>& x){
+    is>>x.first>>x.second;
+    return is;
 }
 
 istream& operator>>(istream& is, Void& x){
@@ -434,16 +432,12 @@ struct Container_Graph : Container<N, vector<pair<E, N> > >{
 
 using NormalSimpleGraph = Container_Graph<ll, Void, AssocVector>;
 
-template<typename T>
-void readNeighbourList(T& g){
+template<typename G, typename Neig=ll>
+void readNeighbourList(G& g){
     for(ll i=1; i<=g.n.value(); i++){
         ll mi;
         cin>>mi;
-        for(ll j=1; j<=mi; j++){
-            ll neig;
-            cin>>neig;
-            g.newEdge(i, neig);
-        }
+        for(ll j=1; j<=mi; j++) g.newEdge(i, read<Neig>());
     }
 }
 
