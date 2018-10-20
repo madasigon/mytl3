@@ -65,12 +65,10 @@ istream& operator>>(istream& is, optional<T>& x){
     return is;
 }
 
-template<typename P, typename Q, typename T>
-istream& operator>>(istream& is, T& x){
-    P a;
-    Q b;
-    is>>a>>b;
-    return T(a,b);
+template<typename P, typename Q>
+istream& operator>>(istream& is, pair<P, Q>& x){
+    is>>x.first>>x.second;
+    return is;
 }
 
 istream& operator>>(istream& is, Void& x){
