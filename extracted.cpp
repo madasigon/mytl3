@@ -401,7 +401,7 @@ struct Container_Graph : Container<N, vector<pair<E, N> > >{
     optional<ll> n;
     Container_Graph(ll n={}) : n{n}, Container<Node, vector<pair<Edge, Node> > >() {}
 
-    void newEdge(ll u, ll v, Edge edge=Void()){
+    void newEdge(Node u, Node v, Edge edge=Void()){
         (*this)[u].push_back(make_pair(edge, v));
     }
     vector<Node> getNodes(){
@@ -432,21 +432,25 @@ struct Container_Graph : Container<N, vector<pair<E, N> > >{
 
 using NormalSimpleGraph = Container_Graph<ll, Void, AssocVector>;
 
-template<typename G, typename Neig=ll>
+template<typename G>
 void readNeighbourList(G& g){
     for(ll i=1; i<=g.n.value(); i++){
         ll mi;
         cin>>mi;
-        for(ll j=1; j<=mi; j++) g.newEdge(i, read<Neig>());
+        for(ll j=1; j<=mi; j++){
+            ll neig;
+            cin>>neig;
+            g.newEdge(i, neig);
+        }
     }
 }
 
-template<typename T>
-void readEdgeList(T& g, optional<ll> m, bool bidirectional=true){
+template<typename G>
+void readEdgeList(G& g, optional<ll> m, bool bidirectional=true){
     cin>>m;
     for(ll i=1; i<=m.value(); i++){
-        ll u,v;
-        typename T::Edge edge;
+        typename G::Node u,v;
+        typename G::Edge edge;
         cin>>u>>v>>edge;
         g.newEdge(u,v,edge);
         if(bidirectional){
