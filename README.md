@@ -20,7 +20,7 @@ cout<<x.get(); //x.get() returns the numeric value of x
 ```C++
 mytl::Node<mytl::Add_Sum<long long> > tree({1,1e+10}); //create a segment tree with 10^10 elements
 tree.query({1, 10}, 2); //add 2 to every element in the range that's written in the curly brackets
-cout<<tree.query({5,14}, 0); //print the sum of the elements in the given range modulo 10^9+7
+cout<<tree.query({5,14}, 0); //print the sum of the elements in the given range
 ```
 ### Toughtless use of `int` instead of `long long`:
 ```C++
