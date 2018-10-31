@@ -1,5 +1,5 @@
 # Mytl3
-An additional "library/framework" for online competitive programming in C++.
+A "library/framework" for online competitive programming in C++.
 # Motivation
 The goal of this project is to spare people's time from repeatedly typing frequently used algorithms, while also making it hard to make bugs or engage in bad habits. Focusing on the safety and speed of writing solutions in expense of runtime efficiency, some of its implementations may not be usable in case of strict time/memory limits. Nevertheless, some contest platforms, such as Codeforces, set relatively big time and memory limits for their tasks, making it usable most of the time.
 # Features
