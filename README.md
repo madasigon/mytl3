@@ -29,7 +29,7 @@ need_int also_big_value = 0; //OK! you can use 'need_int' if you really need int
 ```
 *Further examples are in the codeforces_tests folder: these are correct solutions of Codeforces problems, that use the library.*
 # Installation
-Simply copy the contents of `extracted.cpp` at the top of your file and leave out the standard includes like ```#include<bits/stdc++.h```. The library's functions are in the `mytl::` namespace.
+Simply copy the contents of `extracted.cpp` at the top of your solution and leave out the standard includes like ```#include<bits/stdc++.h```. The library's functions are in the `mytl::` namespace.
 # Contribute
 - *There is a very easy way to contribute*: write a solution to a [Codeforces](http://codeforces.com/) problem, that uses this library. If you add this file to the codeforces_tests folder, it can be always automatically uploaded to Codeforces and tested, so that if a bug is introduced to the library, the solution may give **wrong answer** or some other error, indicating that something may be wrong with the current version of the library.
 - *Also, any change propositions to the library itself are very welcome.*
