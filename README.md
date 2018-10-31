@@ -5,15 +5,15 @@ The goal of this project is to spare people's time from repeatedly typing freque
 # Features
 - Macros to prevent risky usages of `int` instead of `long long`
 - Some convenience functions for input/output.
-- Some convenience functions to simplify often occuring patterns such as memozing a recursive function or making calculations modulo 10^9+7.
-- Some algorithms including graphs (Dijkstra's, DFS etc...), computational geometry (Graham Scan) and data structures (Segment Tree)
+- Some convenience functions to simplify often occuring patterns such as memoizing a recursive function or making calculations modulo 10^9+7.
+- Some algorithms including graphs (Dijkstra's, DFS etc...), computational geometry (Graham Scan: *todo*) and data structures (Segment Tree)
 - All algorithms try to be as generic as possible, using C++ templates. This means you'll be able to do many kinds of things without having to modify the implementations. You'll only need to define what's specific to your case of usage, and pass these as template parameters.
 
 # Examples
 ### Modulo 1000000007:
 ```C++
 mytl::Mod107 x = 43; //the value of x will always be calculated modulo 1000000007
-x = x / 2; //now you can do what you want: add, subtract, multiply, divide
+x = x / 2; //now you can do whatever you want: add, subtract, multiply or divide
 cout<<x.get(); //x.get() returns the numeric value of x
 ```
 ### Segment Tree (updating operation: addition, querying operation: sum):
