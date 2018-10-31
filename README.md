@@ -1,5 +1,5 @@
 # Mytl3
-An additional "standard library/framework" for online competitive programming in C++.
+An additional "library/framework" for online competitive programming in C++.
 # Motivation
 The goal of this project is to spare people's time from repeatedly typing frequently used algorithms, while also making it hard to make bugs or engage in bad habits. Focusing on the safety and speed of writing solutions in expense of runtime efficiency, some of its implementations may not be usable in case of strict time/memory limits. Nevertheless, some contest platforms, such as Codeforces, set forgiving resource limits for their tasks, making it usable most of the time.
 # Features
@@ -31,5 +31,5 @@ need_int also_big_value = 0; //OK! you can use 'need_int' if you really need int
 # Installation
 Simply copy the contents of `extracted.cpp` to the top of your solution and leave out the standard includes like ```#include<bits/stdc++.h```. The library's functions are in the `mytl::` namespace. *You'll have to write* `MAIN main()` *instead of* `int main()`*, because writing `int something` is prohibited as a safety feature.*
 # Contribute
-- *There is a very easy way to contribute*: write a solution to a [Codeforces](http://codeforces.com/) problem, that uses this library. If you add this file to the codeforces_tests folder, it can be always automatically uploaded to Codeforces and tested, so that if a bug is introduced to the library, the solution may give **wrong answer** or some other error, indicating that something may be wrong with the current version of the library.
+- *There is a very easy way to contribute*: write a solution to a [Codeforces](http://codeforces.com/) problem, that uses this library. If you add this file to the codeforces_tests folder, it can always be automatically uploaded to Codeforces and tested, so that if a bug is introduced to the library, the solution may give **wrong answer** or some other error, indicating that something may be wrong with the current version of the library.
 - *Also, any change propositions to the library itself are very welcome.*
