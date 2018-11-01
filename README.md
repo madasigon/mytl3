@@ -12,9 +12,11 @@ The goal of this project is to spare people's time from repeatedly typing freque
 # Examples
 ### Modulo 1000000007:
 ```C++
-mytl::Mod107 x = 43; //the value of x will always be calculated modulo 1000000007
+mytl::Mod107 x = 43; //The value of x will always be calculated modulo 10^9+7. Mod107 is a synonym for TSModulo<100000007>
 x = x / 2; //now you can do whatever you want: add, subtract, multiply or divide
 cout<<x.get(); //x.get() returns the numeric value of x
+mytl::TSModulo<47> y = 3;
+x = x + y; //Compile error: the type of x and y don't match. You can only operate between numbers of the same modulus.
 ```
 ### Segment Tree (updating operation: addition, querying operation: sum):
 ```C++
