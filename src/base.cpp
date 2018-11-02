@@ -9,6 +9,7 @@
 using namespace std;
 
 using u_counter_type = unsigned int;
+using need_int = int;
 using counter_type = int;
 using MAIN = int;
 #define int DontUseIntÉ
