@@ -5,6 +5,7 @@
 using namespace std;
 
 using u_counter_type = unsigned int;
+using need_int = int;
 using counter_type = int;
 using MAIN = int;
 #define int DontUseIntÉ
@@ -43,11 +44,7 @@ namespace mytl{
         static TSModulo inverse(TSModulo x){// asserting MOD is prime
             return power(x, MOD-2);
         };
-        TSModulo(ll initVal){
-            initVal %= MOD;
-            if(val < 0) initVal += MOD;
-            val = initVal;
-        };
+        TSModulo(ll initVal) : val{(MOD + initVal%MOD)%MOD} {};
         TSModulo() : TSModulo(0) {}
         TSModulo& operator=(const TSModulo&) = default;
 
