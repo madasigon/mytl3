@@ -5,6 +5,20 @@
 
 //STARTCOPY
 namespace mytl{
+
+
+template<typename T>
+void forrange(T n, T from){
+    vector<T> res(n);
+    iota(res.begin(), res.end(), from);
+    return res;
+}
+
+template<typename F>
+void repeat(need_int n, const F& callback){
+    for(need_int _ : forrange(n,0)) callback();
+}
+
 template<typename T, T(*f)(T,T)>
 struct Tracker : optional<T>{
     using optional<T>::operator=;
@@ -43,7 +57,7 @@ vector<PairOf<T&> > adjecent_pairs(Container<T>& c){
 
 template<typename T>
 struct LazyVector : vector<T>{
-    T& operator[](counter_type i){
+    typename vector<T>::reference operator[](counter_type i){
         if(i >= this->size()) this->resize(i+1);
         return vector<T>::operator[](i);
     }
@@ -51,85 +65,7 @@ struct LazyVector : vector<T>{
 
 template<typename K, typename T>
 using AssocVector = LazyVector<T>;
-}
 
-namespace std{
-
-template<typename T>
-istream& operator>>(istream& is, optional<T>& x){
-    if(!x.has_value()){
-        T x_;
-        is>>x_;
-        x = x_;
-    }
-    return is;
-}
-
-template<typename P, typename Q>
-istream& operator>>(istream& is, pair<P, Q>& x){
-    is>>x.first>>x.second;
-    return is;
-}
-
-istream& operator>>(istream& is, Void& x){
-    return is;
-}
-
-
-template<typename P, typename Q>
-ostream& operator<<(ostream& os, const pair<P,Q>& x){
-    os<<"("<<x.first<<", "<<x.second<<")";
-    return os;
-}
-
-template<typename T, template<typename> typename Container>
-ostream& operator<<(ostream& os, const Container<T>& x){
-    os<<"{";
-    bool first = true;
-    for(const auto& elem : x){
-        if(!first) os<<", ";
-        os<<elem;
-        first = false;
-    }
-    os<<"}";
-    return os;
-}
-
-}
-
-namespace mytl{
-
-template<typename T, typename P=T>
-T read(istream& is=cin){
-    P a;
-    is>>a;
-    return T(a);
-}
-
-template<typename T, typename P, typename Q>
-T read(istream& is=cin){
-    P a;
-    Q b;
-    is>>a>>b;
-    return T(a,b);
-}
-
-template<typename T, typename... Q>
-vector<T> readValues(ll n, istream& is=cin){
-    vector<T> res;
-    for(ll i=1; i<=n; i++) res.push_back(read<T, Q...>(is));
-    return res;
-}
-
-}
-
-
-namespace mytl{
-
-template<typename T>
-void print(const T& x, ostream& os=cout){
-    os<<x;
-}
 
 template<typename T>
 struct Lazy : optional<T>{
