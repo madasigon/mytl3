@@ -1,5 +1,5 @@
 #include "base.cpp"
-#include "convenience.cpp"
+#include "io.cpp"
 
 #ifndef GRAPH_CPP
 #define GRAPH_CPP
@@ -7,8 +7,10 @@
 //STARTCOPY
 namespace mytl{
 
-template<typename N, typename E, template<typename, typename> typename Container>
-struct Container_Graph : Container<N, vector<pair<E, N> > >{
+template<typename N, typename E, template<typename, typename> typename C>
+struct Container_Graph : C<N, vector<pair<E, N> > >{
+    template<typename A, typename B>
+    using Container = C<A,B>;
     using Edge = E;
     using Node = N;
     optional<ll> n;
@@ -46,86 +48,170 @@ struct Container_Graph : Container<N, vector<pair<E, N> > >{
 using NormalSimpleGraph = Container_Graph<ll, Void, AssocVector>;
 
 template<typename G>
-void readNeighbourList(G& g){
-    for(ll i=1; i<=g.n.value(); i++){
-        ll mi;
-        cin>>mi;
-        for(ll j=1; j<=mi; j++){
-            ll neig;
-            cin>>neig;
-            g.newEdge(i, neig);
+void readNeighbourList(G& g, ll indexing=1){
+    for(ll i : forrange(g.n.size(), indexing)){
+        for(ll neig : readValues<ll>(read<ll>())){
+            g.new_edge(i, neig);
         }
     }
 }
 
 template<typename G>
 void readEdgeList(G& g, optional<ll> m, bool bidirectional=true){
+    using Node = typename G::Node;
+    using Edge = typename G::Edge;
     cin>>m;
-    for(ll i=1; i<=m.value(); i++){
-        typename G::Node u,v;
-        typename G::Edge edge;
-        cin>>u>>v>>edge;
+    for(auto [u, v, edge] : readValues<tuple<Node, Node, Edge> >(m.value())){
         g.newEdge(u,v,edge);
-        if(bidirectional){
-            g.newEdge(v, u, edge);
-        }
+        if(bidirectional) g.newEdge(v, u, edge);
     }
 }
 
-
-template<typename G, template<typename> typename A, typename Container>
-void queue_graph_algorithm(G& g, vector<pair<typename A<G>::Info, typename G::Node> > sources, Container& tav){
+template<typename Container>
+struct Util{
+};
+template<
+    typename G,
+    template<typename> typename A,
+    typename F=void(*)(typename A<G>::Option)
+>
+auto queue_graph_algorithm(
+    G& g,
+    vector<typename A<G>::Option > sources,
+    optional<F> new_node_callback={})
+{
     using Algo = A<G>;
-    typename Algo::Queue qu;
-    for(auto source : sources) qu.push(source);
-
-    while(!qu.empty()){
-        auto akt = qu.top();
-        qu.pop();
+    typename Algo::Queue q;
+    
+    for(auto source : sources) q.push(source);
+    typename G::template Container<typename G::Node, typename Algo::Info> d;
+    while(!q.empty()){
+        auto akt = Algo::consume(q);
         typename Algo::Node who = akt.second;
         typename Algo::Info info = akt.first;
 
-        if(tav[who].has_value()) continue;
+        if(Util<decltype(d)>::has_key(d, who)) continue;
 
-        tav[who] = info;
-
-        for(auto par : g.getEdges(who)) if(!tav[par.second].has_value()){
-            qu.push(make_pair(Algo::append({info, who}, par.first, par.second), par.second));
+        d[who] = info;
+        
+        if(new_node_callback.has_value()){
+            new_node_callback.value()({info, who});
+        }
+        for(auto par : g.getEdges(who)) if(!Util<decltype(d)>::has_key(d, par.second)){
+            q.push({Algo::append({info, who}, par.first, par.second), par.second});
         }
     }
+    return d;
 }
 
-template<typename G>
-struct BFS{
-    using Edge = typename G::Edge;
-    using Node = typename G::Node;
-    using Graph = G;
+template<template<typename> typename QP, template<typename> typename P>
+struct AlgoComposer{
+    template<typename G>
+    struct A{
+        using Path = P<G>;
+        using Edge = typename G::Edge;
+        using Node = typename G::Node;
+        using Info = typename Path::Info;
+        using Option = pair<Info, Node>;
+        using QueuePolicy = QP<Option>;
+        using Queue = typename QueuePolicy::Queue;
 
-    using Info = ll;
-    struct Queue : queue<pair<Info, Node> >{
-        pair<Info, Node> top(){
-            return this->front();
+        static Option consume(Queue& q){
+            return QueuePolicy::consume(q);
+        }
+        static void push(Queue& q, Option new_option){
+            return QueuePolicy::push(q, new_option);
+        }
+        static Info append(pair<Info, Node> from , Edge e, Node to){
+            return Path::append(from, e, to);
         }
     };
-    static Info append(pair<Info,Node> from, Edge e, Node to){
-        return from.first + 1;
+};
+
+
+template<typename T>
+struct Priority{
+    using Queue = priority_queue<T, vector<T>, greater<T> >;
+    static T consume(Queue& q){
+        auto res = q.top();
+        q.pop();
+        return res;
+    }
+    static void push(Queue& q, T new_option){
+        q.push(new_option);
+    }
+};
+
+
+template<typename T>
+struct FIFO{
+    using Queue = queue<T>;
+    static T consume(Queue& q){
+        auto res = q.front();
+        q.pop();
+        return res;
+    }
+    static void push(Queue& q, T new_option){
+        q.push(new_option);
+    }
+};
+
+template<typename T>
+struct FILO{
+    using Queue = stack<T>;
+    static T consume(Queue& q){
+        auto res = q.top();
+        q.pop();
+    }
+    static void push(Queue& q, T new_option){
+        q.pop();
     }
 };
 
 template<typename G>
-struct Dijkstra{
+struct JustLength{
+    using Info = typename G::Edge;
+    static Info append(pair<Info, typename G::Node> from, typename G::Edge e, typename G::Node n){
+        return from.first + e;
+    }
+};
+
+template<typename G>
+struct LengthAndLastNode{
+    using Info = pair<typename G::Edge, typename G::Node>;
+    static Info append(pair<Info, typename G::Node> from, typename G::Edge e, typename G::Node n){
+        return {from.first + e, from.second};
+    }
+};
+
+
+/*
+template<typename G>
+struct Custom{
     using Edge = typename G::Edge;
     using Node = typename G::Node;
-    using Graph = G;
 
-    using Info = Edge;
-    using Queue = priority_queue<pair<Info, Node>, vector<pair<Info, Node> >, greater<pair<Info, Node> > >;
+    using Info = _;
+    using Option = pair<Info, Edge>;
+    using Queue = _;
 
-    static Info append(pair<Info,Node> from, Edge e, Node to){
-        return from.first + e;
+    static Option consume(Queue &q){
+        _
+        return _;
+    }
+
+    static void push(Queue &q, Option new_option){
+        _
+    }
+
+
+
+    static Info append(Option from, Edge e, Node to){
+        return _
     }
 
 };
+*/
 }
 //ENDCOPY
 
