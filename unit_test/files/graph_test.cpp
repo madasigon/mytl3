@@ -1,14 +1,6 @@
 #include "graph.cpp"
 using namespace std;
 
-namespace mytl{
-    template<typename Key, typename Value>
-    struct Util<map<Key, Value> > {
-        static bool has_key(map<Key, Value>& t, Key k){
-            return t.find(k) != t.end();
-        }
-    };
-}
 
 using G = mytl::Container_Graph<ll, double, map>;
 void graph_test(){
@@ -25,12 +17,14 @@ void graph_test(){
 
 
     using Dijkstra = mytl::AlgoComposer<mytl::Priority, mytl::JustLength>;
-    using Option = typename Dijkstra:: template A<G>::Option;
+    using BFS = mytl::AlgoComposer<mytl::FIFO, mytl::SimpleJustLength>;
+    
     auto x = mytl::queue_graph_algorithm<G,Dijkstra::A>(g, {{0,1}});
+    auto y = mytl::queue_graph_algorithm<G,BFS::A>(g, {{0,1}});
 
     vector<pair<double,ll> > res;
     for(ll i=1; i<=g.n.value(); i++){
-        res.push_back(pair<double,ll>(x[i],0/*,bfs[i].value()*/));
+        res.push_back(pair<double,ll>(x[i],y[i]));
     }
 
     cout<<res<<endl;
@@ -38,12 +32,12 @@ void graph_test(){
     assert((res == vector<pair<double, ll> >{
             {0, 0},
             {
-                1, 0//1
+                1, 1//1
             },
             {
-                2, 0//1
+                2, 1//1
             },{
-                2.5, 0//2
+                2.5, 2//2
             }
             }));
 

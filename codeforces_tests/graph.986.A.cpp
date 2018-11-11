@@ -5,6 +5,7 @@
 using namespace std;
 
 using u_counter_type = unsigned int;
+using need_int = int;
 using counter_type = int;
 using MAIN = int;
 #define int DontUseIntÉ
@@ -21,6 +22,188 @@ struct BasicInitialization{
     }
 };
 BasicInitialization __basic_initialization__;
+namespace mytl{
+
+
+template<typename T>
+vector<T> forrange(T n, T from){
+    vector<T> res(n);
+    iota(res.begin(), res.end(), from);
+    return res;
+}
+
+template<typename F>
+void repeat(need_int n, const F& callback){
+    for(need_int _ : forrange(n,0)) callback();
+}
+
+template<typename T, T(*f)(T,T)>
+struct Tracker : optional<T>{
+    using optional<T>::operator=;
+
+    Tracker() : optional<T>() {};
+
+    void update(T val){
+        if(this->has_value()){
+            *this = f(this->value(), val);
+        }
+        else{
+            *this = val;
+        }
+    }
+};
+
+template<typename T>
+T min(T a, T b){return std::min(a,b);}
+template<typename T>
+T max(T a, T b){return std::max(a,b);}
+template<typename T>
+T __gcd(T a, T b){return std::__gcd(a,b);}
+
+template<typename T, template<typename> typename Container>
+vector<PairOf<T&> > adjecent_pairs(Container<T>& c){
+    vector<PairOf<T&> > res;
+    optional<T*> prev_elem;
+    for(auto& elem : c){
+        if(prev_elem.has_value()){
+            res.push_back({*prev_elem.value(), elem});
+        }
+        prev_elem = &elem;
+    }
+    return res;
+}
+
+template<typename T>
+struct LazyVector : vector<T>{
+    typename vector<T>::reference operator[](counter_type i){
+        if(i >= this->size()) this->resize(i+1);
+        return vector<T>::operator[](i);
+    }
+};
+
+template<typename K, typename T>
+struct AssocVector : LazyVector<T>{
+    LazyVector<bool> exists;
+    typename vector<T>::reference operator[](counter_type i){
+        exists[i] = true;
+        return LazyVector<T>::operator[](i);
+    }
+    typename vector<T>::iterator find(counter_type i){
+        if(!exists[i]) return this->end();
+        else return this->begin() + i;
+    }
+};
+
+template<template<typename, typename> typename Container, typename Key, typename Value>
+bool has_key(Container<Key, Value>& container, Key key){
+    return container.find(key) != container.end();
+}
+
+template<typename T>
+struct Lazy : optional<T>{
+
+    function<T()> f;
+
+    Lazy(function<T()> f) : f{f}, optional<T>() {};
+
+    T& value(){
+        if(!this->has_value()){
+            optional<T>::operator=(f());
+        }
+        return optional<T>::value();
+    }
+
+};
+
+#define LAZY(val, tipe) mytl::Lazy<tipe>([&](){return (val);})
+#define WATCH(x) cout << (#x) << " is " << (x) << endl
+}
+
+namespace std{
+
+template<typename T>
+istream& operator>>(istream& is, optional<T>& x){
+    if(!x.has_value()){
+        T x_;
+        is>>x_;
+        x = x_;
+    }
+    return is;
+}
+
+istream& operator>>(istream& is, Void& x){
+    return is;
+}
+
+template<typename P, typename Q>
+ostream& operator<<(ostream& os, const pair<P,Q>& x){
+    os<<"("<<x.first<<", "<<x.second<<")";
+    return os;
+}
+
+template<typename T, template<typename> typename Container>
+ostream& operator<<(ostream& os, const Container<T>& x){
+    os<<"{";
+    bool first = true;
+    for(const auto& elem : x){
+        if(!first) os<<", ";
+        os<<elem;
+        first = false;
+    }
+    os<<"}";
+    return os;
+}
+
+}
+
+namespace mytl{
+
+template<typename T, typename P=T>
+T read(istream& is=cin){
+    P a;
+    is>>a;
+    return T(a);
+}
+
+template<typename T, typename P, typename Q>
+T read(istream& is=cin){
+    P a;
+    Q b;
+    is>>a>>b;
+    return T(a,b);
+}
+
+template<typename T, typename P, typename Q, typename R>
+T read(istream& is=cin){
+    P a;
+    Q b;
+    R c;
+    is>>a>>b>>c;
+    return T(a,b,c);
+}
+
+
+template<typename T, typename... Q>
+vector<T> readValues(ll n, istream& is=cin){
+    vector<T> res;
+    repeat(n, [&res](){
+        res.push_back(read<T,Q...>());
+    });
+    return res;
+}
+
+}
+
+
+namespace mytl{
+
+
+template<typename T>
+void print(const T& x, ostream& os=cout){
+    os<<x;
+}
+
+}
 namespace mytl{
 template<typename T>
 T power(T base, ll exponential, T unit=1){
@@ -43,11 +226,7 @@ namespace mytl{
         static TSModulo inverse(TSModulo x){// asserting MOD is prime
             return power(x, MOD-2);
         };
-        TSModulo(ll initVal){
-            initVal %= MOD;
-            if(val < 0) initVal += MOD;
-            val = initVal;
-        };
+        TSModulo(ll initVal) : val{(MOD + initVal%MOD)%MOD} {};
         TSModulo() : TSModulo(0) {}
         TSModulo& operator=(const TSModulo&) = default;
 
@@ -247,163 +426,17 @@ struct Resetter {
 };
 }
 namespace mytl{
-template<typename T, T(*f)(T,T)>
-struct Tracker : optional<T>{
-    using optional<T>::operator=;
 
-    Tracker() : optional<T>() {};
-
-    void update(T val){
-        if(this->has_value()){
-            *this = f(this->value(), val);
-        }
-        else{
-            *this = val;
-        }
-    }
-};
-
-template<typename T>
-T min(T a, T b){return std::min(a,b);}
-template<typename T>
-T max(T a, T b){return std::max(a,b);}
-template<typename T>
-T __gcd(T a, T b){return std::__gcd(a,b);}
-
-template<typename T, template<typename> typename Container>
-vector<PairOf<T&> > adjecent_pairs(Container<T>& c){
-    vector<PairOf<T&> > res;
-    optional<T*> prev_elem;
-    for(auto& elem : c){
-        if(prev_elem.has_value()){
-            res.push_back({*prev_elem.value(), elem});
-        }
-        prev_elem = &elem;
-    }
-    return res;
-}
-
-template<typename T>
-struct LazyVector : vector<T>{
-    T& operator[](counter_type i){
-        if(i >= this->size()) this->resize(i+1);
-        return vector<T>::operator[](i);
-    }
-};
-
-template<typename K, typename T>
-using AssocVector = LazyVector<T>;
-}
-
-namespace std{
-
-template<typename T>
-istream& operator>>(istream& is, optional<T>& x){
-    if(!x.has_value()){
-        T x_;
-        is>>x_;
-        x = x_;
-    }
-    return is;
-}
-
-template<typename P, typename Q, typename T>
-istream& operator>>(istream& is, T& x){
-    P a;
-    Q b;
-    is>>a>>b;
-    return T(a,b);
-}
-
-istream& operator>>(istream& is, Void& x){
-    return is;
-}
-
-
-template<typename P, typename Q>
-ostream& operator<<(ostream& os, const pair<P,Q>& x){
-    os<<"("<<x.first<<", "<<x.second<<")";
-    return os;
-}
-
-template<typename T, template<typename> typename Container>
-ostream& operator<<(ostream& os, const Container<T>& x){
-    os<<"{";
-    bool first = true;
-    for(const auto& elem : x){
-        if(!first) os<<", ";
-        os<<elem;
-        first = false;
-    }
-    os<<"}";
-    return os;
-}
-
-}
-
-namespace mytl{
-
-template<typename T, typename P=T>
-T read(istream& is=cin){
-    P a;
-    is>>a;
-    return T(a);
-}
-
-template<typename T, typename P, typename Q>
-T read(istream& is=cin){
-    P a;
-    Q b;
-    is>>a>>b;
-    return T(a,b);
-}
-
-template<typename T, typename... Q>
-vector<T> readValues(ll n, istream& is=cin){
-    vector<T> res;
-    for(ll i=1; i<=n; i++) res.push_back(read<T, Q...>(is));
-    return res;
-}
-
-}
-
-
-namespace mytl{
-
-template<typename T>
-void print(const T& x, ostream& os=cout){
-    os<<x;
-}
-
-template<typename T>
-struct Lazy : optional<T>{
-
-    function<T()> f;
-
-    Lazy(function<T()> f) : f{f}, optional<T>() {};
-
-    T& value(){
-        if(!this->has_value()){
-            optional<T>::operator=(f());
-        }
-        return optional<T>::value();
-    }
-
-};
-
-#define LAZY(val, tipe) mytl::Lazy<tipe>([&](){return (val);})
-#define WATCH(x) cout << (#x) << " is " << (x) << endl
-}
-namespace mytl{
-
-template<typename N, typename E, template<typename, typename> typename Container>
-struct Container_Graph : Container<N, vector<pair<E, N> > >{
+template<typename N, typename E, template<typename, typename> typename C>
+struct Container_Graph : C<N, vector<pair<E, N> > >{
+    template<typename A, typename B>
+    using Container = C<A,B>;
     using Edge = E;
     using Node = N;
     optional<ll> n;
     Container_Graph(ll n={}) : n{n}, Container<Node, vector<pair<Edge, Node> > >() {}
 
-    void newEdge(ll u, ll v, Edge edge=Void()){
+    void newEdge(Node u, Node v, Edge edge=Void()){
         (*this)[u].push_back(make_pair(edge, v));
     }
     vector<Node> getNodes(){
@@ -434,87 +467,185 @@ struct Container_Graph : Container<N, vector<pair<E, N> > >{
 
 using NormalSimpleGraph = Container_Graph<ll, Void, AssocVector>;
 
-template<typename T>
-void readNeighbourList(T& g){
-    for(ll i=1; i<=g.n.value(); i++){
-        ll mi;
-        cin>>mi;
-        for(ll j=1; j<=mi; j++){
-            ll neig;
-            cin>>neig;
-            g.newEdge(i, neig);
-        }
-    }
-}
-
-template<typename T>
-void readEdgeList(T& g, optional<ll> m, bool bidirectional=true){
-    cin>>m;
-    for(ll i=1; i<=m.value(); i++){
-        ll u,v;
-        typename T::Edge edge;
-        cin>>u>>v>>edge;
-        g.newEdge(u,v,edge);
-        if(bidirectional){
-            g.newEdge(v, u, edge);
-        }
-    }
-}
-
-
-template<typename G, template<typename> typename A, typename Container>
-void queue_graph_algorithm(G& g, vector<pair<typename A<G>::Info, typename G::Node> > sources, Container& tav){
-    using Algo = A<G>;
-    typename Algo::Queue qu;
-    for(auto source : sources) qu.push(source);
-
-    while(!qu.empty()){
-        auto akt = qu.top();
-        qu.pop();
-        typename Algo::Node who = akt.second;
-        typename Algo::Info info = akt.first;
-
-        if(tav[who].has_value()) continue;
-
-        tav[who] = info;
-
-        for(auto par : g.getEdges(who)) if(!tav[par.second].has_value()){
-            qu.push(make_pair(Algo::append({info, who}, par.first, par.second), par.second));
+template<typename G>
+void readNeighbourList(G& g, ll indexing=1){
+    for(ll i : forrange(g.n.size(), indexing)){
+        for(ll neig : readValues<ll>(read<ll>())){
+            g.new_edge(i, neig);
         }
     }
 }
 
 template<typename G>
-struct BFS{
-    using Edge = typename G::Edge;
+void readEdgeList(G& g, optional<ll> m, bool bidirectional=true){
     using Node = typename G::Node;
-    using Graph = G;
+    using Edge = typename G::Edge;
+    cin>>m;
+    for(auto [u, v, edge] : readValues<tuple<Node, Node, Edge>, Node, Node, Edge >(m.value())){
+        g.newEdge(u,v,edge);
+        if(bidirectional) g.newEdge(v, u, edge);
+    }
+}
 
-    using Info = ll;
-    struct Queue : queue<pair<Info, Node> >{
-        pair<Info, Node> top(){
-            return this->front();
+template<
+    typename G,
+    template<typename> typename A,
+    typename F=void(*)(typename A<G>::Option)
+>
+auto queue_graph_algorithm(
+    G& g,
+    vector<typename A<G>::Option > sources,
+    optional<F> new_node_callback={})
+{
+    using Algo = A<G>;
+    typename Algo::Queue q;
+    
+    for(auto source : sources) q.push(source);
+    typename G::template Container<typename G::Node, typename Algo::Info> d;
+    while(!q.empty()){
+        auto akt = Algo::consume(q);
+        typename Algo::Node who = akt.second;
+        typename Algo::Info info = akt.first;
+
+        if(has_key(d, who)) continue;
+
+        d[who] = info;
+        
+        if(new_node_callback.has_value()){
+            new_node_callback.value()({info, who});
+        }
+        for(auto par : g.getEdges(who)) if(!has_key(d, par.second)){
+            q.push({Algo::append({info, who}, par.first, par.second), par.second});
+        }
+    }
+    return d;
+}
+
+template<template<typename> typename QP, template<typename> typename P>
+struct AlgoComposer{
+    template<typename G>
+    struct A{
+        using Path = P<G>;
+        using Edge = typename G::Edge;
+        using Node = typename G::Node;
+        using Info = typename Path::Info;
+        using Option = pair<Info, Node>;
+        using QueuePolicy = QP<Option>;
+        using Queue = typename QueuePolicy::Queue;
+
+        static Option consume(Queue& q){
+            return QueuePolicy::consume(q);
+        }
+        static void push(Queue& q, Option new_option){
+            return QueuePolicy::push(q, new_option);
+        }
+        static Info append(pair<Info, Node> from , Edge e, Node to){
+            return Path::append(from, e, to);
         }
     };
-    static Info append(pair<Info,Node> from, Edge e, Node to){
+};
+
+
+template<typename T>
+struct Priority{
+    using Queue = priority_queue<T, vector<T>, greater<T> >;
+    static T consume(Queue& q){
+        auto res = q.top();
+        q.pop();
+        return res;
+    }
+    static void push(Queue& q, T new_option){
+        q.push(new_option);
+    }
+};
+
+
+template<typename T>
+struct FIFO{
+    using Queue = queue<T>;
+    static T consume(Queue& q){
+        auto res = q.front();
+        q.pop();
+        return res;
+    }
+    static void push(Queue& q, T new_option){
+        q.push(new_option);
+    }
+};
+
+template<typename T>
+struct FILO{
+    using Queue = stack<T>;
+    static T consume(Queue& q){
+        auto res = q.top();
+        q.pop();
+    }
+    static void push(Queue& q, T new_option){
+        q.pop();
+    }
+};
+
+template<typename G>
+struct JustLength{
+    using Info = typename G::Edge;
+    static Info append(pair<Info, typename G::Node> from, typename G::Edge e, typename G::Node n){
+        return from.first + e;
+    }
+};
+
+template<typename G>
+struct SimpleJustLength{
+    using Info = ll;
+    static Info append(pair<Info, typename G::Node> from, typename G::Edge e, typename G::Node n){
         return from.first + 1;
     }
 };
 
+
 template<typename G>
-struct Dijkstra{
+struct LengthAndLastNode{
+    using Info = pair<ll, typename G::Node>;
+    static Info append(pair<Info, typename G::Node> from, typename G::Edge e, typename G::Node n){
+        return {from.first + e, from.second};
+    }
+};
+
+template<typename G>
+struct SimpleLengthAndLastNode{
+    using Info = pair<typename G::Edge, typename G::Node>;
+    static Info append(pair<Info, typename G::Node> from, typename G::Edge e, typename G::Node n){
+        return {from.first + 1, from.second};
+    }
+};
+
+
+/*
+template<typename G>
+struct Custom{
     using Edge = typename G::Edge;
     using Node = typename G::Node;
-    using Graph = G;
 
-    using Info = Edge;
-    using Queue = priority_queue<pair<Info, Node>, vector<pair<Info, Node> >, greater<pair<Info, Node> > >;
+    using Info = _;
+    using Option = pair<Info, Edge>;
+    using Queue = _;
 
-    static Info append(pair<Info,Node> from, Edge e, Node to){
-        return from.first + e;
+    static Option consume(Queue &q){
+        _
+        return _;
+    }
+
+    static void push(Queue &q, Option new_option){
+        _
+    }
+
+
+
+    static Info append(Option from, Edge e, Node to){
+        return _
     }
 
 };
+*/
 }
 namespace mytl{
 
@@ -813,15 +944,16 @@ function<R (Arg)> memoize(R (*fn)(Arg)) {
 
 
 
-using G = mytl::Container_Graph<ll, Void, mytl::AssocVector>;
-using V = vector< vector<optional<ll> > >;
+using G = mytl::NormalSimpleGraph;
+
 
 ll n,m,s,k;
 
 vector<ll> csopi[101];
 vector<ll> g[100001];
 
-V tav(101, vector<optional<ll> >(100001));
+vector<vector<ll> > tav(101, vector<ll>(100001));
+using BFS = mytl::AlgoComposer<mytl::FIFO, mytl::SimpleJustLength>;
 MAIN main(){
     ios_base::sync_with_stdio(false);
     cin>>n>>m>>k>>s;
@@ -840,12 +972,13 @@ MAIN main(){
             x.push_back({0, elem});
         }
 
-        mytl::queue_graph_algorithm<G, mytl::BFS, V::value_type >(g, x, tav[CS]);
+        tav[CS] = mytl::queue_graph_algorithm<G, BFS::A>(g, x);
+        //cout<<CS<<": "<<tav[CS]<<endl;
     }
 
     for(ll i=1; i<=n; i++){
         vector<ll> akt;
-        for(ll j=1; j<=k; j++) akt.push_back(tav[j][i].value());
+        for(ll j=1; j<=k; j++) akt.push_back(tav[j][i]);
         sort(akt.begin(), akt.end());
         long long aktv = 0;
         for(ll j=0; j<s; j++) aktv += akt[j];

@@ -26,7 +26,7 @@ namespace mytl{
 
 
 template<typename T>
-void forrange(T n, T from){
+vector<T> forrange(T n, T from){
     vector<T> res(n);
     iota(res.begin(), res.end(), from);
     return res;
@@ -82,8 +82,22 @@ struct LazyVector : vector<T>{
 };
 
 template<typename K, typename T>
-using AssocVector = LazyVector<T>;
+struct AssocVector : LazyVector<T>{
+    LazyVector<bool> exists;
+    typename vector<T>::reference operator[](counter_type i){
+        exists[i] = true;
+        return LazyVector<T>::operator[](i);
+    }
+    typename vector<T>::iterator find(counter_type i){
+        if(!exists[i]) return this->end();
+        else return this->begin() + i;
+    }
+};
 
+template<template<typename, typename> typename Container, typename Key, typename Value>
+bool has_key(Container<Key, Value>& container, Key key){
+    return container.find(key) != container.end();
+}
 
 template<typename T>
 struct Lazy : optional<T>{
@@ -467,15 +481,12 @@ void readEdgeList(G& g, optional<ll> m, bool bidirectional=true){
     using Node = typename G::Node;
     using Edge = typename G::Edge;
     cin>>m;
-    for(auto [u, v, edge] : readValues<tuple<Node, Node, Edge> >(m.value())){
+    for(auto [u, v, edge] : readValues<tuple<Node, Node, Edge>, Node, Node, Edge >(m.value())){
         g.newEdge(u,v,edge);
         if(bidirectional) g.newEdge(v, u, edge);
     }
 }
 
-template<typename Container>
-struct Util{
-};
 template<
     typename G,
     template<typename> typename A,
@@ -496,14 +507,14 @@ auto queue_graph_algorithm(
         typename Algo::Node who = akt.second;
         typename Algo::Info info = akt.first;
 
-        if(Util<decltype(d)>::has_key(d, who)) continue;
+        if(has_key(d, who)) continue;
 
         d[who] = info;
         
         if(new_node_callback.has_value()){
             new_node_callback.value()({info, who});
         }
-        for(auto par : g.getEdges(who)) if(!Util<decltype(d)>::has_key(d, par.second)){
+        for(auto par : g.getEdges(who)) if(!has_key(d, par.second)){
             q.push({Algo::append({info, who}, par.first, par.second), par.second});
         }
     }
@@ -583,10 +594,27 @@ struct JustLength{
 };
 
 template<typename G>
+struct SimpleJustLength{
+    using Info = ll;
+    static Info append(pair<Info, typename G::Node> from, typename G::Edge e, typename G::Node n){
+        return from.first + 1;
+    }
+};
+
+
+template<typename G>
 struct LengthAndLastNode{
-    using Info = pair<typename G::Edge, typename G::Node>;
+    using Info = pair<ll, typename G::Node>;
     static Info append(pair<Info, typename G::Node> from, typename G::Edge e, typename G::Node n){
         return {from.first + e, from.second};
+    }
+};
+
+template<typename G>
+struct SimpleLengthAndLastNode{
+    using Info = pair<typename G::Edge, typename G::Node>;
+    static Info append(pair<Info, typename G::Node> from, typename G::Edge e, typename G::Node n){
+        return {from.first + 1, from.second};
     }
 };
 

@@ -8,7 +8,7 @@ namespace mytl{
 
 
 template<typename T>
-void forrange(T n, T from){
+vector<T> forrange(T n, T from){
     vector<T> res(n);
     iota(res.begin(), res.end(), from);
     return res;
@@ -64,8 +64,22 @@ struct LazyVector : vector<T>{
 };
 
 template<typename K, typename T>
-using AssocVector = LazyVector<T>;
+struct AssocVector : LazyVector<T>{
+    LazyVector<bool> exists;
+    typename vector<T>::reference operator[](counter_type i){
+        exists[i] = true;
+        return LazyVector<T>::operator[](i);
+    }
+    typename vector<T>::iterator find(counter_type i){
+        if(!exists[i]) return this->end();
+        else return this->begin() + i;
+    }
+};
 
+template<template<typename, typename> typename Container, typename Key, typename Value>
+bool has_key(Container<Key, Value>& container, Key key){
+    return container.find(key) != container.end();
+}
 
 template<typename T>
 struct Lazy : optional<T>{
