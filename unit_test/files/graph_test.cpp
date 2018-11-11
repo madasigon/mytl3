@@ -2,7 +2,7 @@
 using namespace std;
 
 
-using G = mytl::Container_Graph<ll, double, mytl::AssocVector>;
+using G = mytl::Container_Graph<ll, double, map>;
 void graph_test(){
 
     G g(4);
@@ -16,29 +16,28 @@ void graph_test(){
     g.newEdge(4,2,2);
 
 
-    using V = mytl::LazyVector<optional<typename mytl::Dijkstra<G>::Info> >;
+    using Dijkstra = mytl::AlgoComposer<mytl::Priority, mytl::JustLength>;
+    using BFS = mytl::AlgoComposer<mytl::FIFO, mytl::SimpleJustLength>;
+    
+    auto x = mytl::queue_graph_algorithm<G,Dijkstra::A>(g, {{0,1}});
+    auto y = mytl::queue_graph_algorithm<G,BFS::A>(g, {{0,1}});
 
-    V x;
-    mytl::LazyVector<optional<ll> > bfs;
-
-    mytl::queue_graph_algorithm<G, mytl::Dijkstra, V >(g, {{0,1}}, x);
-    mytl::queue_graph_algorithm<G, mytl::BFS, mytl::LazyVector<optional<ll> > >(g, {{0,1}}, bfs);
-
-    vector<pair<double, ll> > res;
-
+    vector<pair<double,ll> > res;
     for(ll i=1; i<=g.n.value(); i++){
-        res.push_back({x[i].value(),bfs[i].value()});
+        res.push_back(pair<double,ll>(x[i],y[i]));
     }
+
+    cout<<res<<endl;
 
     assert((res == vector<pair<double, ll> >{
             {0, 0},
             {
-                1, 1
+                1, 1//1
             },
             {
-                2, 1
+                2, 1//1
             },{
-                2.5, 2
+                2.5, 2//2
             }
             }));
 

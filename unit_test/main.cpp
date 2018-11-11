@@ -9,6 +9,9 @@
 #include "pow_test.cpp"
 #include "recursion_test.cpp"
 #include "segtree_test.cpp"
+#include "io_test.cpp"
+
+
 
 MAIN main(){
     convenience_test();
@@ -20,5 +23,5 @@ MAIN main(){
     pow_test();
     recursion_test();
     segtree_test();
-
+    io_test();
 }
