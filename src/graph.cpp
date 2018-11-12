@@ -7,7 +7,7 @@
 //STARTCOPY
 namespace mytl{
 
-template<typename N, typename E, template<typename, typename> typename C>
+template<typename N, typename E, template<typename, typename, typename...> typename C>
 struct Container_Graph : C<N, vector<pair<E, N> > >{
     template<typename A, typename B>
     using Container = C<A,B>;
@@ -57,11 +57,13 @@ void readNeighbourList(G& g, ll indexing=1){
 }
 
 template<typename G>
-void readEdgeList(G& g, optional<ll> m, bool bidirectional=true){
+void readEdgeList(G& g, ll m, bool bidirectional=true){
     using Node = typename G::Node;
     using Edge = typename G::Edge;
-    cin>>m;
-    for(auto [u, v, edge] : readValues<tuple<Node, Node, Edge>, Node, Node, Edge >(m.value())){
+    for(auto elem : readValues<tuple<Node, Node, Edge>, Node, Node, Edge >(m)){
+        Node u, v;
+        Edge edge;
+        tie(u, v, edge) = elem;
         g.newEdge(u,v,edge);
         if(bidirectional) g.newEdge(v, u, edge);
     }
@@ -72,10 +74,10 @@ template<
     template<typename> typename A,
     typename F=void(*)(typename A<G>::Option)
 >
-auto queue_graph_algorithm(
+typename G::template Container<typename G::Node, typename A<G>::Info> queue_graph_algorithm(
     G& g,
     vector<typename A<G>::Option > sources,
-    optional<F> new_node_callback={})
+    F new_node_callback=[](typename A<G>::Option){})
 {
     using Algo = A<G>;
     typename Algo::Queue q;
@@ -91,9 +93,7 @@ auto queue_graph_algorithm(
 
         d[who] = info;
         
-        if(new_node_callback.has_value()){
-            new_node_callback.value()({info, who});
-        }
+        new_node_callback({info, who});
         for(auto par : g.getEdges(who)) if(!has_key(d, par.second)){
             q.push({Algo::append({info, who}, par.first, par.second), par.second});
         }

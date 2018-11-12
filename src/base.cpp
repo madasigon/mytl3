@@ -4,8 +4,6 @@
 
 //STARTCOPY
 #include<bits/stdc++.h>
-#include<variant>
-#include<optional>
 using namespace std;
 
 using u_counter_type = unsigned int;

@@ -9,7 +9,7 @@
 namespace std{
 
 template<typename T>
-istream& operator>>(istream& is, optional<T>& x){
+istream& operator>>(istream& is, mytl::optional<T>& x){
     if(!x.has_value()){
         T x_;
         is>>x_;
@@ -28,7 +28,7 @@ ostream& operator<<(ostream& os, const pair<P,Q>& x){
     return os;
 }
 
-template<typename T, template<typename> typename Container>
+template<typename T, template<typename, typename...> typename Container>
 ostream& operator<<(ostream& os, const Container<T>& x){
     os<<"{";
     bool first = true;
