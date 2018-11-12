@@ -1,7 +1,5 @@
 //STARTCOPY
 #include<bits/stdc++.h>
-#include<variant>
-#include<optional>
 using namespace std;
 
 using u_counter_type = unsigned int;
@@ -37,6 +35,42 @@ void repeat(need_int n, const F& callback){
     for(need_int _ : forrange(n,0)) callback();
 }
 
+template<typename T>
+struct optional{
+    private:
+        T *val = nullptr;
+        void reserve(){
+            val = new T;
+        }
+    public:
+        optional<T> operator=(const T& operand){
+            reserve();
+            *val = operand;
+            return *this;
+        }
+        bool has_value(){
+            return val != nullptr;
+        }
+        T& value(){
+            return *val;
+        }
+        optional(T val_){
+            operator=(val_);
+        }
+        optional(initializer_list<T> l){
+            assert(l.size() == 1);
+            operator=(*l.begin());
+        }
+        optional(){}
+};
+
+template<typename T>
+optional<T> make_optional(T val_){
+    return optional<T>(val_); 
+}
+
+
+
 template<typename T, T(*f)(T,T)>
 struct Tracker : optional<T>{
     using optional<T>::operator=;
@@ -60,7 +94,7 @@ T max(T a, T b){return std::max(a,b);}
 template<typename T>
 T __gcd(T a, T b){return std::__gcd(a,b);}
 
-template<typename T, template<typename> typename Container>
+template<typename T, template<typename, typename...> typename Container>
 vector<PairOf<T&> > adjecent_pairs(Container<T>& c){
     vector<PairOf<T&> > res;
     optional<T*> prev_elem;
@@ -94,7 +128,7 @@ struct AssocVector : LazyVector<T>{
     }
 };
 
-template<template<typename, typename> typename Container, typename Key, typename Value>
+template<template<typename, typename, typename...> typename Container, typename Key, typename Value>
 bool has_key(Container<Key, Value>& container, Key key){
     return container.find(key) != container.end();
 }
@@ -122,7 +156,7 @@ struct Lazy : optional<T>{
 namespace std{
 
 template<typename T>
-istream& operator>>(istream& is, optional<T>& x){
+istream& operator>>(istream& is, mytl::optional<T>& x){
     if(!x.has_value()){
         T x_;
         is>>x_;
@@ -141,7 +175,7 @@ ostream& operator<<(ostream& os, const pair<P,Q>& x){
     return os;
 }
 
-template<typename T, template<typename> typename Container>
+template<typename T, template<typename, typename...> typename Container>
 ostream& operator<<(ostream& os, const Container<T>& x){
     os<<"{";
     bool first = true;
@@ -427,7 +461,7 @@ struct Resetter {
 }
 namespace mytl{
 
-template<typename N, typename E, template<typename, typename> typename C>
+template<typename N, typename E, template<typename, typename, typename...> typename C>
 struct Container_Graph : C<N, vector<pair<E, N> > >{
     template<typename A, typename B>
     using Container = C<A,B>;
@@ -477,11 +511,13 @@ void readNeighbourList(G& g, ll indexing=1){
 }
 
 template<typename G>
-void readEdgeList(G& g, optional<ll> m, bool bidirectional=true){
+void readEdgeList(G& g, ll m, bool bidirectional=true){
     using Node = typename G::Node;
     using Edge = typename G::Edge;
-    cin>>m;
-    for(auto [u, v, edge] : readValues<tuple<Node, Node, Edge>, Node, Node, Edge >(m.value())){
+    for(auto elem : readValues<tuple<Node, Node, Edge>, Node, Node, Edge >(m)){
+        Node u, v;
+        Edge edge;
+        tie(u, v, edge) = elem;
         g.newEdge(u,v,edge);
         if(bidirectional) g.newEdge(v, u, edge);
     }
@@ -492,10 +528,10 @@ template<
     template<typename> typename A,
     typename F=void(*)(typename A<G>::Option)
 >
-auto queue_graph_algorithm(
+typename G::template Container<typename G::Node, typename A<G>::Info> queue_graph_algorithm(
     G& g,
     vector<typename A<G>::Option > sources,
-    optional<F> new_node_callback={})
+    F new_node_callback=[](typename A<G>::Option){})
 {
     using Algo = A<G>;
     typename Algo::Queue q;
@@ -511,9 +547,7 @@ auto queue_graph_algorithm(
 
         d[who] = info;
         
-        if(new_node_callback.has_value()){
-            new_node_callback.value()({info, who});
-        }
+        new_node_callback({info, who});
         for(auto par : g.getEdges(who)) if(!has_key(d, par.second)){
             q.push({Algo::append({info, who}, par.first, par.second), par.second});
         }
@@ -926,9 +960,9 @@ struct Custom_Op{
 }
 namespace mytl{
 
-template <template<typename, typename> typename Q, typename Arg, typename R>
+template <template<typename, typename, typename...> typename C, typename Arg, typename R>
 function<R (Arg)> memoize(R (*fn)(Arg)) {
-    Q<Arg, optional<R> > table;
+    C<Arg, optional<R> > table;
     return [fn, table](Arg arg) mutable -> R {
         optional<R>& res = table[arg];
         if(!res.has_value()){

@@ -7,9 +7,9 @@
 //STARTCOPY
 namespace mytl{
 
-template <template<typename, typename> typename Q, typename Arg, typename R>
+template <template<typename, typename, typename...> typename C, typename Arg, typename R>
 function<R (Arg)> memoize(R (*fn)(Arg)) {
-    Q<Arg, optional<R> > table;
+    C<Arg, optional<R> > table;
     return [fn, table](Arg arg) mutable -> R {
         optional<R>& res = table[arg];
         if(!res.has_value()){

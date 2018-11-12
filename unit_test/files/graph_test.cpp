@@ -19,7 +19,7 @@ void graph_test(){
     using Dijkstra = mytl::AlgoComposer<mytl::Priority, mytl::JustLength>;
     using BFS = mytl::AlgoComposer<mytl::FIFO, mytl::SimpleJustLength>;
     
-    auto x = mytl::queue_graph_algorithm<G,Dijkstra::A>(g, {{0,1}});
+    auto x = mytl::queue_graph_algorithm<G,Dijkstra::A>(g, vector<pair<double,ll> >{{0,1}});
     auto y = mytl::queue_graph_algorithm<G,BFS::A>(g, {{0,1}});
 
     vector<pair<double,ll> > res;
