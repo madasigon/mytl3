@@ -27,7 +27,7 @@ cout<<tree.query({5,14}, 0); //print the sum of the elements in the given range
 ### Toughtless use of `int` instead of `long long`:
 ```C++
 int value_that_could_be_very_big = 0; // compile error: you can't write 'int' in your program
-need_int also_big_value = 0; //OK! you can use 'need_int' if you really need int's
+need_int not_big_value = 0; //OK! you can use 'need_int' if you really need int's
 ```
 *Further examples are in the codeforces_tests folder: these are correct solutions of Codeforces problems, that use the library.*
 # Installation
