@@ -159,6 +159,7 @@ struct FILO{
     static T consume(Queue& q){
         auto res = q.top();
         q.pop();
+        return res;
     }
     static void push(Queue& q, T new_option){
         q.pop();
