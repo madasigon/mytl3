@@ -1,5 +1,4 @@
 #include "convenience.cpp"
-#include <optional>
 
 
 void convenience_test(){
@@ -25,6 +24,8 @@ void convenience_test(){
         res.push_back(par.second);
     }
     assert((res == vector<ll>{1, 2, 2, 3, 3, 4}));
+
+    assert((mytl::fmap<ll,ll>([](ll x){return x*2;}, mytl::forrange<ll>(3,1)) == vector<ll>{2,4,6}));
 }
 
 

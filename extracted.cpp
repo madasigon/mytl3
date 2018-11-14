@@ -22,6 +22,12 @@ struct BasicInitialization{
 BasicInitialization __basic_initialization__;
 namespace mytl{
 
+template<typename T, typename R>
+vector<R> fmap(R(*f)(const T), const vector<T>& t){
+    vector<R> res;
+    for(auto elem : t) res.push_back(f(elem));
+    return res;
+}
 
 template<typename T>
 vector<T> forrange(T n, T from){

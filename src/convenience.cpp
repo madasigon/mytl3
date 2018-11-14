@@ -6,8 +6,8 @@
 //STARTCOPY
 namespace mytl{
 
-template<typename T, typename R>
-vector<R> fmap(R(*f)(const T), const vector<T>& t){
+template<typename T, typename R, typename F=function<R(T)> >
+vector<R> fmap(F f, const vector<T>& t){
     vector<R> res;
     for(auto elem : t) res.push_back(f(elem));
     return res;
