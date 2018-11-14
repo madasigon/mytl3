@@ -16,11 +16,11 @@ void graph_test(){
     g.newEdge(4,2,2);
 
 
-    using Dijkstra = mytl::AlgoComposer<mytl::Priority, mytl::JustLength>;
-    using BFS = mytl::AlgoComposer<mytl::FIFO, mytl::SimpleJustLength>;
+    //using Dijkstra = mytl::AlgoComposer<mytl::Priority, mytl::JustLength>;
+    //using BFS = mytl::AlgoComposer<mytl::FIFO, mytl::SimpleJustLength>;
     
-    auto x = mytl::queue_graph_algorithm<G,Dijkstra::A>(g, vector<pair<double,ll> >{{0,1}});
-    auto y = mytl::queue_graph_algorithm<G,BFS::A>(g, {{0,1}});
+    auto x = mytl::queue_graph_algorithm<G, mytl::Priority, mytl::JustLength>(g, vector<pair<double,ll> >{{0,1}});
+    auto y = mytl::queue_graph_algorithm<G,mytl::FIFO, mytl::SimpleJustLength>(g, vector<pair<ll,ll> >{{0,1}});
 
     vector<pair<double,ll> > res;
     for(ll i=1; i<=g.n.value(); i++){
