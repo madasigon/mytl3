@@ -22,6 +22,12 @@ struct BasicInitialization{
 BasicInitialization __basic_initialization__;
 namespace mytl{
 
+template<typename T, typename R>
+vector<R> fmap(R(*f)(const T), const vector<T>& t){
+    vector<R> res;
+    for(auto elem : t) res.push_back(f(elem));
+    return res;
+}
 
 template<typename T>
 vector<T> forrange(T n, T from){
@@ -152,6 +158,84 @@ struct Lazy : optional<T>{
 #define LAZY(val, tipe) mytl::Lazy<tipe>([&](){return (val);})
 #define WATCH(x) cout << (#x) << " is " << (x) << endl
 }
+namespace mytl{
+
+struct Point{
+    ll x, y;
+
+    Point(ll x, ll y) : x{x}, y{y} {};
+    Point(pair<ll,ll> initPair) : x{initPair.first}, y{initPair.second} {};
+
+    pair<ll,ll> getPair(){//not introducing type cast operator for safety
+        return {x,y};
+    }
+
+    //Unary operators
+    Point operator-() const{
+        return {-x, -y};
+    }
+    Point operator+() const{
+        return {x,y};
+    }
+
+    static ll sgn(ll x){
+        return (x > 0) - (x < 0);
+    }
+
+    //Binary operators on ordinary numbers
+    Point operator*(const ll& operand) const{
+        return {x*operand, y*operand};
+    }
+
+    //Binary operators on Point itself
+    Point operator+(const Point& operand) const{
+        return {x+operand.x, y+operand.y};
+    }
+    Point operator-(const Point& operand) const{
+        return {x-operand.x, y-operand.y};
+    }
+
+    ll operator*(const Point& operand){ //vectorial product
+        return x*operand.y - y*operand.x;
+    }
+
+    ll direction(const Point& a, const Point& b) const{
+        return sgn((a - *this) * (b - *this));
+    };
+};
+
+ll distance_squared(const Point& a, const Point& b){
+    return (a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y);
+}
+
+double distance(const Point& a, const Point& b){
+    return sqrt(distance_squared(a, b));
+}
+
+ll cartesian_distance(const Point& a, const Point& b){
+    return abs(a.x - b.x) + abs(a.y - b.y);
+}
+
+typedef vector<Point> Poly;
+
+bool inside(const Poly& poly, const Point& point, bool strict){ //assuming Poly is weakly convex
+    ll prevdir = -2;
+    for(ll i=0; i<poly.size(); i++){
+        ll nexdindex = (i+1)%poly.size();
+        ll dir = poly[i].direction(poly[nexdindex], point);
+        if(dir == 0){
+            if(strict) return false;
+        }
+        else{
+            if(dir != prevdir && prevdir != -2) return false;
+            prevdir = dir;
+        }
+
+    }
+    return true;
+}
+
+}
 
 namespace std{
 
@@ -168,6 +252,12 @@ istream& operator>>(istream& is, mytl::optional<T>& x){
 istream& operator>>(istream& is, Void& x){
     return is;
 }
+
+template<typename P, typename Q>
+istream& operator>>(istream& is, pair<P,Q> x){
+    return is>>x.first>>x.second;
+}
+
 
 template<typename P, typename Q>
 ostream& operator<<(ostream& os, const pair<P,Q>& x){
@@ -217,13 +307,13 @@ T read(istream& is=cin){
 }
 
 
-template<typename T, typename... Q>
+template<typename T, typename... Q, typename Container=vector<T>>
 vector<T> readValues(ll n, istream& is=cin){
     vector<T> res;
     repeat(n, [&res](){
         res.push_back(read<T,Q...>());
     });
-    return res;
+    return Container(res.begin(), res.end());
 }
 
 }
@@ -239,6 +329,305 @@ void print(const T& x, ostream& os=cout){
 
 }
 namespace mytl{
+
+template<typename N, typename E, template<typename, typename, typename...> typename C>
+struct Container_Graph : C<N, vector<pair<E, N> > >{
+    template<typename A, typename B>
+    using Container = C<A,B>;
+    using Edge = E;
+    using Node = N;
+    optional<ll> n;
+    Container_Graph(ll n={}) : n{n}, Container<Node, vector<pair<Edge, Node> > >() {}
+
+    void newEdge(Node u, Node v, Edge edge=Void()){
+        (*this)[u].push_back(make_pair(edge, v));
+    }
+    vector<Node> getNodes(){
+        vector<Node> res;
+        if(n.has_value()){
+            for(ll i=1; i<=n.value(); i++) res.push_back(i);
+        }
+        else{
+            for(auto& p : *this){
+                res.push_back(p.first);
+            }
+        }
+        return res;
+
+    }
+    vector<pair<Edge, Node> >& getEdges(Node node){
+        return (*this)[node];
+    }
+    vector<Node > getNeighbours(Node node){
+        vector<Node> res;
+        for(auto& par : getEdges(node)){
+            res.push_back(par.second);
+        }
+        return res;
+    }
+
+};
+
+using NormalSimpleGraph = Container_Graph<ll, Void, AssocVector>;
+
+template<typename G>
+void readNeighbourList(G& g, ll indexing=1){
+    for(ll i : forrange(g.n.size(), indexing)){
+        for(ll neig : readValues<ll>(read<ll>())){
+            g.new_edge(i, neig);
+        }
+    }
+}
+
+template<typename G>
+void readEdgeList(G& g, ll m, bool bidirectional=true){
+    using Node = typename G::Node;
+    using Edge = typename G::Edge;
+    for(auto elem : readValues<tuple<Node, Node, Edge>, Node, Node, Edge >(m)){
+        Node u, v;
+        Edge edge;
+        tie(u, v, edge) = elem;
+        g.newEdge(u,v,edge);
+        if(bidirectional) g.newEdge(v, u, edge);
+    }
+}
+
+template<
+    typename G,
+    template<typename> typename QP,
+    template<typename> typename P,
+    typename F=void(*)(pair<typename P<G>::Info, typename G::Node>)
+>
+typename G::template Container<typename G::Node, typename P<G>::Info> queue_graph_algorithm(
+    G& g,
+    vector<pair<typename P<G>::Info, typename G::Node> > sources,
+    F new_node_callback=[](pair<typename P<G>::Info, typename G::Node>){})
+{
+    
+    using Path = P<G>;
+    using Edge = typename G::Edge;
+    using Node = typename G::Node;
+    using Info = typename Path::Info;
+    using Option = pair<Info, Node>;
+    using QueuePolicy = QP<Option>;
+    using Queue = typename QueuePolicy::Queue;
+
+    Queue q;
+    for(auto source : sources) QueuePolicy::push(q, source);
+    typename G::template Container<Node, Info> d;
+    while(!q.empty()){
+        auto akt = QueuePolicy::consume(q);
+        Node who = akt.second;
+        Info info = akt.first;
+
+        if(has_key(d, who)) continue;
+
+        d[who] = info;
+        
+        new_node_callback({info, who});
+        for(auto par : g.getEdges(who)) if(!has_key(d, par.second)){
+            QueuePolicy::push(q, {Path::append({info, who}, par.first, par.second), par.second});
+        }
+    }
+    return d;
+}
+
+/*template<template<typename> typename QP, template<typename> typename P>
+struct AlgoComposer{
+    template<typename G>
+    struct A{
+        using Path = P<G>;
+        using Edge = typename G::Edge;
+        using Node = typename G::Node;
+        using Info = typename Path::Info;
+        using Option = pair<Info, Node>;
+        using QueuePolicy = QP<Option>;
+        using Queue = typename QueuePolicy::Queue;
+
+        static Option consume(Queue& q){
+            return QueuePolicy::consume(q);
+        }
+        static void push(Queue& q, Option new_option){
+            return QueuePolicy::push(q, new_option);
+        }
+        static Info append(pair<Info, Node> from , Edge e, Node to){
+            return Path::append(from, e, to);
+        }
+    };
+};
+*/
+
+template<typename T>
+struct Priority{
+    using Queue = priority_queue<T, vector<T>, greater<T> >;
+    static T consume(Queue& q){
+        auto res = q.top();
+        q.pop();
+        return res;
+    }
+    static void push(Queue& q, T new_option){
+        q.push(new_option);
+    }
+};
+
+
+template<typename T>
+struct FIFO{
+    using Queue = queue<T>;
+    static T consume(Queue& q){
+        auto res = q.front();
+        q.pop();
+        return res;
+    }
+    static void push(Queue& q, T new_option){
+        q.push(new_option);
+    }
+};
+
+template<typename T>
+struct FILO{
+    using Queue = stack<T>;
+    static T consume(Queue& q){
+        auto res = q.top();
+        q.pop();
+        return res;
+    }
+    static void push(Queue& q, T new_option){
+        q.pop();
+    }
+};
+
+template<typename G>
+struct JustLength{
+    using Info = typename G::Edge;
+    static Info append(pair<Info, typename G::Node> from, typename G::Edge e, typename G::Node n){
+        return from.first + e;
+    }
+};
+
+template<typename G>
+struct SimpleJustLength{
+    using Info = ll;
+    static Info append(pair<Info, typename G::Node> from, typename G::Edge e, typename G::Node n){
+        return from.first + 1;
+    }
+};
+
+
+template<typename G>
+struct LengthAndLastNode{
+    using Info = pair<ll, typename G::Node>;
+    static Info append(pair<Info, typename G::Node> from, typename G::Edge e, typename G::Node n){
+        return {from.first + e, from.second};
+    }
+};
+
+template<typename G>
+struct SimpleLengthAndLastNode{
+    using Info = pair<typename G::Edge, typename G::Node>;
+    static Info append(pair<Info, typename G::Node> from, typename G::Edge e, typename G::Node n){
+        return {from.first + 1, from.second};
+    }
+};
+
+
+/*
+template<typename G>
+struct Custom{
+    using Edge = typename G::Edge;
+    using Node = typename G::Node;
+
+    using Info = _;
+    using Option = pair<Info, Edge>;
+    using Queue = _;
+
+    static Option consume(Queue &q){
+        _
+        return _;
+    }
+
+    static void push(Queue &q, Option new_option){
+        _
+    }
+
+
+
+    static Info append(Option from, Edge e, Node to){
+        return _
+    }
+
+};
+*/
+}
+namespace mytl {
+
+template<class T>
+struct Resetter;
+
+template<class T>
+Resetter<T>* global_resetter = new Resetter<T>;
+
+template<class T>
+struct Resetter {
+
+    using State = pair<counter_type, T>;
+
+    State* state = new State{0, T()};
+
+    Resetter(){}
+    Resetter(T value){
+        state = new State{0, value};
+    }
+
+    void activate(){
+        global_resetter<T> = this;
+    }
+
+    void reset(T value){
+        *state = State{state->first+1, value};
+    }
+
+    struct Variable{
+
+        State state;
+        State& parent = *global_resetter<T>->state;
+
+        Variable() : state{*global_resetter<T>->state} {}
+        Variable(T value) : state{global_resetter<T>->state->first, value} {}
+        Variable(State st) : state{st} {}
+        Variable(T value, State& parent) : state{parent->first, value} {};
+
+        bool fresh(){
+            return state.first >= parent.first;
+        }
+
+        void overwrite(){
+            state = parent;
+        }
+
+        bool refresh(){
+            if(!fresh()) overwrite();
+        }
+
+        T get(){
+            refresh();
+            return state.second;
+        }
+
+        void survive(){
+            state.first = parent.first;
+        }
+
+        void operator=(T new_value){
+            state.second = new_value;
+            survive();
+        }
+
+    };
+
+};
+}
+namespace mytl{
 template<typename T>
 T power(T base, ll exponential, T unit=1){
     T res = unit;
@@ -249,70 +638,6 @@ T power(T base, ll exponential, T unit=1){
     }
     return res;
 }
-}
-namespace mytl{
-    template<ll MOD>
-    struct TSModulo{
-    private:
-        ll val;
-
-    public:
-        static TSModulo inverse(TSModulo x){// asserting MOD is prime
-            return power(x, MOD-2);
-        };
-        TSModulo(ll initVal) : val{(MOD + initVal%MOD)%MOD} {};
-        TSModulo() : TSModulo(0) {}
-        TSModulo& operator=(const TSModulo&) = default;
-
-        ll get() const{ // no type cast operator to prevent accidentally turning into ordinary number
-            return val;
-        }
-
-        //Unary operators
-        TSModulo operator-() const{
-            return TSModulo(-val);
-        };
-        TSModulo operator+() const{
-            return TSModulo(+val);
-        };
-
-        //Binary operators on ordinary numbers
-        TSModulo operator-(const ll& operand) const{
-            return TSModulo(val-operand);
-        };
-        TSModulo operator+(const ll& operand) const{
-            return TSModulo(val+operand);
-        };
-        TSModulo operator*(const ll& operand) const{
-            return TSModulo(val*operand);
-        };
-        TSModulo operator/(const ll& operand) const{ //asserting MOD is prime
-            return TSModulo(inverse(operand) * val);
-        };
-
-        //Binary operators on Modulo
-        TSModulo operator-(const TSModulo& operand) const{
-            return TSModulo(val-operand.get());
-        };
-        TSModulo operator+(const TSModulo& operand) const{
-            return TSModulo(val+operand.get());
-        };
-        TSModulo operator*(const TSModulo& operand) const{
-            return TSModulo(val*operand.get());
-        };
-        TSModulo operator/(const TSModulo& operand) const{ //asserting MOD is prime
-            return TSModulo(val * inverse(operand));
-        };
-    };
-
-    using Mod107 = TSModulo<1000000007LL>;
-
-    template<ll MOD>
-    ostream& operator<<(ostream& os, TSModulo<MOD> x){
-        return os<<"("<<x.get()<<"%"<<MOD<<")";
-    }
-
-
 }
 namespace mytl{
     struct Modulo{
@@ -391,372 +716,84 @@ namespace mytl{
 
 
 }
-namespace mytl {
+namespace mytl{
+    template<ll MOD>
+    struct TSModulo{
+    private:
+        ll val;
 
-template<class T>
-struct Resetter;
+    public:
+        static TSModulo inverse(TSModulo x){// asserting MOD is prime
+            return power(x, MOD-2);
+        };
+        TSModulo(ll initVal) : val{(MOD + initVal%MOD)%MOD} {};
+        TSModulo() : TSModulo(0) {}
+        TSModulo& operator=(const TSModulo&) = default;
 
-template<class T>
-Resetter<T>* global_resetter = new Resetter<T>;
-
-template<class T>
-struct Resetter {
-
-    using State = pair<counter_type, T>;
-
-    State* state = new State{0, T()};
-
-    Resetter(){}
-    Resetter(T value){
-        state = new State{0, value};
-    }
-
-    void activate(){
-        global_resetter<T> = this;
-    }
-
-    void reset(T value){
-        *state = State{state->first+1, value};
-    }
-
-    struct Variable{
-
-        State state;
-        State& parent = *global_resetter<T>->state;
-
-        Variable() : state{*global_resetter<T>->state} {}
-        Variable(T value) : state{global_resetter<T>->state->first, value} {}
-        Variable(State st) : state{st} {}
-        Variable(T value, State& parent) : state{parent->first, value} {};
-
-        bool fresh(){
-            return state.first >= parent.first;
+        ll get() const{ // no type cast operator to prevent accidentally turning into ordinary number
+            return val;
         }
 
-        void overwrite(){
-            state = parent;
-        }
+        //Unary operators
+        TSModulo operator-() const{
+            return TSModulo(-val);
+        };
+        TSModulo operator+() const{
+            return TSModulo(+val);
+        };
 
-        bool refresh(){
-            if(!fresh()) overwrite();
-        }
+        //Binary operators on ordinary numbers
+        TSModulo operator-(const ll& operand) const{
+            return TSModulo(val-operand);
+        };
+        TSModulo operator+(const ll& operand) const{
+            return TSModulo(val+operand);
+        };
+        TSModulo operator*(const ll& operand) const{
+            return TSModulo(val*operand);
+        };
+        TSModulo operator/(const ll& operand) const{ //asserting MOD is prime
+            return TSModulo(inverse(operand) * val);
+        };
 
-        T get(){
-            refresh();
-            return state.second;
-        }
-
-        void survive(){
-            state.first = parent.first;
-        }
-
-        void operator=(T new_value){
-            state.second = new_value;
-            survive();
-        }
-
+        //Binary operators on Modulo
+        TSModulo operator-(const TSModulo& operand) const{
+            return TSModulo(val-operand.get());
+        };
+        TSModulo operator+(const TSModulo& operand) const{
+            return TSModulo(val+operand.get());
+        };
+        TSModulo operator*(const TSModulo& operand) const{
+            return TSModulo(val*operand.get());
+        };
+        TSModulo operator/(const TSModulo& operand) const{ //asserting MOD is prime
+            return TSModulo(val * inverse(operand));
+        };
     };
 
-};
+    using Mod107 = TSModulo<1000000007LL>;
+
+    template<ll MOD>
+    ostream& operator<<(ostream& os, TSModulo<MOD> x){
+        return os<<"("<<x.get()<<"%"<<MOD<<")";
+    }
+
+
 }
 namespace mytl{
 
-template<typename N, typename E, template<typename, typename, typename...> typename C>
-struct Container_Graph : C<N, vector<pair<E, N> > >{
-    template<typename A, typename B>
-    using Container = C<A,B>;
-    using Edge = E;
-    using Node = N;
-    optional<ll> n;
-    Container_Graph(ll n={}) : n{n}, Container<Node, vector<pair<Edge, Node> > >() {}
-
-    void newEdge(Node u, Node v, Edge edge=Void()){
-        (*this)[u].push_back(make_pair(edge, v));
-    }
-    vector<Node> getNodes(){
-        vector<Node> res;
-        if(n.has_value()){
-            for(ll i=1; i<=n.value(); i++) res.push_back(i);
+template <template<typename, typename, typename...> typename C, typename Arg, typename R>
+function<R (Arg)> memoize(R (*fn)(Arg)) {
+    C<Arg, optional<R> > table;
+    return [fn, table](Arg arg) mutable -> R {
+        optional<R>& res = table[arg];
+        if(!res.has_value()){
+            res = fn(arg);
         }
-        else{
-            for(auto& p : *this){
-                res.push_back(p.first);
-            }
-        }
-        return res;
-
-    }
-    vector<pair<Edge, Node> >& getEdges(Node node){
-        return (*this)[node];
-    }
-    vector<Node > getNeighbours(Node node){
-        vector<Node> res;
-        for(auto& par : getEdges(node)){
-            res.push_back(par.second);
-        }
-        return res;
-    }
-
-};
-
-using NormalSimpleGraph = Container_Graph<ll, Void, AssocVector>;
-
-template<typename G>
-void readNeighbourList(G& g, ll indexing=1){
-    for(ll i : forrange(g.n.size(), indexing)){
-        for(ll neig : readValues<ll>(read<ll>())){
-            g.new_edge(i, neig);
-        }
-    }
-}
-
-template<typename G>
-void readEdgeList(G& g, ll m, bool bidirectional=true){
-    using Node = typename G::Node;
-    using Edge = typename G::Edge;
-    for(auto elem : readValues<tuple<Node, Node, Edge>, Node, Node, Edge >(m)){
-        Node u, v;
-        Edge edge;
-        tie(u, v, edge) = elem;
-        g.newEdge(u,v,edge);
-        if(bidirectional) g.newEdge(v, u, edge);
-    }
-}
-
-template<
-    typename G,
-    template<typename> typename A,
-    typename F=void(*)(typename A<G>::Option)
->
-typename G::template Container<typename G::Node, typename A<G>::Info> queue_graph_algorithm(
-    G& g,
-    vector<typename A<G>::Option > sources,
-    F new_node_callback=[](typename A<G>::Option){})
-{
-    using Algo = A<G>;
-    typename Algo::Queue q;
-    
-    for(auto source : sources) q.push(source);
-    typename G::template Container<typename G::Node, typename Algo::Info> d;
-    while(!q.empty()){
-        auto akt = Algo::consume(q);
-        typename Algo::Node who = akt.second;
-        typename Algo::Info info = akt.first;
-
-        if(has_key(d, who)) continue;
-
-        d[who] = info;
-        
-        new_node_callback({info, who});
-        for(auto par : g.getEdges(who)) if(!has_key(d, par.second)){
-            q.push({Algo::append({info, who}, par.first, par.second), par.second});
-        }
-    }
-    return d;
-}
-
-template<template<typename> typename QP, template<typename> typename P>
-struct AlgoComposer{
-    template<typename G>
-    struct A{
-        using Path = P<G>;
-        using Edge = typename G::Edge;
-        using Node = typename G::Node;
-        using Info = typename Path::Info;
-        using Option = pair<Info, Node>;
-        using QueuePolicy = QP<Option>;
-        using Queue = typename QueuePolicy::Queue;
-
-        static Option consume(Queue& q){
-            return QueuePolicy::consume(q);
-        }
-        static void push(Queue& q, Option new_option){
-            return QueuePolicy::push(q, new_option);
-        }
-        static Info append(pair<Info, Node> from , Edge e, Node to){
-            return Path::append(from, e, to);
-        }
+        return res.value();
     };
-};
-
-
-template<typename T>
-struct Priority{
-    using Queue = priority_queue<T, vector<T>, greater<T> >;
-    static T consume(Queue& q){
-        auto res = q.top();
-        q.pop();
-        return res;
-    }
-    static void push(Queue& q, T new_option){
-        q.push(new_option);
-    }
-};
-
-
-template<typename T>
-struct FIFO{
-    using Queue = queue<T>;
-    static T consume(Queue& q){
-        auto res = q.front();
-        q.pop();
-        return res;
-    }
-    static void push(Queue& q, T new_option){
-        q.push(new_option);
-    }
-};
-
-template<typename T>
-struct FILO{
-    using Queue = stack<T>;
-    static T consume(Queue& q){
-        auto res = q.top();
-        q.pop();
-    }
-    static void push(Queue& q, T new_option){
-        q.pop();
-    }
-};
-
-template<typename G>
-struct JustLength{
-    using Info = typename G::Edge;
-    static Info append(pair<Info, typename G::Node> from, typename G::Edge e, typename G::Node n){
-        return from.first + e;
-    }
-};
-
-template<typename G>
-struct SimpleJustLength{
-    using Info = ll;
-    static Info append(pair<Info, typename G::Node> from, typename G::Edge e, typename G::Node n){
-        return from.first + 1;
-    }
-};
-
-
-template<typename G>
-struct LengthAndLastNode{
-    using Info = pair<ll, typename G::Node>;
-    static Info append(pair<Info, typename G::Node> from, typename G::Edge e, typename G::Node n){
-        return {from.first + e, from.second};
-    }
-};
-
-template<typename G>
-struct SimpleLengthAndLastNode{
-    using Info = pair<typename G::Edge, typename G::Node>;
-    static Info append(pair<Info, typename G::Node> from, typename G::Edge e, typename G::Node n){
-        return {from.first + 1, from.second};
-    }
-};
-
-
-/*
-template<typename G>
-struct Custom{
-    using Edge = typename G::Edge;
-    using Node = typename G::Node;
-
-    using Info = _;
-    using Option = pair<Info, Edge>;
-    using Queue = _;
-
-    static Option consume(Queue &q){
-        _
-        return _;
-    }
-
-    static void push(Queue &q, Option new_option){
-        _
-    }
-
-
-
-    static Info append(Option from, Edge e, Node to){
-        return _
-    }
-
-};
-*/
-}
-namespace mytl{
-
-struct Point{
-    ll x, y;
-
-    Point(ll x, ll y) : x{x}, y{y} {};
-    Point(pair<ll,ll> initPair) : x{initPair.first}, y{initPair.second} {};
-
-    pair<ll,ll> getPair(){//not introducing type cast operator for safety
-        return {x,y};
-    }
-
-    //Unary operators
-    Point operator-() const{
-        return {-x, -y};
-    }
-    Point operator+() const{
-        return {x,y};
-    }
-
-    static ll sgn(ll x){
-        return (x > 0) - (x < 0);
-    }
-
-    //Binary operators on ordinary numbers
-    Point operator*(const ll& operand) const{
-        return {x*operand, y*operand};
-    }
-
-    //Binary operators on Point itself
-    Point operator+(const Point& operand) const{
-        return {x+operand.x, y+operand.y};
-    }
-    Point operator-(const Point& operand) const{
-        return {x-operand.x, y-operand.y};
-    }
-
-    ll operator*(const Point& operand){ //vectorial product
-        return x*operand.y - y*operand.x;
-    }
-
-    ll direction(const Point& a, const Point& b) const{
-        return sgn((a - *this) * (b - *this));
-    };
-};
-
-ll distance_squared(const Point& a, const Point& b){
-    return (a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y);
 }
 
-double distance(const Point& a, const Point& b){
-    return sqrt(distance_squared(a, b));
-}
-
-ll cartesian_distance(const Point& a, const Point& b){
-    return abs(a.x - b.x) + abs(a.y - b.y);
-}
-
-typedef vector<Point> Poly;
-
-bool inside(const Poly& poly, const Point& point, bool strict){ //assuming Poly is weakly convex
-    ll prevdir = -2;
-    for(ll i=0; i<poly.size(); i++){
-        ll nexdindex = (i+1)%poly.size();
-        ll dir = poly[i].direction(poly[nexdindex], point);
-        if(dir == 0){
-            if(strict) return false;
-        }
-        else{
-            if(dir != prevdir && prevdir != -2) return false;
-            prevdir = dir;
-        }
-
-    }
-    return true;
-}
 
 }
 namespace mytl{
@@ -956,22 +993,6 @@ struct Custom_Op{
 
 };
 */
-
-}
-namespace mytl{
-
-template <template<typename, typename, typename...> typename C, typename Arg, typename R>
-function<R (Arg)> memoize(R (*fn)(Arg)) {
-    C<Arg, optional<R> > table;
-    return [fn, table](Arg arg) mutable -> R {
-        optional<R>& res = table[arg];
-        if(!res.has_value()){
-            res = fn(arg);
-        }
-        return res.value();
-    };
-}
-
 
 }
 //ENDCOPY
