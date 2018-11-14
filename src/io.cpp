@@ -23,6 +23,12 @@ istream& operator>>(istream& is, Void& x){
 }
 
 template<typename P, typename Q>
+istream& operator>>(istream& is, pair<P,Q> x){
+    return is>>x.first>>x.second;
+}
+
+
+template<typename P, typename Q>
 ostream& operator<<(ostream& os, const pair<P,Q>& x){
     os<<"("<<x.first<<", "<<x.second<<")";
     return os;
@@ -70,13 +76,13 @@ T read(istream& is=cin){
 }
 
 
-template<typename T, typename... Q>
+template<typename T, typename... Q, typename Container=vector<T>>
 vector<T> readValues(ll n, istream& is=cin){
     vector<T> res;
     repeat(n, [&res](){
         res.push_back(read<T,Q...>());
     });
-    return res;
+    return Container(res.begin(), res.end());
 }
 
 }

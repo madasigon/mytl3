@@ -71,23 +71,31 @@ void readEdgeList(G& g, ll m, bool bidirectional=true){
 
 template<
     typename G,
-    template<typename> typename A,
-    typename F=void(*)(typename A<G>::Option)
+    template<typename> typename QP,
+    template<typename> typename P,
+    typename F=void(*)(pair<typename P<G>::Info, typename G::Node>)
 >
-typename G::template Container<typename G::Node, typename A<G>::Info> queue_graph_algorithm(
+typename G::template Container<typename G::Node, typename P<G>::Info> queue_graph_algorithm(
     G& g,
-    vector<typename A<G>::Option > sources,
-    F new_node_callback=[](typename A<G>::Option){})
+    vector<pair<typename P<G>::Info, typename G::Node> > sources,
+    F new_node_callback=[](pair<typename P<G>::Info, typename G::Node>){})
 {
-    using Algo = A<G>;
-    typename Algo::Queue q;
     
-    for(auto source : sources) q.push(source);
-    typename G::template Container<typename G::Node, typename Algo::Info> d;
+    using Path = P<G>;
+    using Edge = typename G::Edge;
+    using Node = typename G::Node;
+    using Info = typename Path::Info;
+    using Option = pair<Info, Node>;
+    using QueuePolicy = QP<Option>;
+    using Queue = typename QueuePolicy::Queue;
+
+    Queue q;
+    for(auto source : sources) QueuePolicy::push(q, source);
+    typename G::template Container<Node, Info> d;
     while(!q.empty()){
-        auto akt = Algo::consume(q);
-        typename Algo::Node who = akt.second;
-        typename Algo::Info info = akt.first;
+        auto akt = QueuePolicy::consume(q);
+        Node who = akt.second;
+        Info info = akt.first;
 
         if(has_key(d, who)) continue;
 
@@ -95,13 +103,13 @@ typename G::template Container<typename G::Node, typename A<G>::Info> queue_grap
         
         new_node_callback({info, who});
         for(auto par : g.getEdges(who)) if(!has_key(d, par.second)){
-            q.push({Algo::append({info, who}, par.first, par.second), par.second});
+            QueuePolicy::push(q, {Path::append({info, who}, par.first, par.second), par.second});
         }
     }
     return d;
 }
 
-template<template<typename> typename QP, template<typename> typename P>
+/*template<template<typename> typename QP, template<typename> typename P>
 struct AlgoComposer{
     template<typename G>
     struct A{
@@ -124,7 +132,7 @@ struct AlgoComposer{
         }
     };
 };
-
+*/
 
 template<typename T>
 struct Priority{
@@ -159,6 +167,7 @@ struct FILO{
     static T consume(Queue& q){
         auto res = q.top();
         q.pop();
+        return res;
     }
     static void push(Queue& q, T new_option){
         q.pop();
