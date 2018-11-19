@@ -22,8 +22,8 @@ struct BasicInitialization{
 BasicInitialization __basic_initialization__;
 namespace mytl{
 
-template<typename T, typename R>
-vector<R> fmap(R(*f)(const T), const vector<T>& t){
+template<typename T, typename R, typename F=function<R(T)> >
+vector<R> fmap(F f, const vector<T>& t){
     vector<R> res;
     for(auto elem : t) res.push_back(f(elem));
     return res;
@@ -424,7 +424,7 @@ typename G::template Container<typename G::Node, typename P<G>::Info> queue_grap
 
         d[who] = info;
         
-        new_node_callback({info, who});
+        new_node_callback(pair<Info, Node>(info, who));
         for(auto par : g.getEdges(who)) if(!has_key(d, par.second)){
             QueuePolicy::push(q, {Path::append({info, who}, par.first, par.second), par.second});
         }

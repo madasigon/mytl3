@@ -101,7 +101,7 @@ typename G::template Container<typename G::Node, typename P<G>::Info> queue_grap
 
         d[who] = info;
         
-        new_node_callback({info, who});
+        new_node_callback(pair<Info, Node>(info, who));
         for(auto par : g.getEdges(who)) if(!has_key(d, par.second)){
             QueuePolicy::push(q, {Path::append({info, who}, par.first, par.second), par.second});
         }
