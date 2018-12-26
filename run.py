@@ -19,6 +19,8 @@ def test(*args):
         print("Great! All accepted.")
     else:
         print("Not great! Not all accepted.")
+        import sys
+        sys.exit(1)
 
 def extract_to_file(*args):
     content = """//{}\n{}\n//{}""".format(config.STARTCOPY, collect_dir(config.LIBRARY_PATH), config.ENDCOPY)
