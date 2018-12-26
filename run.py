@@ -28,14 +28,43 @@ def before_commit(*args):
     extract_to_file()
     test()
 
+def add_module(name):
+    write_file(f"src/{name}.cpp",f"""
+#include "base.cpp"
+
+#ifndef {name.upper()}_CPP
+#define {name.upper()}_CPP
+
+//STARTCOPY
+namespace mytl{{
+
+
+
+}}
+//ENDCOPY
+
+#endif""")
+    write_file(f"unit_test/files/{name}_test.cpp",f"""
+#include "{name}.cpp"
+using namespace std;
+
+
+void {name}_test(){{
+    
+
+}}""")
+
 available_operations = {
     "test": test,
     "extract": extract_to_file,
-    "precommit": before_commit
+    "precommit": before_commit,
+    "add_module": add_module
 }
+
+
 
 def main():
     import sys
-    available_operations[sys.argv[1]](sys.argv[2:])
+    available_operations[sys.argv[1]](*sys.argv[2:])
 
 main()
