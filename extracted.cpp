@@ -160,81 +160,27 @@ struct Lazy : optional<T>{
 }
 namespace mytl{
 
-struct Point{
-    ll x, y;
-
-    Point(ll x, ll y) : x{x}, y{y} {};
-    Point(pair<ll,ll> initPair) : x{initPair.first}, y{initPair.second} {};
-
-    pair<ll,ll> getPair(){//not introducing type cast operator for safety
-        return {x,y};
+template<typename T>
+T discrete_binary_search(function<bool(T)> f, T l, T r){
+    if(!f(l)) return l;
+    while(l < r){
+        T pivot = (l+r)/2;
+        if(!f(pivot)) r = pivot-1;
+        else if(!f(pivot+1)) l = r = pivot;
+        else l = pivot+1;
     }
-
-    //Unary operators
-    Point operator-() const{
-        return {-x, -y};
-    }
-    Point operator+() const{
-        return {x,y};
-    }
-
-    static ll sgn(ll x){
-        return (x > 0) - (x < 0);
-    }
-
-    //Binary operators on ordinary numbers
-    Point operator*(const ll& operand) const{
-        return {x*operand, y*operand};
-    }
-
-    //Binary operators on Point itself
-    Point operator+(const Point& operand) const{
-        return {x+operand.x, y+operand.y};
-    }
-    Point operator-(const Point& operand) const{
-        return {x-operand.x, y-operand.y};
-    }
-
-    ll operator*(const Point& operand){ //vectorial product
-        return x*operand.y - y*operand.x;
-    }
-
-    ll direction(const Point& a, const Point& b) const{
-        return sgn((a - *this) * (b - *this));
-    };
-};
-
-ll distance_squared(const Point& a, const Point& b){
-    return (a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y);
+    return l;
 }
 
-double distance(const Point& a, const Point& b){
-    return sqrt(distance_squared(a, b));
+template<typename T>
+T continous_binary_search(function<bool(T)> f, T l, T r, need_int iterations){
+    mytl::repeat(iterations,[&](){
+        T pivot = (l+r)/2;
+        if(f(pivot)) l = pivot;
+        else r = pivot;
+    });
+    return l;
 }
-
-ll cartesian_distance(const Point& a, const Point& b){
-    return abs(a.x - b.x) + abs(a.y - b.y);
-}
-
-typedef vector<Point> Poly;
-
-bool inside(const Poly& poly, const Point& point, bool strict){ //assuming Poly is weakly convex
-    ll prevdir = -2;
-    for(ll i=0; i<poly.size(); i++){
-        ll nexdindex = (i+1)%poly.size();
-        ll dir = poly[i].direction(poly[nexdindex], point);
-        if(dir == 0){
-            if(strict) return false;
-        }
-        else{
-            if(dir != prevdir && prevdir != -2) return false;
-            prevdir = dir;
-        }
-
-    }
-    return true;
-}
-
 }
 
 namespace std{
@@ -327,6 +273,227 @@ void print(const T& x, ostream& os=cout){
     os<<x;
 }
 
+}
+namespace mytl{
+template<typename T>
+T power(T base, ll exponential, T unit=1){
+    T res = unit;
+    while(exponential > 0){
+        if(exponential%2 == 1) res = res * base;
+        base = base * base;
+        exponential = exponential / 2;
+    }
+    return res;
+}
+}
+namespace mytl{
+    template<ll MOD>
+    struct TSModulo{
+    private:
+        ll val;
+
+    public:
+        static TSModulo inverse(TSModulo x){// asserting MOD is prime
+            return power(x, MOD-2);
+        };
+        TSModulo(ll initVal) : val{(MOD + initVal%MOD)%MOD} {};
+        TSModulo() : TSModulo(0) {}
+        TSModulo& operator=(const TSModulo&) = default;
+
+        ll get() const{ // no type cast operator to prevent accidentally turning into ordinary number
+            return val;
+        }
+
+        //Unary operators
+        TSModulo operator-() const{
+            return TSModulo(-val);
+        };
+        TSModulo operator+() const{
+            return TSModulo(+val);
+        };
+
+        //Binary operators on ordinary numbers
+        TSModulo operator-(const ll& operand) const{
+            return TSModulo(val-operand);
+        };
+        TSModulo operator+(const ll& operand) const{
+            return TSModulo(val+operand);
+        };
+        TSModulo operator*(const ll& operand) const{
+            return TSModulo(val*operand);
+        };
+        TSModulo operator/(const ll& operand) const{ //asserting MOD is prime
+            return TSModulo(inverse(operand) * val);
+        };
+
+        //Binary operators on Modulo
+        TSModulo operator-(const TSModulo& operand) const{
+            return TSModulo(val-operand.get());
+        };
+        TSModulo operator+(const TSModulo& operand) const{
+            return TSModulo(val+operand.get());
+        };
+        TSModulo operator*(const TSModulo& operand) const{
+            return TSModulo(val*operand.get());
+        };
+        TSModulo operator/(const TSModulo& operand) const{ //asserting MOD is prime
+            return TSModulo(val * inverse(operand));
+        };
+    };
+
+    using Mod107 = TSModulo<1000000007LL>;
+
+    template<ll MOD>
+    ostream& operator<<(ostream& os, TSModulo<MOD> x){
+        return os<<"("<<x.get()<<"%"<<MOD<<")";
+    }
+
+
+}
+namespace mytl{
+    struct Modulo{
+        static ll global_mod;
+    private:
+        ll val;
+    public:
+        const ll MOD;
+        Modulo(ll initMOD, ll initVal) : MOD{initMOD}, val{initVal} {
+            val %= MOD;
+            if(val < 0) val += MOD;
+        };
+        Modulo() : Modulo(global_mod, 0) {};
+
+        static Modulo inverse(Modulo x){// asserting MOD is prime
+            return power(x, x.MOD-2, x.unit());
+        };
+        Modulo unit() const{
+            return Modulo(MOD, 1);
+        }
+        Modulo& operator=(const Modulo& operand){
+            val = operand.val;
+            return *this;
+        };
+
+        ll get() const{ // no type cast operator to prevent accidentally turning into ordinary number
+            return val;
+        }
+
+        //Unary operators
+        Modulo operator-() const{
+            return Modulo(MOD, -val);
+        };
+        Modulo operator+() const{
+            return Modulo(MOD, +val);
+        };
+
+        //Binary operators on ordinary numbers
+        Modulo operator-(const ll& operand) const{
+            return Modulo(MOD, val-operand);
+        };
+        Modulo operator+(const ll& operand) const{
+            return Modulo(MOD, val+operand);
+        };
+        Modulo operator*(const ll& operand) const{
+            return Modulo(MOD, val*operand);
+        };
+        Modulo operator/(const ll& operand) const{ //asserting MOD is prime
+            return Modulo(MOD, val * inverse(Modulo(MOD, operand)).get());
+        };
+
+        //Binary operators on Modulo
+        Modulo operator-(const Modulo& operand) const{
+            return Modulo(MOD, val-operand.get());
+        };
+        Modulo operator+(const Modulo& operand) const{
+            return Modulo(MOD, val+operand.get());
+        };
+        Modulo operator*(const Modulo& operand) const{
+            return Modulo(MOD, val*operand.get());
+        };
+        Modulo operator/(const Modulo& operand) const{ //asserting MOD is prime
+            return Modulo(MOD, val * inverse(operand).get());
+        };
+
+    };
+
+    ll Modulo::global_mod = 1000000007LL;
+
+    Modulo mod107(ll x){
+        return Modulo(1000000007LL, x);
+    }
+    ostream& operator<<(ostream& os, Modulo x){
+        return os<<"("<<x.get()<<"%"<<x.MOD<<")";
+    }
+
+
+}
+namespace mytl {
+
+template<class T>
+struct Resetter;
+
+template<class T>
+Resetter<T>* global_resetter = new Resetter<T>;
+
+template<class T>
+struct Resetter {
+
+    using State = pair<counter_type, T>;
+
+    State* state = new State{0, T()};
+
+    Resetter(){}
+    Resetter(T value){
+        state = new State{0, value};
+    }
+
+    void activate(){
+        global_resetter<T> = this;
+    }
+
+    void reset(T value){
+        *state = State{state->first+1, value};
+    }
+
+    struct Variable{
+
+        State state;
+        State& parent = *global_resetter<T>->state;
+
+        Variable() : state{*global_resetter<T>->state} {}
+        Variable(T value) : state{global_resetter<T>->state->first, value} {}
+        Variable(State st) : state{st} {}
+        Variable(T value, State& parent) : state{parent->first, value} {};
+
+        bool fresh(){
+            return state.first >= parent.first;
+        }
+
+        void overwrite(){
+            state = parent;
+        }
+
+        bool refresh(){
+            if(!fresh()) overwrite();
+        }
+
+        T get(){
+            refresh();
+            return state.second;
+        }
+
+        void survive(){
+            state.first = parent.first;
+        }
+
+        void operator=(T new_value){
+            state.second = new_value;
+            survive();
+        }
+
+    };
+
+};
 }
 namespace mytl{
 
@@ -559,241 +726,82 @@ struct Custom{
 };
 */
 }
-namespace mytl {
+namespace mytl{
 
-template<class T>
-struct Resetter;
+struct Point{
+    ll x, y;
 
-template<class T>
-Resetter<T>* global_resetter = new Resetter<T>;
+    Point(ll x, ll y) : x{x}, y{y} {};
+    Point(pair<ll,ll> initPair) : x{initPair.first}, y{initPair.second} {};
 
-template<class T>
-struct Resetter {
-
-    using State = pair<counter_type, T>;
-
-    State* state = new State{0, T()};
-
-    Resetter(){}
-    Resetter(T value){
-        state = new State{0, value};
+    pair<ll,ll> getPair(){//not introducing type cast operator for safety
+        return {x,y};
     }
 
-    void activate(){
-        global_resetter<T> = this;
+    //Unary operators
+    Point operator-() const{
+        return {-x, -y};
+    }
+    Point operator+() const{
+        return {x,y};
     }
 
-    void reset(T value){
-        *state = State{state->first+1, value};
+    static ll sgn(ll x){
+        return (x > 0) - (x < 0);
     }
 
-    struct Variable{
+    //Binary operators on ordinary numbers
+    Point operator*(const ll& operand) const{
+        return {x*operand, y*operand};
+    }
 
-        State state;
-        State& parent = *global_resetter<T>->state;
+    //Binary operators on Point itself
+    Point operator+(const Point& operand) const{
+        return {x+operand.x, y+operand.y};
+    }
+    Point operator-(const Point& operand) const{
+        return {x-operand.x, y-operand.y};
+    }
 
-        Variable() : state{*global_resetter<T>->state} {}
-        Variable(T value) : state{global_resetter<T>->state->first, value} {}
-        Variable(State st) : state{st} {}
-        Variable(T value, State& parent) : state{parent->first, value} {};
+    ll operator*(const Point& operand){ //vectorial product
+        return x*operand.y - y*operand.x;
+    }
 
-        bool fresh(){
-            return state.first >= parent.first;
-        }
-
-        void overwrite(){
-            state = parent;
-        }
-
-        bool refresh(){
-            if(!fresh()) overwrite();
-        }
-
-        T get(){
-            refresh();
-            return state.second;
-        }
-
-        void survive(){
-            state.first = parent.first;
-        }
-
-        void operator=(T new_value){
-            state.second = new_value;
-            survive();
-        }
-
+    ll direction(const Point& a, const Point& b) const{
+        return sgn((a - *this) * (b - *this));
     };
-
 };
-}
-namespace mytl{
-template<typename T>
-T power(T base, ll exponential, T unit=1){
-    T res = unit;
-    while(exponential > 0){
-        if(exponential%2 == 1) res = res * base;
-        base = base * base;
-        exponential = exponential / 2;
-    }
-    return res;
-}
-}
-namespace mytl{
-    struct Modulo{
-        static ll global_mod;
-    private:
-        ll val;
-    public:
-        const ll MOD;
-        Modulo(ll initMOD, ll initVal) : MOD{initMOD}, val{initVal} {
-            val %= MOD;
-            if(val < 0) val += MOD;
-        };
-        Modulo() : Modulo(global_mod, 0) {};
 
-        static Modulo inverse(Modulo x){// asserting MOD is prime
-            return power(x, x.MOD-2, x.unit());
-        };
-        Modulo unit() const{
-            return Modulo(MOD, 1);
+ll distance_squared(const Point& a, const Point& b){
+    return (a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y);
+}
+
+double distance(const Point& a, const Point& b){
+    return sqrt(distance_squared(a, b));
+}
+
+ll cartesian_distance(const Point& a, const Point& b){
+    return abs(a.x - b.x) + abs(a.y - b.y);
+}
+
+typedef vector<Point> Poly;
+
+bool inside(const Poly& poly, const Point& point, bool strict){ //assuming Poly is weakly convex
+    ll prevdir = -2;
+    for(ll i=0; i<poly.size(); i++){
+        ll nexdindex = (i+1)%poly.size();
+        ll dir = poly[i].direction(poly[nexdindex], point);
+        if(dir == 0){
+            if(strict) return false;
         }
-        Modulo& operator=(const Modulo& operand){
-            val = operand.val;
-            return *this;
-        };
-
-        ll get() const{ // no type cast operator to prevent accidentally turning into ordinary number
-            return val;
+        else{
+            if(dir != prevdir && prevdir != -2) return false;
+            prevdir = dir;
         }
 
-        //Unary operators
-        Modulo operator-() const{
-            return Modulo(MOD, -val);
-        };
-        Modulo operator+() const{
-            return Modulo(MOD, +val);
-        };
-
-        //Binary operators on ordinary numbers
-        Modulo operator-(const ll& operand) const{
-            return Modulo(MOD, val-operand);
-        };
-        Modulo operator+(const ll& operand) const{
-            return Modulo(MOD, val+operand);
-        };
-        Modulo operator*(const ll& operand) const{
-            return Modulo(MOD, val*operand);
-        };
-        Modulo operator/(const ll& operand) const{ //asserting MOD is prime
-            return Modulo(MOD, val * inverse(Modulo(MOD, operand)).get());
-        };
-
-        //Binary operators on Modulo
-        Modulo operator-(const Modulo& operand) const{
-            return Modulo(MOD, val-operand.get());
-        };
-        Modulo operator+(const Modulo& operand) const{
-            return Modulo(MOD, val+operand.get());
-        };
-        Modulo operator*(const Modulo& operand) const{
-            return Modulo(MOD, val*operand.get());
-        };
-        Modulo operator/(const Modulo& operand) const{ //asserting MOD is prime
-            return Modulo(MOD, val * inverse(operand).get());
-        };
-
-    };
-
-    ll Modulo::global_mod = 1000000007LL;
-
-    Modulo mod107(ll x){
-        return Modulo(1000000007LL, x);
     }
-    ostream& operator<<(ostream& os, Modulo x){
-        return os<<"("<<x.get()<<"%"<<x.MOD<<")";
-    }
-
-
+    return true;
 }
-namespace mytl{
-    template<ll MOD>
-    struct TSModulo{
-    private:
-        ll val;
-
-    public:
-        static TSModulo inverse(TSModulo x){// asserting MOD is prime
-            return power(x, MOD-2);
-        };
-        TSModulo(ll initVal) : val{(MOD + initVal%MOD)%MOD} {};
-        TSModulo() : TSModulo(0) {}
-        TSModulo& operator=(const TSModulo&) = default;
-
-        ll get() const{ // no type cast operator to prevent accidentally turning into ordinary number
-            return val;
-        }
-
-        //Unary operators
-        TSModulo operator-() const{
-            return TSModulo(-val);
-        };
-        TSModulo operator+() const{
-            return TSModulo(+val);
-        };
-
-        //Binary operators on ordinary numbers
-        TSModulo operator-(const ll& operand) const{
-            return TSModulo(val-operand);
-        };
-        TSModulo operator+(const ll& operand) const{
-            return TSModulo(val+operand);
-        };
-        TSModulo operator*(const ll& operand) const{
-            return TSModulo(val*operand);
-        };
-        TSModulo operator/(const ll& operand) const{ //asserting MOD is prime
-            return TSModulo(inverse(operand) * val);
-        };
-
-        //Binary operators on Modulo
-        TSModulo operator-(const TSModulo& operand) const{
-            return TSModulo(val-operand.get());
-        };
-        TSModulo operator+(const TSModulo& operand) const{
-            return TSModulo(val+operand.get());
-        };
-        TSModulo operator*(const TSModulo& operand) const{
-            return TSModulo(val*operand.get());
-        };
-        TSModulo operator/(const TSModulo& operand) const{ //asserting MOD is prime
-            return TSModulo(val * inverse(operand));
-        };
-    };
-
-    using Mod107 = TSModulo<1000000007LL>;
-
-    template<ll MOD>
-    ostream& operator<<(ostream& os, TSModulo<MOD> x){
-        return os<<"("<<x.get()<<"%"<<MOD<<")";
-    }
-
-
-}
-namespace mytl{
-
-template <template<typename, typename, typename...> typename C, typename Arg, typename R>
-function<R (Arg)> memoize(R (*fn)(Arg)) {
-    C<Arg, optional<R> > table;
-    return [fn, table](Arg arg) mutable -> R {
-        optional<R>& res = table[arg];
-        if(!res.has_value()){
-            res = fn(arg);
-        }
-        return res.value();
-    };
-}
-
 
 }
 namespace mytl{
@@ -993,6 +1001,22 @@ struct Custom_Op{
 
 };
 */
+
+}
+namespace mytl{
+
+template <template<typename, typename, typename...> typename C, typename Arg, typename R>
+function<R (Arg)> memoize(R (*fn)(Arg)) {
+    C<Arg, optional<R> > table;
+    return [fn, table](Arg arg) mutable -> R {
+        optional<R>& res = table[arg];
+        if(!res.has_value()){
+            res = fn(arg);
+        }
+        return res.value();
+    };
+}
+
 
 }
 //ENDCOPY

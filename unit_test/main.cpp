@@ -10,7 +10,7 @@
 #include "recursion_test.cpp"
 #include "segtree_test.cpp"
 #include "io_test.cpp"
-
+#include "binary_search_test.cpp"
 
 
 MAIN main(){
@@ -24,4 +24,5 @@ MAIN main(){
     recursion_test();
     segtree_test();
     io_test();
+    binary_search_test();
 }
