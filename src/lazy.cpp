@@ -25,7 +25,7 @@ struct Lazy : optional<T>{
 };
 
 #define LAZY(val, tipe) mytl::Lazy<tipe>([&](){return (val);})
-#define WATCH(x) cout << (#x) << " is " << (x) << endl
+
 
 }
 //ENDCOPY

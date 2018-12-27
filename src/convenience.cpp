@@ -38,6 +38,7 @@ vector<PairOf<T&> > adjecent_pairs(Container<T>& c){
     }
     return res;
 }
+#define WATCH(x) cout << (#x) << " is " << (x) << endl
 }
 //ENDCOPY
 
