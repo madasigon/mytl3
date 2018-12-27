@@ -26,30 +26,6 @@ void repeat(need_int n, const F& callback){
 }
 
 
-
-template<typename T, T(*f)(T,T)>
-struct Tracker : optional<T>{
-    using optional<T>::operator=;
-
-    Tracker() : optional<T>() {};
-
-    void update(T val){
-        if(this->has_value()){
-            *this = f(this->value(), val);
-        }
-        else{
-            *this = val;
-        }
-    }
-};
-
-template<typename T>
-T min(T a, T b){return std::min(a,b);}
-template<typename T>
-T max(T a, T b){return std::max(a,b);}
-template<typename T>
-T __gcd(T a, T b){return std::__gcd(a,b);}
-
 template<typename T, template<typename, typename...> typename Container>
 vector<PairOf<T&> > adjecent_pairs(Container<T>& c){
     vector<PairOf<T&> > res;
