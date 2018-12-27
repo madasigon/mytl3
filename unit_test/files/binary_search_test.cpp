@@ -8,11 +8,10 @@ bool pred(T val){
 }
 
 void binary_search_test(){
-
     assert((
         mytl::discrete_binary_search<ll>(pred<ll>, 0, 10) == 4
         &&
-        abs(mytl::continous_binary_search<double>(pred<double>,0,10,100) - 5) < 0.0001
+        abs(mytl::continuous_binary_search<double>(pred<double>,0,10,100) - 5) < 0.0001
     ));
 
 
