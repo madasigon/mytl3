@@ -173,7 +173,7 @@ T discrete_binary_search(function<bool(T)> f, T l, T r){
 }
 
 template<typename T>
-T continous_binary_search(function<bool(T)> f, T l, T r, need_int iterations){
+T continuous_binary_search(function<bool(T)> f, T l, T r, need_int iterations){
     mytl::repeat(iterations,[&](){
         T pivot = (l+r)/2;
         if(f(pivot)) l = pivot;
@@ -866,36 +866,39 @@ struct Node : Op::Range{
     T build_from(const function<T(ll)>& getter){
         prepare();
         pending = Op::identity();
-        if(singleton()) partial = getter(this->first);
+        if(singleton()) partial = getter(this->l);
         else partial = Op::reduce(left_child->build_from(getter), right_child->build_from(getter));
         return partial;
     }
 
 };
 
-struct Range1D : PairOf<ll>{
-    using PairOf<ll>::pair;
+struct Range1D{
+
+    ll l, r;
+
+    Range1D(ll l, ll r): l{l}, r{r} {}
 
     ll span() const {
-        return second-first+1;
+        return r-l+1;
     }
     bool singleton() const {
         return span() == 1;
     }
     Range1D leftHalf() const {
-        return Range1D(first, (first+second)/2);
+        return Range1D(l, (l+r)/2);
     }
     Range1D rightHalf() const {
-        return Range1D((first + second)/2 + 1, second);
+        return Range1D((l + r)/2 + 1, r);
     }
     bool inside(const Range1D& other) const {
-        return other.first <= first && second <= other.second;
+        return other.l <= l && r <= other.r;
     }
     bool intersect(const Range1D& other) const {
 
         return other.inside(*this)
-             ||(other.first <= first && first <= other.second)
-             ||(other.first <= second && second <= other.second);
+             ||(other.l <= l && l <= other.r)
+             ||(other.l <= r && r <= other.r);
     }
 };
 
