@@ -25,40 +25,6 @@ void repeat(need_int n, const F& callback){
     for(need_int _ : forrange(n,0)) callback();
 }
 
-template<typename T>
-struct optional{
-    private:
-        T *val = nullptr;
-        void reserve(){
-            val = new T;
-        }
-    public:
-        optional<T> operator=(const T& operand){
-            reserve();
-            *val = operand;
-            return *this;
-        }
-        bool has_value(){
-            return val != nullptr;
-        }
-        T& value(){
-            return *val;
-        }
-        optional(T val_){
-            operator=(val_);
-        }
-        optional(initializer_list<T> l){
-            assert(l.size() == 1);
-            operator=(*l.begin());
-        }
-        optional(){}
-};
-
-template<typename T>
-optional<T> make_optional(T val_){
-    return optional<T>(val_); 
-}
-
 
 
 template<typename T, T(*f)(T,T)>
