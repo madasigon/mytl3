@@ -11,7 +11,9 @@
 #include "segtree_test.cpp"
 #include "io_test.cpp"
 #include "binary_search_test.cpp"
-
+#include "tracker_test.cpp"
+#include "container_test.cpp"
+#include "lazy_test.cpp"
 
 MAIN main(){
     convenience_test();
@@ -25,4 +27,7 @@ MAIN main(){
     segtree_test();
     io_test();
     binary_search_test();
+    tracker_test();
+    container_test();
+    lazy_test();
 }

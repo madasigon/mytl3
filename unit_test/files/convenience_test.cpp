@@ -3,12 +3,6 @@
 
 void convenience_test(){
 
-    ll x = 1;
-    auto y = LAZY(++x, ll);
-    assert(x == 1);
-    assert(y.value() == 2);
-    assert(x == 2);
-
     vector<ll> l{1,2,3,4};
     vector<ll> res;
     for(auto& par : mytl::adjecent_pairs(l)){
