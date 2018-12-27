@@ -11,7 +11,7 @@
 #include "segtree_test.cpp"
 #include "io_test.cpp"
 #include "binary_search_test.cpp"
-
+#include "named_pair_test.cpp"
 
 MAIN main(){
     convenience_test();
@@ -25,4 +25,5 @@ MAIN main(){
     segtree_test();
     io_test();
     binary_search_test();
+    named_pair_test();
 }
