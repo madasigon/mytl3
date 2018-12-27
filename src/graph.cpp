@@ -119,30 +119,7 @@ typename G::template Container<typename G::Node, typename P<G>::Info> queue_grap
     return d;
 }
 
-/*template<template<typename> typename QP, template<typename> typename P>
-struct AlgoComposer{
-    template<typename G>
-    struct A{
-        using Path = P<G>;
-        using Edge = typename G::Edge;
-        using Node = typename G::Node;
-        using Info = typename Path::Info;
-        using Option = pair<Info, Node>;
-        using QueuePolicy = QP<Option>;
-        using Queue = typename QueuePolicy::Queue;
 
-        static Option consume(Queue& q){
-            return QueuePolicy::consume(q);
-        }
-        static void push(Queue& q, Option new_option){
-            return QueuePolicy::push(q, new_option);
-        }
-        static Info append(pair<Info, Node> from , Edge e, Node to){
-            return Path::append(from, e, to);
-        }
-    };
-};
-*/
 
 template<typename T>
 struct Priority{
