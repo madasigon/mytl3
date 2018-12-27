@@ -1,5 +1,6 @@
 #include "base.cpp"
 #include "io.cpp"
+#include "named_pair.cpp"
 
 #ifndef GRAPH_CPP
 #define GRAPH_CPP
@@ -7,17 +8,26 @@
 //STARTCOPY
 namespace mytl{
 
+
+
 template<typename N, typename E, template<typename, typename, typename...> typename C>
-struct Container_Graph : C<N, vector<pair<E, N> > >{
+struct Container_Graph{
     template<typename A, typename B>
     using Container = C<A,B>;
     using Edge = E;
     using Node = N;
+    struct Arm{
+        Edge edge;
+        Node node;
+    };
+
+    Container<Node,  vector<Arm> > container;
+
     optional<ll> n;
-    Container_Graph(ll n={}) : n{n}, Container<Node, vector<pair<Edge, Node> > >() {}
+    Container_Graph(ll n={}) : n{n}, container() {}
 
     void newEdge(Node u, Node v, Edge edge=Void()){
-        (*this)[u].push_back(make_pair(edge, v));
+        container[u].push_back({edge, v});
     }
     vector<Node> getNodes(){
         vector<Node> res;
@@ -25,20 +35,20 @@ struct Container_Graph : C<N, vector<pair<E, N> > >{
             for(ll i=1; i<=n.value(); i++) res.push_back(i);
         }
         else{
-            for(auto& p : *this){
+            for(auto& p : container){
                 res.push_back(p.first);
             }
         }
         return res;
 
     }
-    vector<pair<Edge, Node> >& getEdges(Node node){
-        return (*this)[node];
+    vector<Arm >& getEdges(Node node){
+        return container[node];
     }
     vector<Node > getNeighbours(Node node){
         vector<Node> res;
-        for(auto& par : getEdges(node)){
-            res.push_back(par.second);
+        for(auto& arm : getEdges(node)){
+            res.push_back(arm.node);
         }
         return res;
     }
@@ -102,8 +112,8 @@ typename G::template Container<typename G::Node, typename P<G>::Info> queue_grap
         d[who] = info;
         
         new_node_callback(pair<Info, Node>(info, who));
-        for(auto par : g.getEdges(who)) if(!has_key(d, par.second)){
-            QueuePolicy::push(q, {Path::append({info, who}, par.first, par.second), par.second});
+        for(auto arm : g.getEdges(who)) if(!has_key(d, arm.node)){
+            QueuePolicy::push(q, {Path::append({info, who}, arm.edge, arm.node), arm.node});
         }
     }
     return d;
