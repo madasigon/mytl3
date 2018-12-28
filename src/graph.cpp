@@ -127,6 +127,21 @@ typename G::template Container<typename G::Node, typename P<G>::Info> queue_grap
     return d;
 }
 
+template<
+        typename G,
+        template<typename> typename QP,
+        template<typename> typename P,
+        typename F=void(*)(typename P<G>::Info, typename G::Node)
+>
+typename G::template Container<typename G::Node, typename P<G>::Info> queue_graph_algorithm_from_single_source(
+        G& g,
+        typename P<G>::Info info,
+        typename G::Node node,
+        F new_node_callback=[](typename P<G>::Info, typename G::Node){})
+{
+    return queue_graph_algorithm<G,QP,P,F>(g, {{info,node}},new_node_callback);
+}
+
 
 
 template<typename T>

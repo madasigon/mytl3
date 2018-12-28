@@ -20,7 +20,14 @@ void graph_test(){
     //using BFS = mytl::AlgoComposer<mytl::FIFO, mytl::SimpleJustLength>;
 
     auto x = mytl::queue_graph_algorithm<G, mytl::Priority, mytl::JustLength>(g, {{0,1}});
+    auto x_ = mytl::queue_graph_algorithm_from_single_source<G, mytl::Priority, mytl::JustLength>(g, 0, 1);
+
+    assert((x == x_));
+
     auto y = mytl::queue_graph_algorithm<G,mytl::FIFO, mytl::SimpleJustLength>(g, {{0,1}});
+    auto y_ = mytl::queue_graph_algorithm_from_single_source<G, mytl::FIFO, mytl::SimpleJustLength>(g, 0, 1);
+
+    assert((y == y_));
 
     vector<pair<double,ll> > res;
     for(ll i=1; i<=g.n.value(); i++){
