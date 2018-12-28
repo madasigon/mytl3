@@ -1,6 +1,5 @@
 #include "base.cpp"
 #include "io.cpp"
-#include "named_pair.cpp"
 
 #ifndef GRAPH_CPP
 #define GRAPH_CPP

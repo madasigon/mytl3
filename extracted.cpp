@@ -182,22 +182,6 @@ T continuous_binary_search(function<bool(T)> f, T l, T r, need_int iterations){
     return l;
 }
 }
-namespace mytl{
-
-#define NAMED_PAIR(classname, fst, snd)\
-template<typename P, typename Q>\
-struct classname : public pair<P,Q>{\
-\
-private:\
-    using pair<P,Q>::first;\
-    using pair<P,Q>::second;\
-public:\
-    P &fst = first;\
-    Q &snd = second;\
-    using pair<P,Q>::pair;\
-};
-
-}
 
 namespace std{
 
