@@ -79,41 +79,49 @@ void readEdgeList(G& g, ll m, bool bidirectional=true){
     }
 }
 
+template<typename G, template<typename> typename Path>
+struct Reaching{
+    typename Path<G>::Info info;
+    typename G::Node node;
+    bool operator<(const Reaching& other) const {
+        return info > other.info;
+    }
+};
+
 template<
     typename G,
     template<typename> typename QP,
     template<typename> typename P,
-    typename F=void(*)(pair<typename P<G>::Info, typename G::Node>)
+    typename F=void(*)(typename P<G>::Info, typename G::Node)
 >
 typename G::template Container<typename G::Node, typename P<G>::Info> queue_graph_algorithm(
     G& g,
-    vector<pair<typename P<G>::Info, typename G::Node> > sources,
-    F new_node_callback=[](pair<typename P<G>::Info, typename G::Node>){})
+    vector<Reaching<G,P> > sources,
+    F new_node_callback=[](typename P<G>::Info, typename G::Node){})
 {
-    
+
     using Path = P<G>;
     using Edge = typename G::Edge;
     using Node = typename G::Node;
     using Info = typename Path::Info;
-    using Option = pair<Info, Node>;
-    using QueuePolicy = QP<Option>;
+    //using Option = pair<Info, Node>;
+    using R = Reaching<G,P>;
+    using QueuePolicy = QP<R>;
     using Queue = typename QueuePolicy::Queue;
 
     Queue q;
-    for(auto source : sources) QueuePolicy::push(q, source);
+    for(R source : sources) QueuePolicy::push(q, source);
     typename G::template Container<Node, Info> d;
     while(!q.empty()){
-        auto akt = QueuePolicy::consume(q);
-        Node who = akt.second;
-        Info info = akt.first;
+        R akt = QueuePolicy::consume(q);
 
-        if(has_key(d, who)) continue;
+        if(has_key(d, akt.node)) continue;
 
-        d[who] = info;
-        
-        new_node_callback(pair<Info, Node>(info, who));
-        for(auto arm : g.getEdges(who)) if(!has_key(d, arm.node)){
-            QueuePolicy::push(q, {Path::append({info, who}, arm.edge, arm.node), arm.node});
+        d[akt.node] = akt.info;
+
+        new_node_callback(akt.info, akt.node);
+        for(auto arm : g.getEdges(akt.node)) if(!has_key(d, arm.node)){
+            QueuePolicy::push(q, {Path::append(akt.info, akt.node, arm.edge, arm.node), arm.node});
         }
     }
     return d;
@@ -123,7 +131,7 @@ typename G::template Container<typename G::Node, typename P<G>::Info> queue_grap
 
 template<typename T>
 struct Priority{
-    using Queue = priority_queue<T, vector<T>, greater<T> >;
+    using Queue = priority_queue<T>;
     static T consume(Queue& q){
         auto res = q.top();
         q.pop();
@@ -164,16 +172,16 @@ struct FILO{
 template<typename G>
 struct JustLength{
     using Info = typename G::Edge;
-    static Info append(pair<Info, typename G::Node> from, typename G::Edge e, typename G::Node n){
-        return from.first + e;
+    static Info append(Info old_info, typename G::Node old_node, typename G::Edge e, typename G::Node n){
+        return old_info + e;
     }
 };
 
 template<typename G>
 struct SimpleJustLength{
     using Info = ll;
-    static Info append(pair<Info, typename G::Node> from, typename G::Edge e, typename G::Node n){
-        return from.first + 1;
+    static Info append(Info old_info, typename G::Node old_node, typename G::Edge e, typename G::Node n){
+        return old_info + 1;
     }
 };
 
@@ -181,47 +189,19 @@ struct SimpleJustLength{
 template<typename G>
 struct LengthAndLastNode{
     using Info = pair<ll, typename G::Node>;
-    static Info append(pair<Info, typename G::Node> from, typename G::Edge e, typename G::Node n){
-        return {from.first + e, from.second};
+    static Info append(Info old_info, typename G::Node old_node, typename G::Edge e, typename G::Node n){
+        return {old_info + e, old_node};
     }
 };
 
 template<typename G>
 struct SimpleLengthAndLastNode{
     using Info = pair<typename G::Edge, typename G::Node>;
-    static Info append(pair<Info, typename G::Node> from, typename G::Edge e, typename G::Node n){
-        return {from.first + 1, from.second};
+    static Info append(Info old_info, typename G::Node old_node, typename G::Edge e, typename G::Node n){
+        return {old_info + 1, old_node};
     }
 };
 
-
-/*
-template<typename G>
-struct Custom{
-    using Edge = typename G::Edge;
-    using Node = typename G::Node;
-
-    using Info = _;
-    using Option = pair<Info, Edge>;
-    using Queue = _;
-
-    static Option consume(Queue &q){
-        _
-        return _;
-    }
-
-    static void push(Queue &q, Option new_option){
-        _
-    }
-
-
-
-    static Info append(Option from, Edge e, Node to){
-        return _
-    }
-
-};
-*/
 }
 //ENDCOPY
 
