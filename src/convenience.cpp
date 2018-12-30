@@ -25,64 +25,6 @@ void repeat(need_int n, const F& callback){
     for(need_int _ : forrange(n,0)) callback();
 }
 
-template<typename T>
-struct optional{
-    private:
-        T *val = nullptr;
-        void reserve(){
-            val = new T;
-        }
-    public:
-        optional<T> operator=(const T& operand){
-            reserve();
-            *val = operand;
-            return *this;
-        }
-        bool has_value(){
-            return val != nullptr;
-        }
-        T& value(){
-            return *val;
-        }
-        optional(T val_){
-            operator=(val_);
-        }
-        optional(initializer_list<T> l){
-            assert(l.size() == 1);
-            operator=(*l.begin());
-        }
-        optional(){}
-};
-
-template<typename T>
-optional<T> make_optional(T val_){
-    return optional<T>(val_); 
-}
-
-
-
-template<typename T, T(*f)(T,T)>
-struct Tracker : optional<T>{
-    using optional<T>::operator=;
-
-    Tracker() : optional<T>() {};
-
-    void update(T val){
-        if(this->has_value()){
-            *this = f(this->value(), val);
-        }
-        else{
-            *this = val;
-        }
-    }
-};
-
-template<typename T>
-T min(T a, T b){return std::min(a,b);}
-template<typename T>
-T max(T a, T b){return std::max(a,b);}
-template<typename T>
-T __gcd(T a, T b){return std::__gcd(a,b);}
 
 template<typename T, template<typename, typename...> typename Container>
 vector<PairOf<T&> > adjecent_pairs(Container<T>& c){
@@ -96,50 +38,6 @@ vector<PairOf<T&> > adjecent_pairs(Container<T>& c){
     }
     return res;
 }
-
-template<typename T>
-struct LazyVector : vector<T>{
-    typename vector<T>::reference operator[](counter_type i){
-        if(i >= this->size()) this->resize(i+1);
-        return vector<T>::operator[](i);
-    }
-};
-
-template<typename K, typename T>
-struct AssocVector : LazyVector<T>{
-    LazyVector<bool> exists;
-    typename vector<T>::reference operator[](counter_type i){
-        exists[i] = true;
-        return LazyVector<T>::operator[](i);
-    }
-    typename vector<T>::iterator find(counter_type i){
-        if(!exists[i]) return this->end();
-        else return this->begin() + i;
-    }
-};
-
-template<template<typename, typename, typename...> typename Container, typename Key, typename Value>
-bool has_key(Container<Key, Value>& container, Key key){
-    return container.find(key) != container.end();
-}
-
-template<typename T>
-struct Lazy : optional<T>{
-
-    function<T()> f;
-
-    Lazy(function<T()> f) : f{f}, optional<T>() {};
-
-    T& value(){
-        if(!this->has_value()){
-            optional<T>::operator=(f());
-        }
-        return optional<T>::value();
-    }
-
-};
-
-#define LAZY(val, tipe) mytl::Lazy<tipe>([&](){return (val);})
 #define WATCH(x) cout << (#x) << " is " << (x) << endl
 }
 //ENDCOPY

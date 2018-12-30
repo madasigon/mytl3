@@ -34,7 +34,7 @@ class Codeforces(webdriver.Firefox):
     def submit_solution(self, number, letter, path):
         while 1:
             try:
-                self.by_css("select[name=\"programTypeId\"] > option[value=\"42\"]").click()
+                self.by_css("select[name=\"programTypeId\"] > option[value=\"52\"]").click()
                 break
             except ElementClickInterceptedException:
                 pass

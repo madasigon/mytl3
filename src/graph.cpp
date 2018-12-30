@@ -1,5 +1,6 @@
 #include "base.cpp"
 #include "io.cpp"
+#include "container.cpp"
 
 #ifndef GRAPH_CPP
 #define GRAPH_CPP
