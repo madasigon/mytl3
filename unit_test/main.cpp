@@ -12,7 +12,6 @@
 #include "io_test.cpp"
 #include "binary_search_test.cpp"
 
-
 MAIN main(){
     convenience_test();
     geom_test();
