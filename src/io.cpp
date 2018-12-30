@@ -9,7 +9,7 @@
 namespace std{
 
 template<typename T>
-istream& operator>>(istream& is, mytl::optional<T>& x){
+istream& operator>>(istream& is, optional<T>& x){
     if(!x.has_value()){
         T x_;
         is>>x_;
