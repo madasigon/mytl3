@@ -3,7 +3,24 @@
 #define BASE_CPP
 
 //STARTCOPY
+#ifndef _MSC_VER
 #include<bits/stdc++.h>
+#else
+#include <iostream>
+#include<algorithm>
+#include<vector>
+#include <set>
+#include <functional>
+#include <unordered_set>
+#include <map>
+#include <unordered_map>
+#include <assert.h>
+#include <queue>
+#include <istream>
+#include <numeric>
+#endif
+
+
 using namespace std;
 
 using u_counter_type = unsigned int;
@@ -18,12 +35,6 @@ using PairOf = pair<T,T>;
 
 using Void = tuple<>;
 
-struct BasicInitialization{
-    BasicInitialization(){
-        ios_base::sync_with_stdio(false);
-    }
-};
-BasicInitialization __basic_initialization__;
 //ENDCOPY
 
 

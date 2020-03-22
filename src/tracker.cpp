@@ -8,18 +8,23 @@
 namespace mytl{
 
 template<typename T, T(*f)(T,T)>
-struct Tracker : optional<T>{
+struct Tracker {
 
-    Tracker() : optional<T>() {};
+	T* val = nullptr;
 
-    void update(T val){
-        if(this->has_value()){
-            optional<T>::operator=(f(this->value(), val));
+    void update(T x){
+        if(val != nullptr){
+            *val = f(*val, x);
         }
         else{
-            optional<T>::operator=(val);
+			val = new T;
+			*val = x;
         }
     }
+
+	T value() {
+		return *val;
+	}
 };
 
 template<typename T>

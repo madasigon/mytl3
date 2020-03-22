@@ -8,15 +8,6 @@
 
 namespace std{
 
-template<typename T>
-istream& operator>>(istream& is, optional<T>& x){
-    if(!x.has_value()){
-        T x_;
-        is>>x_;
-        x = x_;
-    }
-    return is;
-}
 
 istream& operator>>(istream& is, Void& x){
     return is;

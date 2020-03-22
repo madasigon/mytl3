@@ -10,3 +10,5 @@ codeforces_tests/*
 !codeforces_tests/autotest
 
 venv/
+
+dev/

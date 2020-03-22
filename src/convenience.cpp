@@ -26,18 +26,7 @@ void repeat(need_int n, const F& callback){
 }
 
 
-template<typename T, template<typename, typename...> typename Container>
-vector<PairOf<T&> > adjecent_pairs(Container<T>& c){
-    vector<PairOf<T&> > res;
-    optional<T*> prev_elem;
-    for(auto& elem : c){
-        if(prev_elem.has_value()){
-            res.push_back({*prev_elem.value(), elem});
-        }
-        prev_elem = &elem;
-    }
-    return res;
-}
+
 #define WATCH(x) cout << (#x) << " is " << (x) << endl
 }
 //ENDCOPY
