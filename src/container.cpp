@@ -8,30 +8,39 @@
 namespace mytl{
 
 template<typename T>
-struct LazyVector : vector<T>{
-    typename vector<T>::reference operator[](counter_type i){
-        if(i >= this->size()) this->resize(i+1);
-        return vector<T>::operator[](i);
-    }
+struct LazyVector : vector<T> {
+	inline vector<T>::reference operator[](need_int i) {
+		if (i >= vector<T>::size()) vector<T>::resize(i + 1);
+		return vector<T>::operator[](i);
+	}
 };
 
-template<typename K, typename T>
-struct AssocVector : LazyVector<T>{
-    LazyVector<bool> exists;
-    typename vector<T>::reference operator[](counter_type i){
-        exists[i] = true;
-        return LazyVector<T>::operator[](i);
-    }
-    typename vector<T>::iterator find(counter_type i){
-        if(!exists[i]) return this->end();
-        else return this->begin() + i;
-    }
-};
 
-template<template<typename, typename, typename...> typename Container, typename Key, typename Value>
-bool has_key(Container<Key, Value>& container, Key key){
-    return container.find(key) != container.end();
-}
+template<typename T>
+struct optional {
+	T *ptr = nullptr;
+
+	inline optional() {}
+	inline optional(T val) {
+		*ptr = val;
+	}
+
+	~optional() {
+		if (ptr != nullptr) delete ptr;
+	}
+	inline T value() {
+		return *ptr;
+	}
+	inline bool has_value() {
+		return ptr != nullptr;
+	}
+
+	inline void set(T val) {
+		ptr = new T;
+		*ptr = val;
+	}
+
+};
 
 }
 //ENDCOPY

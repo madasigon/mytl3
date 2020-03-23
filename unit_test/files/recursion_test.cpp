@@ -7,10 +7,17 @@ using namespace std;
 
 
 ll natural_(ll x);
-auto natural = mytl::memoize<mytl::AssocVector, ll, ll>(natural_);
+auto natural = mytl::quick_memoize(natural_);
 ll natural_(ll x){
     if(x < 3) return 1;
     else return natural(x-1) + natural(x-2);
+}
+
+ll grid_(ll a, ll b);
+auto grid = mytl::quick_memoize(grid_);
+ll grid_(ll a, ll b) {
+	if (min(a, b) == 0) return 0;
+	else return 1 + grid(a - 1, b - 1);
 }
 
 ll unordered_(ll x);
@@ -39,4 +46,5 @@ void recursion_test(){
     assert(slow(30) == natural(30));
     assert(slow(30) == ordered(30));
     assert(slow(30) == unordered(30));
+	assert(15 == grid(15, 16));
 }
