@@ -62,10 +62,9 @@ template<typename T>
 T discrete_binary_search(bool(*f)(T), T l, T r){
     if(!f(l)) return l;
     while(l < r){
-        T pivot = (l+r)/2;
+        T pivot = (l+r+1)/2;
         if(!f(pivot)) r = pivot-1;
-        else if(!f(pivot+1)) l = r = pivot;
-        else l = pivot+1;
+		else l = pivot;
     }
     return l;
 }
@@ -434,7 +433,7 @@ namespace mytl{
         ll val;
 
     public:
-        static TSModulo inverse(TSModulo x){// asserting MOD is prime
+        static TSModulo inverse(TSModulo x){// assuming MOD is prime and x != 0
             return power(x, MOD-2);
         };
 		TSModulo(ll initVal) {
