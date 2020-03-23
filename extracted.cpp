@@ -437,12 +437,20 @@ namespace mytl{
         static TSModulo inverse(TSModulo x){// asserting MOD is prime
             return power(x, MOD-2);
         };
-        TSModulo(ll initVal) : val{(MOD + initVal%MOD)%MOD} {};
+		TSModulo(ll initVal) {
+			if (-MOD < initVal && initVal < MOD) {
+				val = initVal;
+			}
+			else {
+				val = initVal % MOD;
+			}
+		}
         TSModulo() : TSModulo(0) {}
         TSModulo& operator=(const TSModulo&) = default;
 
         ll get() const{ // no type cast operator to prevent accidentally turning into ordinary number
-            return val;
+			if (val >= 0) return val;
+			else return val + MOD;
         }
 
         //Unary operators
