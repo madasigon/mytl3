@@ -59,7 +59,7 @@ void repeat(need_int n, const F& callback){
 namespace mytl{
 
 template<typename T>
-T discrete_binary_search(function<bool(T)> f, T l, T r){
+T discrete_binary_search(bool(*f)(T), T l, T r){
     if(!f(l)) return l;
     while(l < r){
         T pivot = (l+r)/2;
@@ -71,7 +71,7 @@ T discrete_binary_search(function<bool(T)> f, T l, T r){
 }
 
 template<typename T>
-T continuous_binary_search(function<bool(T)> f, T l, T r, need_int iterations){
+T continuous_binary_search(bool(*f)(T), T l, T r, need_int iterations){
     mytl::repeat(iterations,[&](){
         T pivot = (l+r)/2;
         if(f(pivot)) l = pivot;
