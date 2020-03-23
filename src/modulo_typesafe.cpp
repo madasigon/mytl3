@@ -12,7 +12,7 @@ namespace mytl{
         ll val;
 
     public:
-        static TSModulo inverse(TSModulo x){// asserting MOD is prime
+        static TSModulo inverse(TSModulo x){// assuming MOD is prime and x != 0
             return power(x, MOD-2);
         };
 		TSModulo(ll initVal) {
