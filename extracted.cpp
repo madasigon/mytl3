@@ -19,7 +19,7 @@
 
 using namespace std;
 
-using u_counter_type = unsigned int;
+using unsigned_int = unsigned int;
 using need_int = int;
 using counter_type = int;
 using MAIN = int;
@@ -82,30 +82,39 @@ T continuous_binary_search(bool(*f)(T), T l, T r, need_int iterations){
 namespace mytl{
 
 template<typename T>
-struct LazyVector : vector<T>{
-    typename vector<T>::reference operator[](counter_type i){
-        if(i >= this->size()) this->resize(i+1);
-        return vector<T>::operator[](i);
-    }
+struct LazyVector : vector<T> {
+	inline typename vector<T>::reference operator[](need_int i) {
+		if (i >= vector<T>::size()) vector<T>::resize(i + 1);
+		return vector<T>::operator[](i);
+	}
 };
 
-template<typename K, typename T>
-struct AssocVector : LazyVector<T>{
-    LazyVector<bool> exists;
-    typename vector<T>::reference operator[](counter_type i){
-        exists[i] = true;
-        return LazyVector<T>::operator[](i);
-    }
-    typename vector<T>::iterator find(counter_type i){
-        if(!exists[i]) return this->end();
-        else return this->begin() + i;
-    }
-};
 
-template<template<typename, typename, typename...> typename Container, typename Key, typename Value>
-bool has_key(Container<Key, Value>& container, Key key){
-    return container.find(key) != container.end();
-}
+template<typename T>
+struct optional {
+	T *ptr = nullptr;
+
+	inline optional() {}
+	inline optional(T val) {
+		*ptr = val;
+	}
+
+	~optional() {
+		if (ptr != nullptr) delete ptr;
+	}
+	inline T value() {
+		return *ptr;
+	}
+	inline bool has_value() {
+		return ptr != nullptr;
+	}
+
+	inline void set(T val) {
+		ptr = new T;
+		*ptr = val;
+	}
+
+};
 
 }
 namespace mytl{
@@ -498,19 +507,40 @@ namespace mytl{
 
 
 }
-namespace mytl{
+namespace mytl {
 
-template <template<typename, typename, typename...> typename C, typename Arg, typename R>
-function<R (Arg)> memoize(R (*fn)(Arg)) {
-    C<Arg, R* > table;
-    return [fn, table](Arg arg) mutable -> R {
-        R*& res = table[arg];
-        if(res == nullptr){
-			res = new R;
-			*res = fn(arg);
-        }
-		return *res;
-    };
+template <typename C, typename Arg, typename R>
+function<R(Arg)> __memoize(R(*fn)(Arg)) {
+	C table;
+	return [fn, table](Arg arg) mutable -> R {
+		optional<R>& res = table[arg];
+		if (!res.has_value()) {
+			res.set(fn(arg));
+		}
+		return res.value();
+	};
+}
+
+template<template<typename, typename, typename...> typename C, typename Arg, typename R>
+function<R(Arg)> memoize(R(*fn)(Arg)) {
+	return __memoize<C<Arg, optional<R> >, Arg, R>(fn);
+}
+
+template<typename R>
+function<R (ll) > quick_memoize(R(*fn)(ll)) {
+	return __memoize<LazyVector<optional<R> >, ll, R>(fn);
+}
+
+template<typename R>
+function<R(ll, ll)> quick_memoize(R(*fn)(ll, ll)) {
+	LazyVector< LazyVector<optional<R> > > table;
+	return [fn, table](ll p1, ll p2) mutable -> R {
+		optional<R>& res = table[p1][p2];
+		if (!res.has_value()) {
+			res.set(fn(p1, p2));
+		}
+		return res.value();
+	};
 }
 
 
