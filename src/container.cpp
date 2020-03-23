@@ -9,7 +9,7 @@ namespace mytl{
 
 template<typename T>
 struct LazyVector : vector<T> {
-	inline vector<T>::reference operator[](need_int i) {
+	inline typename vector<T>::reference operator[](need_int i) {
 		if (i >= vector<T>::size()) vector<T>::resize(i + 1);
 		return vector<T>::operator[](i);
 	}
