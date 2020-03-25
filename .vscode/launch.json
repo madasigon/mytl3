@@ -6,6 +6,30 @@
     "configurations": [
 
         {
+            "name": "precommit",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceRoot}/run.py",
+            "console": "integratedTerminal",
+            "args": ["precommit"]
+        },
+        {
+            "name": "extract",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceRoot}/run.py",
+            "console": "integratedTerminal",
+            "args": ["extract"]
+        },
+        {
+            "name": "test",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceRoot}/run.py",
+            "console": "integratedTerminal",
+            "args": ["test"]
+        },
+        {
             "name": "Windows (gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
