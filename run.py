@@ -23,8 +23,6 @@ def test(*args):
         sys.exit(1)
 
 def extract_to_templates(*args):
-    content = """//{}\n{}\n//{}""".format(config.STARTCOPY, collect_dir(config.LIBRARY_PATH), config.ENDCOPY)
-    write_file("extracted.cpp", content)
     sync(config.LIBRARY_PATH, config.TEMPLATE_PATH, config.TEMPLATE_PATH)
 
 def before_commit(*args):
