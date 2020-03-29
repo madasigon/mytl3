@@ -1,4 +1,4 @@
-#include <bits/stdc++.h>
+
 #include "instant_zero.cpp"
 using namespace std;
 

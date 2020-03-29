@@ -1,4 +1,4 @@
-#include <bits/stdc++.h>
+
 //#include "../cbp/test.h"
 #include "pow.cpp"
 using namespace std;
