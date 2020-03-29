@@ -12,6 +12,7 @@
 #include "binary_search_test.cpp"
 #include "tracker_test.cpp"
 #include "container_test.cpp"
+#include "corasick_test.cpp"
 MAIN main(){
     convenience_test();
     geom_test();
@@ -25,4 +26,5 @@ MAIN main(){
     binary_search_test();
     tracker_test();
     container_test();
+    corasick_test();
 }
