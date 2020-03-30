@@ -18,6 +18,7 @@
 #include <queue>
 #include <istream>
 #include <numeric>
+#include <string>
 #endif
 
 
