@@ -10,7 +10,7 @@ namespace mytl{
 template<typename BaseTrie>
 struct Corasick {
 
-	struct Korasick_Op : BaseTrie::Op {
+	struct Corasick_Op : BaseTrie::Op {
 		using T = typename BaseTrie::Op::T;
 
 		template<typename N>
@@ -21,9 +21,9 @@ struct Corasick {
 		};
 	};
 
-	using MyTrie = Trie<Korasick_Op>;
+	using MyTrie = Trie<Corasick_Op>;
 	using Node = typename MyTrie::Node;
-	using T = typename Korasick_Op::T;
+	using T = typename Corasick_Op::T;
 
 	MyTrie trie;
 
