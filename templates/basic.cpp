@@ -1,7 +1,3 @@
-using ll = long long;
-
-ll tabnums = 0;
-
 //STARTCOPY
 #ifndef _MSC_VER
 #include<bits/stdc++.h>
@@ -88,6 +84,7 @@ namespace mytl{
 template<typename T>
 struct LazyVector : vector<T> {
 	inline typename vector<T>::reference operator[](need_int i) {
+
 		if (i >= vector<T>::size()) vector<T>::resize(i + 1);
 		return vector<T>::operator[](i);
 	}
@@ -551,70 +548,70 @@ function<R(ll, ll)> quick_memoize(R(*fn)(ll, ll)) {
 }
 namespace mytl{
 template<class Op>
-struct IntervalTree : Op::Range{
-    using Range = typename Op::Range;
-    using T = typename Op::T;
-    using Change = typename Op::Change;
-    using Range::singleton;
-    using Range::inside;
-    using Range::intersect;
-    using Range::leftHalf;
-    using Range::rightHalf;
+struct IntervalTree : Op::Range {
+	using Range = typename Op::Range;
+	using T = typename Op::T;
+	using Change = typename Op::Change;
+	using Range::singleton;
+	using Range::inside;
+	using Range::intersect;
+	using Range::leftHalf;
+	using Range::rightHalf;
 
-    IntervalTree *left_child=NULL, *right_child=NULL;
+	IntervalTree *left_child = NULL, *right_child = NULL;
 
-    T partial;
-    Change pending = Op::identity();
+	T partial;
+	Change pending = Op::identity();
 
-    IntervalTree(Range range) : Range(range), partial{Op::initial(range)} {};
+	IntervalTree(Range range) : Range(range), partial{ Op::initial(range) } {};
 
-    T query(Range range, Change change){
-        return query_(range, change).first;
-    }
+	T query(Range range, Change change) {
+		return query_(range, change).first;
+	}
 
-    void add(Change change){
-        pending = Op::push(pending, change);
-    }
+	void add(Change change) {
+		pending = Op::push(pending, change);
+	}
 
-    void prepare(){
-        if(!singleton()){
-            if(left_child == NULL) left_child = (new IntervalTree(leftHalf()));
-            if(right_child == NULL) right_child = (new IntervalTree(rightHalf()));
-            left_child->add(pending);
-            right_child->add(pending);
-        }
-        partial = Op::apply(*this, partial, pending);
-        pending = Op::identity();
-    }
+	void prepare() {
+		if (!singleton()) {
+			if (left_child == NULL) left_child = (new IntervalTree(leftHalf()));
+			if (right_child == NULL) right_child = (new IntervalTree(rightHalf()));
+			left_child->add(pending);
+			right_child->add(pending);
+		}
+		partial = Op::apply(*this, partial, pending);
+		pending = Op::identity();
+	}
 
-    pair<T,T> query_(Range range, Change change){
-        //cout<<range<<" "<<*this<<endl;
-        prepare();
-        if(inside(range)){
-            add(change);
-            prepare();
-            return {partial, Op::zero()};
-        }
-        if(!intersect(range)){
-            //cout<<"n"<<range<<" "<<*this<<endl;
-            return {Op::zero(), partial};
-        }
+	pair<T, T> query_(Range range, Change change) {
+		//cout<<range<<" "<<*this<<endl;
+		prepare();
+		if (inside(range)) {
+			add(change);
+			prepare();
+			return { partial, Op::zero() };
+		}
+		if (!intersect(range)) {
+			//cout<<"n"<<range<<" "<<*this<<endl;
+			return { Op::zero(), partial };
+		}
 
-        auto from_left = left_child->query_(range, change);
-        auto from_right = right_child->query_(range, change);
-        //cout<<from_right.first<<endl;
-        auto needed = Op::reduce(from_left.first, from_right.first), rest = Op::reduce(from_left.second, from_right.second);
-        partial = Op::reduce(needed, rest);
-        return {needed, rest};
-    }
+		auto from_left = left_child->query_(range, change);
+		auto from_right = right_child->query_(range, change);
+		//cout<<from_right.first<<endl;
+		auto needed = Op::reduce(from_left.first, from_right.first), rest = Op::reduce(from_left.second, from_right.second);
+		partial = Op::reduce(needed, rest);
+		return { needed, rest };
+	}
 
-    T build_from(const function<T(ll)>& getter){
-        prepare();
-        pending = Op::identity();
-        if(singleton()) partial = getter(this->l);
-        else partial = Op::reduce(left_child->build_from(getter), right_child->build_from(getter));
-        return partial;
-    }
+	T build_from(const function<T(ll)>& getter) {
+		prepare();
+		pending = Op::identity();
+		if (singleton()) partial = getter(this->l);
+		else partial = Op::reduce(left_child->build_from(getter), right_child->build_from(getter));
+		return partial;
+	}
 
 };
 
@@ -789,70 +786,36 @@ struct Multiply_Sum {
 
 /*
 struct Custom_Op{
-	using Range = _;
-	using T = _;
-	using Change = _;
+using Range = _;
+using T = _;
+using Change = _;
 
-	static Change identity(){
-		return _;
-	}
+static Change identity(){
+return _;
+}
 
-	static T zero(){
-		return _;
-	}
+static T zero(){
+return _;
+}
 
-	static T initial(Range r){
-		return _;
-	}
+static T initial(Range r){
+return _;
+}
 
-	static T reduce(T a, T b){
-		return _;
-	}
+static T reduce(T a, T b){
+return _;
+}
 
-	static T apply(Range r, T a, Change c){
-		return _;
-	}
+static T apply(Range r, T a, Change c){
+return _;
+}
 
-	static Change push(Change a, Change b){
-		return _;
-	}
+static Change push(Change a, Change b){
+return _;
+}
 
 };
 */
-}
-
-namespace mytl{
-
-
-struct Range1D {
-
-	ll l, r;
-
-	Range1D(ll l, ll r) : l{ l }, r{ r } {}
-
-	ll span() const {
-		return r - l + 1;
-	}
-	bool singleton() const {
-		return span() == 1;
-	}
-	Range1D leftHalf() const {
-		return Range1D(l, (l + r) / 2);
-	}
-	Range1D rightHalf() const {
-		return Range1D((l + r) / 2 + 1, r);
-	}
-	bool inside(const Range1D& other) const {
-		return other.l <= l && r <= other.r;
-	}
-	bool intersect(const Range1D& other) const {
-
-		return other.inside(*this)
-			|| (other.l <= l && l <= other.r)
-			|| (other.l <= r && r <= other.r);
-	}
-};
-
 }
 namespace mytl{
 
@@ -885,104 +848,14 @@ T __gcd(T a, T b){return std::__gcd(a,b);}
 
 }
 //ENDCOPY
- //HAJAJ
-using Par = pair<ll, ll>;
-using ParPar = pair<Par, Par>;
-
-ll M = 1000000007;
-
-Par operator+(Par a, Par b) {
-	Par res = { (a.first + b.first), a.second + b.second };
-	return { res.first%M, res.second%M };
-}
-Par operator*(Par a, ParPar b) {
-	Par res = { b.first.first*a.first + b.first.second*a.second, b.second.first*a.first + b.second.second*a.second };
-	return { res.first%M, res.second%M };
-}
-ParPar operator*(ParPar a_, ParPar b_) {
-	ll a = a_.first.first,
-		b = a_.first.second,
-		c = a_.second.first,
-		d = a_.second.second,
-		e = b_.first.first,
-		f = b_.first.second,
-		g = b_.second.first,
-		h = b_.second.second;
-	ParPar res = { { e*a + f * c, e*b + f * d },{ g*a + h * c, g*b + h * d } };
-	return { { res.first.first%M, res.first.second%M },{ res.second.first%M, res.second.second%M } };
-}
-
-struct Custom_Op {
-	using T = Par;
-	using Change = ParPar;
-
-	static Change identity() {
-		return { { 1, 0 },{ 0,1 } };
-	}
-	static T zero() {
-		return { 0, 0 };
-	}
-
-
-	static T reduce(T a, T b) {
-		T res = a + b;
-		return res;
-	}
-
-	static T apply(ll k, T a, Change c) {
-		T res = a * c;
-		return res;
-	}
-
-	static Change push(Change a, Change b) {
-		return a * b;
-	}
-
-};
-
-
-ll n, m;
-
-ParPar hatv(ll kitevo) {
-	ParPar res = Custom_Op::identity();
-	ParPar alap = { { 0,1 },{ 1,1 } };
-	while (kitevo > 0) {
-		if (kitevo % 2 == 1) res = res * alap;
-		alap = alap * alap;
-		kitevo /= 2;
-	}
-	return res;
-}
-
-vector<ll> be(200001);
-
-typename Custom_Op::T kaka(ll index) {
-	return Par{ 1,1 } *hatv(be[index + 1] - 1);
-}
 
 
 MAIN main() {
-	//freopen("be.txt", "r", stdin);
 	ios_base::sync_with_stdio(false);
-	cin >> n >> m;
-	for (ll i = 1; i <= n; i++) {
-		cin >> be[i];
-	}
-	mytl::SegmentTree<Custom_Op> node({ 1,n }, kaka);
+#ifdef _MSC_VER
+#if 1
+	freopen("be.txt", "r", stdin);
+#endif
+#endif // _MSC_VER
 
-	for (ll i = 1; i <= m; i++) {
-		ll mode;
-		cin >> mode;
-		if (mode == 1) {
-			ll l, r, x;
-			cin >> l >> r >> x;
-			node.modify({ l,r }, hatv(x));
-		}
-		else {
-			ll l, r;
-			cin >> l >> r;
-			cout << node.query({ l, r }).first << endl;
-		}
-	}
-	return 0;
 }

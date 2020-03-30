@@ -10,3 +10,6 @@ codeforces_tests/*
 !codeforces_tests/autotest
 
 venv/
+
+dev/
+unit_test/a.exe
