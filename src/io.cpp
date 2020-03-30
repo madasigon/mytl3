@@ -25,19 +25,6 @@ ostream& operator<<(ostream& os, const pair<P,Q>& x){
     return os;
 }
 
-template<typename T, template<typename, typename...> typename Container>
-ostream& operator<<(ostream& os, const Container<T>& x){
-    os<<"{";
-    bool first = true;
-    for(const auto& elem : x){
-        if(!first) os<<", ";
-        os<<elem;
-        first = false;
-    }
-    os<<"}";
-    return os;
-}
-
 }
 
 namespace mytl{
