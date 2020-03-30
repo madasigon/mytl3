@@ -12,3 +12,4 @@ codeforces_tests/*
 venv/
 
 dev/
+unit_test/a.exe

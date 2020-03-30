@@ -84,6 +84,7 @@ namespace mytl{
 template<typename T>
 struct LazyVector : vector<T> {
 	inline typename vector<T>::reference operator[](need_int i) {
+
 		if (i >= vector<T>::size()) vector<T>::resize(i + 1);
 		return vector<T>::operator[](i);
 	}
@@ -847,3 +848,14 @@ T __gcd(T a, T b){return std::__gcd(a,b);}
 
 }
 //ENDCOPY
+
+
+MAIN main() {
+	ios_base::sync_with_stdio(false);
+#ifdef _MSC_VER
+#if 1
+	freopen("be.txt", "r", stdin);
+#endif
+#endif // _MSC_VER
+
+}
