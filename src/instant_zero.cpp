@@ -50,7 +50,7 @@ struct Resetter {
             state = parent;
         }
 
-        bool refresh(){
+        void refresh(){
             if(!fresh()) overwrite();
         }
 

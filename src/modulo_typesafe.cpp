@@ -1,5 +1,6 @@
 #include "base.cpp"
 #include "pow.cpp"
+#include "container.cpp"
 
 #ifndef MODULO_TYPESAFE_CPP
 #define MODULO_TYPESAFE_CPP
@@ -12,15 +13,23 @@ namespace mytl{
         ll val;
 
     public:
-        static TSModulo inverse(TSModulo x){// asserting MOD is prime
+        static TSModulo inverse(TSModulo x){// assuming MOD is prime and x != 0
             return power(x, MOD-2);
         };
-        TSModulo(ll initVal) : val{(MOD + initVal%MOD)%MOD} {};
+		TSModulo(ll initVal) {
+			if (-MOD < initVal && initVal < MOD) {
+				val = initVal;
+			}
+			else {
+				val = initVal % MOD;
+			}
+		}
         TSModulo() : TSModulo(0) {}
         TSModulo& operator=(const TSModulo&) = default;
 
         ll get() const{ // no type cast operator to prevent accidentally turning into ordinary number
-            return val;
+			if (val >= 0) return val;
+			else return val + MOD;
         }
 
         //Unary operators
@@ -59,6 +68,37 @@ namespace mytl{
             return TSModulo(val * inverse(operand));
         };
     };
+
+	template<ll MOD>
+	struct optional<TSModulo<MOD> >{
+		ll val = off_value;
+		static const ll off_value = -MOD - 1;
+
+		bool has_value() const {
+			return val != off_value;
+		}
+
+		void set(const TSModulo<MOD>& other) {
+			val = other.val;
+		}
+
+		TSModulo<MOD> value() const { //unsafe, won't tell!
+			assert((has_value()));
+			return TSModulo<MOD>(val);
+		}
+
+		optional() {
+		}
+
+		optional<TSModulo<MOD> >& operator=(const TSModulo<MOD>& other) {
+			set(other);
+			return *this;
+		}
+		optional(const TSModulo<MOD>& other) {
+			set(other);
+		}
+
+	};
 
     using Mod107 = TSModulo<1000000007LL>;
 

@@ -8,15 +8,6 @@
 
 namespace std{
 
-template<typename T>
-istream& operator>>(istream& is, mytl::optional<T>& x){
-    if(!x.has_value()){
-        T x_;
-        is>>x_;
-        x = x_;
-    }
-    return is;
-}
 
 istream& operator>>(istream& is, Void& x){
     return is;
@@ -31,19 +22,6 @@ istream& operator>>(istream& is, pair<P,Q> x){
 template<typename P, typename Q>
 ostream& operator<<(ostream& os, const pair<P,Q>& x){
     os<<"("<<x.first<<", "<<x.second<<")";
-    return os;
-}
-
-template<typename T, template<typename, typename...> typename Container>
-ostream& operator<<(ostream& os, const Container<T>& x){
-    os<<"{";
-    bool first = true;
-    for(const auto& elem : x){
-        if(!first) os<<", ";
-        os<<elem;
-        first = false;
-    }
-    os<<"}";
     return os;
 }
 

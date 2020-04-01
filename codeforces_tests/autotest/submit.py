@@ -27,19 +27,29 @@ class Codeforces(webdriver.Firefox):
         self.by_css("#password").send_keys(pw)
         sleep(1)
         self.by_css("#password").send_keys(u'\ue007')
-        sleep(1)
+        sleep(3)
     
     
     @at("/problemset/problem/{}/{}")
     def submit_solution(self, number, letter, path):
+        try:
+            self.by_css(".close").click()
+        except NoSuchElementException:
+            pass
         while 1:
             try:
-                self.by_css("select[name=\"programTypeId\"] > option[value=\"42\"]").click()
+                self.by_css("select[name=\"programTypeId\"] > option[value=\"54\"]").click()
                 break
             except ElementClickInterceptedException:
                 pass
+
         self.by_css("input[name=\"sourceFile\"]").send_keys(path)
+
+
         self.by_css("input.submit[value=\"Submit\"]").click()
+
+        
+        
 
     
     @at("/problemset/problem/{}/{}")

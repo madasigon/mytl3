@@ -1,7 +1,7 @@
 import sys
 
 sys.path.insert(0, "./codeforces_tests/")
-from autotest import Codeforces, run_test, collect_dir
+from autotest import Codeforces, run_test, collect_dir, sync
 import autotest.config as config
 import autotest.config.secret as secret
 import os
@@ -22,12 +22,11 @@ def test(*args):
         import sys
         sys.exit(1)
 
-def extract_to_file(*args):
-    content = """//{}\n{}\n//{}""".format(config.STARTCOPY, collect_dir(config.LIBRARY_PATH), config.ENDCOPY)
-    write_file("extracted.cpp", content)
+def extract_to_templates(*args):
+    sync(config.LIBRARY_PATH, config.TEMPLATE_PATH, config.TEMPLATE_PATH)
 
 def before_commit(*args):
-    extract_to_file()
+    extract_to_templates()
     test()
 
 def add_module(name):
@@ -58,7 +57,7 @@ void {name}_test(){{
 
 available_operations = {
     "test": test,
-    "extract": extract_to_file,
+    "extract": extract_to_templates,
     "precommit": before_commit,
     "add_module": add_module
 }

@@ -1,6 +1,6 @@
 {
-    "python.pythonPath": "venv/bin/python",
-    "C_Cpp.errorSquiggles": "Disabled",
+    "python.pythonPath": "venv\\Scripts\\python.exe",
+    "C_Cpp.errorSquiggles": "Enabled",
     "files.exclude":{
         "**/.git": true,
         "**/.svn": true,

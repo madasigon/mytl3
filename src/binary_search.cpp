@@ -9,19 +9,18 @@
 namespace mytl{
 
 template<typename T>
-T discrete_binary_search(function<bool(T)> f, T l, T r){
+T discrete_binary_search(bool(*f)(T), T l, T r){
     if(!f(l)) return l;
     while(l < r){
-        T pivot = (l+r)/2;
+        T pivot = (l+r+1)/2;
         if(!f(pivot)) r = pivot-1;
-        else if(!f(pivot+1)) l = r = pivot;
-        else l = pivot+1;
+		else l = pivot;
     }
     return l;
 }
 
 template<typename T>
-T continuous_binary_search(function<bool(T)> f, T l, T r, need_int iterations){
+T continuous_binary_search(bool(*f)(T), T l, T r, need_int iterations){
     mytl::repeat(iterations,[&](){
         T pivot = (l+r)/2;
         if(f(pivot)) l = pivot;
