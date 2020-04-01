@@ -95,24 +95,57 @@ template<typename T>
 struct optional {
 	T *ptr = nullptr;
 
+	inline void set(const T& val) {
+		ptr = new T(val);
+	}
+
 	inline optional() {}
-	inline optional(T val) {
-		*ptr = val;
+	inline optional(const T& val) {
+		set(val);
+	}
+
+	optional& operator=(const T& val){
+		set(val);
+		return *this;
 	}
 
 	~optional() {
-		if (ptr != nullptr) delete ptr;
+		delete ptr;
 	}
-	inline T value() {
+	inline T value() const {
 		return *ptr;
 	}
-	inline bool has_value() {
+	inline bool has_value() const {
 		return ptr != nullptr;
 	}
 
-	inline void set(T val) {
-		ptr = new T;
-		*ptr = val;
+	
+
+	optional& operator=(const optional& other) {
+		if (other.has_value()) {
+			set(other.value());
+		}
+		else {
+			ptr = nullptr;
+		}
+		return *this;
+	}
+	optional(const optional& other) {
+		operator=(other);
+	}
+
+	optional(optional&& other) {
+		ptr = other.ptr;
+		other.ptr = nullptr;
+	}
+
+	optional& operator=(optional&& other) {
+		if (this != &other) {
+			delete ptr;
+			ptr = other.ptr;
+			other.ptr = nullptr;
+			return *this;
+		}
 	}
 
 };
@@ -514,11 +547,10 @@ template <typename C, typename Arg, typename R>
 function<R(Arg)> __memoize(R(*fn)(Arg)) {
 	C table;
 	return [fn, table](Arg arg) mutable -> R {
-		optional<R>& res = table[arg];
-		if (!res.has_value()) {
-			res.set(fn(arg));
+		if (!table[arg].has_value()) {
+			table[arg].set(fn(arg));
 		}
-		return res.value();
+		return table[arg].value();
 	};
 }
 
@@ -536,11 +568,10 @@ template<typename R>
 function<R(ll, ll)> quick_memoize(R(*fn)(ll, ll)) {
 	LazyVector< LazyVector<optional<R> > > table;
 	return [fn, table](ll p1, ll p2) mutable -> R {
-		optional<R>& res = table[p1][p2];
-		if (!res.has_value()) {
-			res.set(fn(p1, p2));
+		if(!table[p1][p2].has_value()){
+			table[p1][p2].set(fn(p1, p2));
 		}
-		return res.value();
+		return table[p1][p2].value();
 	};
 }
 
@@ -820,23 +851,16 @@ return _;
 namespace mytl{
 
 template<typename T, T(*f)(T,T)>
-struct Tracker {
+struct Tracker : optional<T>{
 
-	T* val = nullptr;
-
-    void update(T x){
-        if(val != nullptr){
-            *val = f(*val, x);
-        }
-        else{
-			val = new T;
-			*val = x;
-        }
+	void update(const T& x){
+		if (optional<T>::has_value()) {
+			optional<T>::set(f(optional<T>::value(), x));
+		}
+		else {
+			optional<T>::set(x);
+		}
     }
-
-	T value() {
-		return *val;
-	}
 };
 
 template<typename T>
