@@ -1,5 +1,6 @@
 
 #include "base.cpp"
+#include "container.cpp"
 
 #ifndef TRACKER_CPP
 #define TRACKER_CPP
@@ -8,23 +9,16 @@
 namespace mytl{
 
 template<typename T, T(*f)(T,T)>
-struct Tracker {
+struct Tracker : optional<T>{
 
-	T* val = nullptr;
-
-    void update(T x){
-        if(val != nullptr){
-            *val = f(*val, x);
-        }
-        else{
-			val = new T;
-			*val = x;
-        }
+	void update(const T& x){
+		if (optional<T>::has_value()) {
+			optional<T>::set(f(optional<T>::value(), x));
+		}
+		else {
+			optional<T>::set(x);
+		}
     }
-
-	T value() {
-		return *val;
-	}
 };
 
 template<typename T>
