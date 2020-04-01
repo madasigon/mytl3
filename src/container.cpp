@@ -23,6 +23,7 @@ struct optional {
 
 	inline optional() {}
 	inline optional(T val) {
+		ptr = new T;
 		*ptr = val;
 	}
 
