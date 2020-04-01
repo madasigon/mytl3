@@ -84,6 +84,7 @@ namespace mytl{
 template<typename T>
 struct LazyVector : vector<T> {
 	inline typename vector<T>::reference operator[](need_int i) {
+
 		if (i >= vector<T>::size()) vector<T>::resize(i + 1);
 		return vector<T>::operator[](i);
 	}
@@ -96,6 +97,7 @@ struct optional {
 
 	inline optional() {}
 	inline optional(T val) {
+		ptr = new T;
 		*ptr = val;
 	}
 
@@ -497,6 +499,37 @@ namespace mytl{
             return TSModulo(val * inverse(operand));
         };
     };
+
+	template<ll MOD>
+	struct optional<TSModulo<MOD> >{
+		ll val = off_value;
+		static const ll off_value = -MOD - 1;
+
+		bool has_value() const {
+			return val != off_value;
+		}
+
+		void set(const TSModulo<MOD>& other) {
+			val = other.val;
+		}
+
+		TSModulo<MOD> value() const { //unsafe, won't tell!
+			assert((has_value()));
+			return TSModulo<MOD>(val);
+		}
+
+		optional() {
+		}
+
+		optional<TSModulo<MOD> >& operator=(const TSModulo<MOD>& other) {
+			set(other);
+			return *this;
+		}
+		optional(const TSModulo<MOD>& other) {
+			set(other);
+		}
+
+	};
 
     using Mod107 = TSModulo<1000000007LL>;
 
