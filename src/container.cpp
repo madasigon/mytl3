@@ -21,25 +21,57 @@ template<typename T>
 struct optional {
 	T *ptr = nullptr;
 
+	inline void set(const T& val) {
+		ptr = new T(val);
+	}
+
 	inline optional() {}
-	inline optional(T val) {
-		ptr = new T;
-		*ptr = val;
+	inline optional(const T& val) {
+		set(val);
+	}
+
+	optional& operator=(const T& val){
+		set(val);
+		return *this;
 	}
 
 	~optional() {
-		if (ptr != nullptr) delete ptr;
+		delete ptr;
 	}
-	inline T value() {
+	inline T value() const {
 		return *ptr;
 	}
-	inline bool has_value() {
+	inline bool has_value() const {
 		return ptr != nullptr;
 	}
 
-	inline void set(T val) {
-		ptr = new T;
-		*ptr = val;
+	
+
+	optional& operator=(const optional& other) {
+		if (other.has_value()) {
+			set(other.value());
+		}
+		else {
+			ptr = nullptr;
+		}
+		return *this;
+	}
+	optional(const optional& other) {
+		operator=(other);
+	}
+
+	optional(optional&& other) {
+		ptr = other.ptr;
+		other.ptr = nullptr;
+	}
+
+	optional& operator=(optional&& other) {
+		if (this != &other) {
+			delete ptr;
+			ptr = other.ptr;
+			other.ptr = nullptr;
+			return *this;
+		}
 	}
 
 };
