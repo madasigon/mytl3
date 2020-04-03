@@ -1,5 +1,6 @@
 
 #include "base.cpp"
+#include "trie.cpp"
 
 #ifndef CORASICK_CPP
 #define CORASICK_CPP

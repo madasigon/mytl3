@@ -14,6 +14,7 @@
 #include <queue>
 #include <istream>
 #include <numeric>
+#include <string>
 #endif
 
 
@@ -100,7 +101,6 @@ struct optional {
 	}
 
 	inline optional() {}
-
 	inline optional(const T& val) {
 		set(val);
 	}
@@ -150,6 +150,192 @@ struct optional {
 	}
 
 };
+
+}
+namespace mytl{
+
+template<typename Op_>
+struct Trie {
+	struct Node;
+	using Op = Op_;
+	using T = typename Op::T;
+	using Info = typename Op::template Info<Node>;
+	using Next_Container = typename Op::template Next<Node*>;
+
+	struct Node : Info {
+		Node *parent;
+		T last;
+		Next_Container next;
+		need_int leaf = 0;
+		Node *jump(T c) {
+			if (next.contains(c)) {
+				return next[c];
+			}
+			else return nullptr;
+		}
+
+		Node(Node *parent, T last) : parent{ parent }, last{ last } {}
+	};
+
+	Node *root = new Node(nullptr, T());
+
+	template<typename C>
+	Node *insert_word(C word, need_int leaf_flag = 1) {
+		Node *curr = root;
+		for (T c : word) {
+			if (!curr->next.contains(c)) {
+				curr->next[c] = new Node(curr, c);
+			}
+			curr = curr->next[c];
+		}
+		curr->leaf = leaf_flag;
+		return curr;
+	}
+
+	template<typename C>
+	Node* jump_path(Node* node, C path) {
+		for (T c : path) {
+			if (node == nullptr) return node;
+			node = node->jump(c);
+		}
+		return node;
+	}
+
+	template<typename C>
+	bool contains_word(C word) {
+		Node *res = jump_path(root, word);
+		return res && res->leaf;
+	}
+
+
+};
+
+
+template<need_int ALPHABETSIZE>
+struct Basic_Char_Trie_Op {
+	using T = char;
+
+	template<typename Node>
+	struct Info {
+	};
+
+	template<typename N>
+	struct Next {
+		N next[ALPHABETSIZE] = {};
+
+		N& operator[](char i) {
+			return next[i - 'a'];
+		}
+
+		bool contains(char i) {
+			return operator[](i) != nullptr;
+		}
+
+	};
+
+};
+
+
+template<need_int ALPHABET_SIZE>
+using CharTrie = Trie<Basic_Char_Trie_Op<ALPHABET_SIZE> >;
+
+
+}
+namespace mytl{
+
+template<typename BaseTrie>
+struct Corasick {
+
+	struct Corasick_Op : BaseTrie::Op {
+		using T = typename BaseTrie::Op::T;
+
+		template<typename N>
+		struct Info {
+			N* next_leaf_d = nullptr;
+			N* link_d = nullptr;
+			typename BaseTrie::Op::template Next<N*> go_d;
+		};
+	};
+
+	using MyTrie = Trie<Corasick_Op>;
+	using Node = typename MyTrie::Node;
+	using T = typename Corasick_Op::T;
+
+	MyTrie trie;
+
+	static Node* go(Node *node, T c) {
+		if (!node->go_d.contains(c)) {
+			if (node->next.contains(c)) {
+				node->go_d[c] = node->next[c];
+			}
+			else if (node->parent == nullptr) {
+				node->go_d[c] = node;
+			}
+			else {
+				node->go_d[c] = go(link(node), c);
+			}
+		}
+		return node->go_d[c];
+	};
+
+	static Node* link(Node *node) {
+		if (node->link_d == nullptr) {
+			if (node->parent == nullptr) {
+				node->link_d = node;
+			}
+			else if (node->parent->parent == nullptr) {
+				node->link_d = node->parent;
+			}
+			else {
+				node->link_d = go(link(node->parent), node->last);
+			}
+		}
+		return node->link_d;
+	}
+
+	static Node* next_leaf(Node *node) {
+		if (node->next_leaf_d == nullptr) {
+			if (node->parent == nullptr) {
+				node->next_leaf_d = node;
+			}
+			else {
+				if (link(node)->leaf) {
+					node->next_leaf_d = link(node);
+				}
+				else {
+					node->next_leaf_d = next_leaf(link(node));
+					if (!node->next_leaf_d->leaf) {
+						node->next_leaf_d = node;
+					}
+				}
+			}
+		}
+		return node->next_leaf_d;
+	}
+
+	static vector<need_int> current_matches(Node* node) {
+		vector<need_int> res;
+		if (node->leaf) res.push_back(node->leaf);
+		while (next_leaf(node) != node) {
+			node = next_leaf(node);
+			res.push_back(node->leaf);
+		}
+		return res;
+	}
+
+	Node *root = trie.root;
+
+
+	template<typename C>
+	Corasick(C dictionary) {
+		need_int i = 0;
+		for (auto word : dictionary) {
+			trie.insert_word(word, ++i);
+		}
+	}
+
+};
+
 
 }
 namespace mytl{
@@ -315,19 +501,6 @@ istream& operator>>(istream& is, pair<P,Q> x){
 template<typename P, typename Q>
 ostream& operator<<(ostream& os, const pair<P,Q>& x){
     os<<"("<<x.first<<", "<<x.second<<")";
-    return os;
-}
-
-template<typename T, template<typename, typename...> typename Container>
-ostream& operator<<(ostream& os, const Container<T>& x){
-    os<<"{";
-    bool first = true;
-    for(const auto& elem : x){
-        if(!first) os<<", ";
-        os<<elem;
-        first = false;
-    }
-    os<<"}";
     return os;
 }
 
