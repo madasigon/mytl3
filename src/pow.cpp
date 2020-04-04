@@ -16,6 +16,21 @@ T power(T base, ll exponential, T unit=1){
     }
     return res;
 }
+
+template<typename T>
+struct Pows2 : vector<T>{
+    Pows2(){
+        this->resize(300);
+        this->operator[](0) = 1;
+        for(ll i=1; i < this->size(); i++){
+            this->operator[](i) = this->operator[](i) * 2;
+        }
+    }
+};
+
+template<typename T>
+Pows2<T> powers2;
+
 }
 //ENDCOPY
 
