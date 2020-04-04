@@ -567,80 +567,73 @@ T power(T base, ll exponential, T unit=1){
 }
 }
 namespace mytl{
-    struct Modulo{
-        static ll global_mod;
-    private:
-        ll val;
-    public:
-        const ll MOD;
-        Modulo(ll initMOD, ll initVal) : MOD{initMOD}, val{initVal} {
-            val %= MOD;
-            if(val < 0) val += MOD;
-        };
-        Modulo() : Modulo(global_mod, 0) {};
 
-        static Modulo inverse(Modulo x){// asserting MOD is prime
-            return power(x, x.MOD-2, x.unit());
-        };
-        Modulo unit() const{
-            return Modulo(MOD, 1);
-        }
-        Modulo& operator=(const Modulo& operand){
-            val = operand.val;
-            return *this;
-        };
+struct Modulo {
 
-        ll get() const{ // no type cast operator to prevent accidentally turning into ordinary number
-            return val;
-        }
+	static ll CURRENT_MOD;
 
-        //Unary operators
-        Modulo operator-() const{
-            return Modulo(MOD, -val);
-        };
-        Modulo operator+() const{
-            return Modulo(MOD, +val);
-        };
+private:
+	ll val;
 
-        //Binary operators on ordinary numbers
-        Modulo operator-(const ll& operand) const{
-            return Modulo(MOD, val-operand);
-        };
-        Modulo operator+(const ll& operand) const{
-            return Modulo(MOD, val+operand);
-        };
-        Modulo operator*(const ll& operand) const{
-            return Modulo(MOD, val*operand);
-        };
-        Modulo operator/(const ll& operand) const{ //asserting MOD is prime
-            return Modulo(MOD, val * inverse(Modulo(MOD, operand)).get());
-        };
+public:
+	static Modulo inverse(Modulo x) {// assuming MOD is prime and x != 0
+		return power(x, CURRENT_MOD - 2);
+	};
+	Modulo(ll initVal) {
+		assert(CURRENT_MOD != 0);
+		if (-CURRENT_MOD < initVal && initVal < CURRENT_MOD) {
+			val = initVal;
+		}
+		else {
+			val = initVal % CURRENT_MOD;
+		}
+	}
+	Modulo() : Modulo(0) {}
+	Modulo& operator=(const Modulo&) = default;
 
-        //Binary operators on Modulo
-        Modulo operator-(const Modulo& operand) const{
-            return Modulo(MOD, val-operand.get());
-        };
-        Modulo operator+(const Modulo& operand) const{
-            return Modulo(MOD, val+operand.get());
-        };
-        Modulo operator*(const Modulo& operand) const{
-            return Modulo(MOD, val*operand.get());
-        };
-        Modulo operator/(const Modulo& operand) const{ //asserting MOD is prime
-            return Modulo(MOD, val * inverse(operand).get());
-        };
+	ll get() const { // no type cast operator to prevent accidentally turning into ordinary number
+		if (val >= 0) return val;
+		else return val + CURRENT_MOD;
+	}
 
-    };
+	//Unary operators
+	Modulo operator-() const {
+		return Modulo(-val);
+	};
+	Modulo operator+() const {
+		return Modulo(+val);
+	};
 
-    ll Modulo::global_mod = 1000000007LL;
+	//Binary operators on ordinary numbers
+	Modulo operator-(const ll& operand) const {
+		return Modulo(val - operand);
+	};
+	Modulo operator+(const ll& operand) const {
+		return Modulo(val + operand);
+	};
+	Modulo operator*(const ll& operand) const {
+		return Modulo(val*operand);
+	};
+	Modulo operator/(const ll& operand) const { //asserting MOD is prime
+		return Modulo(inverse(operand) * val);
+	};
 
-    Modulo mod107(ll x){
-        return Modulo(1000000007LL, x);
-    }
-    ostream& operator<<(ostream& os, Modulo x){
-        return os<<"("<<x.get()<<"%"<<x.MOD<<")";
-    }
+	//Binary operators on Modulo
+	Modulo operator-(const Modulo& operand) const {
+		return Modulo(val - operand.get());
+	};
+	Modulo operator+(const Modulo& operand) const {
+		return Modulo(val + operand.get());
+	};
+	Modulo operator*(const Modulo& operand) const {
+		return Modulo(val*operand.get());
+	};
+	Modulo operator/(const Modulo& operand) const { //asserting MOD is prime
+		return Modulo(inverse(operand) * val);
+	};
+};
 
+ll Modulo::CURRENT_MOD = 0;
 
 }
 namespace mytl{
@@ -719,8 +712,12 @@ namespace mytl{
 			val = other.val;
 		}
 
-		TSModulo<MOD> value() const { //unsafe, won't tell!
+		TSModulo<MOD> value() const {
 			assert((has_value()));
+			if (!has_value()) {
+                TSModulo<MOD> dummy = nullptr;
+				return *dummy;
+			}
 			return TSModulo<MOD>(val);
 		}
 
