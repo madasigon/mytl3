@@ -736,12 +736,6 @@ namespace mytl{
 
     using Mod107 = TSModulo<1000000007LL>;
 
-    template<ll MOD>
-    ostream& operator<<(ostream& os, TSModulo<MOD> x){
-        return os<<"("<<x.get()<<"%"<<MOD<<")";
-    }
-
-
 }
 namespace mytl {
 
