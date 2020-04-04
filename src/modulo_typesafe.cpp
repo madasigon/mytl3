@@ -85,7 +85,8 @@ namespace mytl{
 		TSModulo<MOD> value() const {
 			assert((has_value()));
 			if (!has_value()) {
-				return *nullptr;
+                TSModulo<MOD> dummy = nullptr;
+				return *dummy;
 			}
 			return TSModulo<MOD>(val);
 		}
