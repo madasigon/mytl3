@@ -82,8 +82,11 @@ namespace mytl{
 			val = other.val;
 		}
 
-		TSModulo<MOD> value() const { //unsafe, won't tell!
+		TSModulo<MOD> value() const {
 			assert((has_value()));
+			if (!has_value()) {
+				return *nullptr;
+			}
 			return TSModulo<MOD>(val);
 		}
 
