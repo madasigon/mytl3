@@ -25,12 +25,12 @@ function<R(Arg)> memoize(R(*fn)(Arg)) {
 
 template<typename R>
 function<R (ll) > quick_memoize(R(*fn)(ll)) {
-	return __memoize<LazyVector<optional<R> >, ll, R>(fn);
+	return __memoize<TwoWayLazyVector<optional<R> >, ll, R>(fn);
 }
 
 template<typename R>
 function<R(ll, ll)> quick_memoize(R(*fn)(ll, ll)) {
-	LazyVector< LazyVector<optional<R> > > table;
+	TwoWayLazyVector< TwoWayLazyVector<optional<R> > > table;
 	return [fn, table](ll p1, ll p2) mutable -> R {
 		if(!table[p1][p2].has_value()){
 			table[p1][p2].set(fn(p1, p2));
