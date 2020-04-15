@@ -8,9 +8,9 @@
 //STARTCOPY
 namespace mytl{
 
-template<typename T>
-T discrete_binary_search(bool(*f)(T), T l, T r){
-    if(!f(l)) return l;
+template<typename T, typename Pred>
+T discrete_binary_search(T l, T r, Pred f){
+	assert(f(l));
     while(l < r){
         T pivot = (l+r+1)/2;
         if(!f(pivot)) r = pivot-1;
@@ -19,8 +19,8 @@ T discrete_binary_search(bool(*f)(T), T l, T r){
     return l;
 }
 
-template<typename T>
-T continuous_binary_search(bool(*f)(T), T l, T r, need_int iterations){
+template<typename T, typename Pred>
+T continuous_binary_search(T l, T r, need_int iterations, Pred f){
     mytl::repeat(iterations,[&](){
         T pivot = (l+r)/2;
         if(f(pivot)) l = pivot;
