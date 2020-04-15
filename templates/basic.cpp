@@ -565,6 +565,21 @@ T power(T base, ll exponential, T unit=1){
     }
     return res;
 }
+
+template<typename T>
+struct Pows2 : vector<T>{
+    Pows2(){
+        this->resize(300);
+        this->operator[](0) = 1;
+        for(ll i=1; i < this->size(); i++){
+            this->operator[](i) = this->operator[](i) * 2;
+        }
+    }
+};
+
+template<typename T>
+Pows2<T> powers2;
+
 }
 namespace mytl{
 
@@ -639,6 +654,7 @@ ll Modulo::CURRENT_MOD = 0;
 namespace mytl{
     template<ll MOD>
     struct TSModulo{
+		friend class optional<TSModulo<MOD> >;
     private:
         ll val;
 
@@ -715,7 +731,7 @@ namespace mytl{
 		TSModulo<MOD> value() const {
 			assert((has_value()));
 			if (!has_value()) {
-                TSModulo<MOD> dummy = nullptr;
+                TSModulo<MOD>* dummy = nullptr;
 				return *dummy;
 			}
 			return TSModulo<MOD>(val);

@@ -6,7 +6,7 @@ using namespace std;
 
 
 void modulo_typesafe_test(){
-    mytl::Mod107 x = 5;
-
-	mytl::optional<mytl::Mod107> v;
+	mytl::optional<mytl::TSModulo<6> > lala;
+	lala.set(3);
+	auto x = lala.value();
 }

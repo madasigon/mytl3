@@ -9,6 +9,7 @@
 namespace mytl{
     template<ll MOD>
     struct TSModulo{
+		friend class optional<TSModulo<MOD> >;
     private:
         ll val;
 
@@ -85,7 +86,7 @@ namespace mytl{
 		TSModulo<MOD> value() const {
 			assert((has_value()));
 			if (!has_value()) {
-                TSModulo<MOD> dummy = nullptr;
+                TSModulo<MOD>* dummy = nullptr;
 				return *dummy;
 			}
 			return TSModulo<MOD>(val);
