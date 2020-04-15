@@ -16,6 +16,19 @@ struct LazyVector : vector<T> {
 	}
 };
 
+template<typename T>
+struct TwoWayLazyVector {
+	LazyVector<T> negative, positive;
+	inline typename vector<T>::reference operator[](need_int i) {
+		if(i >= 0){
+			return positive[i];
+		}
+		else {
+			return negative[-i];
+		}
+	}
+};
+
 
 template<typename T>
 struct optional {
