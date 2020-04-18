@@ -96,7 +96,11 @@ class Codeforces(webdriver.Firefox):
         return list(zip(paths, res))
 
     def __init__(self, un, pw):
-        super(Codeforces, self).__init__()
+        from selenium.webdriver.firefox.options import Options
+
+        options = Options()
+        options.headless = True
+        super(Codeforces, self).__init__(options=options)
         self.login(un, pw)
 
 
