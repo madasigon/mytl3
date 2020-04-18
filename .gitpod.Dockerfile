@@ -10,7 +10,7 @@ USER gitpod
 # More information: https://www.gitpod.io/docs/config-docker/
 
  RUN sudo apt update \
-  && sudo apt install firefox
+  && sudo apt -y install firefox
 
  RUN python3 -m venv venv \
   && source venv/bin/activate \
