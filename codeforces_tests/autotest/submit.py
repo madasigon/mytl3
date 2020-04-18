@@ -99,7 +99,7 @@ class Codeforces(webdriver.Firefox):
         from selenium.webdriver.firefox.options import Options
 
         options = Options()
-        options.headless = True
+        options.add_argument("--headless")
         super(Codeforces, self).__init__(options=options)
         self.login(un, pw)
 
