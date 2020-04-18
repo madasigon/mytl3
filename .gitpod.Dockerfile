@@ -17,7 +17,3 @@ USER gitpod
   && mv geckodriver bin/geckodriver \
   && export PATH="/home/gitpod/bin:$PATH"
 
-  
- RUN python3 -m venv venv \
-  && . venv/bin/activate \
-  && pip install requirements.txt
