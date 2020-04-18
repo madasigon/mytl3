@@ -13,9 +13,9 @@ USER gitpod
   && sudo apt -y install firefox
  RUN wget https://github.com/mozilla/geckodriver/releases/download/v0.26.0/geckodriver-v0.26.0-linux64.tar.gz \
   && tar -zxvf geckodriver-v0.26.0-linux64.tar.gz \
-  && mkdir /workspace/bin \
-  && mv geckodriver /workspace/bin/geckodriver \
-  && export PATH="/workspace/bin:$PATH"
+  && mkdir bin \
+  && mv geckodriver bin/geckodriver \
+  && export PATH="/home/gitpod/bin:$PATH"
 
   
  RUN python3 -m venv venv \
