@@ -1,5 +1,5 @@
 {
-    "python.pythonPath": "venv\\Scripts\\python.exe",
+    "python.pythonPath": "/home/gitpod/.pyenv/shims/python3",
     "C_Cpp.errorSquiggles": "Enabled",
     "files.exclude":{
         "**/.git": true,
