@@ -11,7 +11,7 @@
                 "-g",
                 "unit_test/main.cpp",
                 "-o",
-                "unit_test/a.exe",
+                "a.out",
                 "-std=c++14",
                 "-Isrc",
                 "-Iunit_test/files"
@@ -19,7 +19,8 @@
             "group": {
                 "kind": "build",
                 "isDefault": true
-            }
+            },
+            "problemMatcher": "$gcc"
         }
     ]
 }
