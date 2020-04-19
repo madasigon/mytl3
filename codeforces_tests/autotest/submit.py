@@ -1,8 +1,10 @@
 from selenium import webdriver
+from selenium.webdriver.firefox.options import Options
 from time import sleep
 from selenium.common.exceptions import ElementClickInterceptedException, NoSuchElementException
 from functools import wraps
 from .util import *
+import getpass
 
 @curried(2)
 def at(s, f):
@@ -96,10 +98,8 @@ class Codeforces(webdriver.Firefox):
         return list(zip(paths, res))
 
     def __init__(self, un, pw):
-        from selenium.webdriver.firefox.options import Options
-
         options = Options()
-        options.add_argument("--headless")
+        if getpass.getuser() == "gitpod": options.add_argument("--headless")
         super(Codeforces, self).__init__(options=options)
         self.login(un, pw)
 
