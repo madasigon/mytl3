@@ -498,73 +498,46 @@ struct Resetter {
 };
 }
 
-namespace std{
-
-
-istream& operator>>(istream& is, Void& x){
-    return is;
-}
-
-template<typename P, typename Q>
-istream& operator>>(istream& is, pair<P,Q> x){
-    return is>>x.first>>x.second;
-}
-
-
-template<typename P, typename Q>
-ostream& operator<<(ostream& os, const pair<P,Q>& x){
-    os<<"("<<x.first<<", "<<x.second<<")";
-    return os;
-}
-
-}
-
 namespace mytl{
 
-template<typename T, typename P=T>
+template<typename T>
 T read(istream& is=cin){
-    P a;
+    T a;
     is>>a;
-    return T(a);
+    return a;
 }
 
-template<typename T, typename P, typename Q>
-T read(istream& is=cin){
-    P a;
-    Q b;
-    is>>a>>b;
-    return T(a,b);
-}
-
-template<typename T, typename P, typename Q, typename R>
-T read(istream& is=cin){
-    P a;
-    Q b;
-    R c;
-    is>>a>>b>>c;
-    return T(a,b,c);
-}
-
-
-template<typename T, typename... Q, typename Container=vector<T>>
+template<typename T, typename Container=vector<T>>
 vector<T> readValues(ll n, istream& is=cin){
     vector<T> res;
     repeat(n, [&res](){
-        res.push_back(read<T,Q...>());
+        res.push_back(read<T>());
     });
     return Container(res.begin(), res.end());
 }
-
-}
-
-
-namespace mytl{
 
 
 template<typename T>
 void print(const T& x, ostream& os=cout){
     os<<x;
 }
+
+template<typename Container>
+void printContainer(const Container& cont, ostream& os=cout){
+    os<<"{";
+    bool first = true;
+    for(const auto& elem : cont){
+        if(!first){
+            os<<", ";
+        }
+        else{
+            first = false;
+        }
+        print(elem, os);
+    }
+    os<<"}";
+}
+
 
 }
 namespace mytl{
@@ -955,7 +928,7 @@ public:
 		t.resize(n * 2);
 		d.resize(n, Op::identity());
 		for (ll i = 0; i < n; i++) {
-			t[i + n] = getter(i);
+			t[i + n] = getter(i+range.first);
 		}
 		for (ll i = n - 1; i > 0; i--) t[i] = t[i * 2] + t[i * 2 + 1];
 		h = 0;
@@ -968,10 +941,21 @@ public:
 	}
 
 	typename Op::T query(pair<ll, ll> query_range) {
+		assert(range.first <= query_range.first && query_range.second <= range.second);
 		return __query(query_range.first - range.first, query_range.second - range.first + 1);
 	}
+	
+	typename Op::T query_single(ll query_point) {
+		return query({ query_point, query_point });
+	}
+
 	void modify(pair<ll, ll> modify_range, typename Op::Change value) {
+		assert(range.first <= modify_range.first && modify_range.second <= range.second);
 		__modify(modify_range.first - range.first, modify_range.second - range.first + 1, value);
+	}
+
+	void modify_single(ll modify_point, typename Op::Change value) {
+		return modify({ modify_point, modify_point }, value);
 	}
 
 };
