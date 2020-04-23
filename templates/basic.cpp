@@ -10,7 +10,7 @@
 #include <unordered_set>
 #include <map>
 #include <unordered_map>
-#include <debug_assert.h>
+#include <assert.h>
 #include <queue>
 #include <istream>
 #include <numeric>
@@ -31,6 +31,12 @@ template<typename T>
 using PairOf = pair<T,T>;
 
 using Void = tuple<>;
+
+#ifdef __OPTIMIZE__
+#define debug_assert(expression) 
+#else
+#define debug_assert(expression) assert(expression)
+#endif
 
 namespace mytl{
 
@@ -61,7 +67,7 @@ namespace mytl{
 
 template<typename T, typename Pred>
 T discrete_binary_search(T l, T r, Pred f){
-	debug_debug_assert(f(l));
+	debug_assert(f(l));
     while(l < r){
         T pivot = (l+r+1)/2;
         if(!f(pivot)) r = pivot-1;
@@ -581,7 +587,7 @@ public:
 		return power(x, CURRENT_MOD - 2);
 	};
 	Modulo(ll initVal) {
-		debug_debug_assert(CURRENT_MOD != 0);
+		debug_assert(CURRENT_MOD != 0);
 		if (-CURRENT_MOD < initVal && initVal < CURRENT_MOD) {
 			val = initVal;
 		}
