@@ -51,7 +51,7 @@ namespace mytl{
         TSModulo operator*(const ll& operand) const{
             return TSModulo(val*operand);
         };
-        TSModulo operator/(const ll& operand) const{ //asserting MOD is prime
+        TSModulo operator/(const ll& operand) const{ //debug_asserting MOD is prime
             return TSModulo(inverse(operand) * val);
         };
 
@@ -65,7 +65,7 @@ namespace mytl{
         TSModulo operator*(const TSModulo& operand) const{
             return TSModulo(val*operand.get());
         };
-        TSModulo operator/(const TSModulo& operand) const{ //asserting MOD is prime
+        TSModulo operator/(const TSModulo& operand) const{ //debug_asserting MOD is prime
             return TSModulo(val * inverse(operand));
         };
     };
@@ -84,7 +84,7 @@ namespace mytl{
 		}
 
 		TSModulo<MOD> value() const {
-			assert((has_value()));
+			debug_assert((has_value()));
 			if (!has_value()) {
                 TSModulo<MOD>* dummy = nullptr;
 				return *dummy;

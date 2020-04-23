@@ -9,18 +9,18 @@ void instant_zero_test(){
     mytl::Resetter<ll>::Variable x = 5;
 
     x = 7;
-    assert(x.get() == 7);
+    debug_assert(x.get() == 7);
 
     mytl::global_resetter<ll>->reset(0);
 
-    assert(x.get() == 0);
+    debug_assert(x.get() == 0);
 
     m[5] = "apple";
-    assert(m[5].get() == "apple");
+    debug_assert(m[5].get() == "apple");
     r.activate();
     r.reset("resetted to this");
-    assert(m[5].get() == "resetted to this");
-    assert(m[6].get() == "resetted to this");
+    debug_assert(m[5].get() == "resetted to this");
+    debug_assert(m[6].get() == "resetted to this");
 
 
 

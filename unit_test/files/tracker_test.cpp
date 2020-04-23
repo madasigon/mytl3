@@ -9,6 +9,6 @@ void tracker_test(){
     t.update(2);
     t.update(3);
     t.update(1);
-    assert(t.value() == 1);
+    debug_assert(t.value() == 1);
 
 }

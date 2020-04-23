@@ -10,7 +10,7 @@
 #include <unordered_set>
 #include <map>
 #include <unordered_map>
-#include <assert.h>
+#include <debug_assert.h>
 #include <queue>
 #include <istream>
 #include <numeric>
@@ -61,7 +61,7 @@ namespace mytl{
 
 template<typename T, typename Pred>
 T discrete_binary_search(T l, T r, Pred f){
-	assert(f(l));
+	debug_debug_assert(f(l));
     while(l < r){
         T pivot = (l+r+1)/2;
         if(!f(pivot)) r = pivot-1;
@@ -581,7 +581,7 @@ public:
 		return power(x, CURRENT_MOD - 2);
 	};
 	Modulo(ll initVal) {
-		assert(CURRENT_MOD != 0);
+		debug_debug_assert(CURRENT_MOD != 0);
 		if (-CURRENT_MOD < initVal && initVal < CURRENT_MOD) {
 			val = initVal;
 		}
@@ -615,7 +615,7 @@ public:
 	Modulo operator*(const ll& operand) const {
 		return Modulo(val*operand);
 	};
-	Modulo operator/(const ll& operand) const { //asserting MOD is prime
+	Modulo operator/(const ll& operand) const { //debug_asserting MOD is prime
 		return Modulo(inverse(operand) * val);
 	};
 
@@ -629,7 +629,7 @@ public:
 	Modulo operator*(const Modulo& operand) const {
 		return Modulo(val*operand.get());
 	};
-	Modulo operator/(const Modulo& operand) const { //asserting MOD is prime
+	Modulo operator/(const Modulo& operand) const { //debug_asserting MOD is prime
 		return Modulo(inverse(operand) * val);
 	};
 };
@@ -682,7 +682,7 @@ namespace mytl{
         TSModulo operator*(const ll& operand) const{
             return TSModulo(val*operand);
         };
-        TSModulo operator/(const ll& operand) const{ //asserting MOD is prime
+        TSModulo operator/(const ll& operand) const{ //debug_asserting MOD is prime
             return TSModulo(inverse(operand) * val);
         };
 
@@ -696,7 +696,7 @@ namespace mytl{
         TSModulo operator*(const TSModulo& operand) const{
             return TSModulo(val*operand.get());
         };
-        TSModulo operator/(const TSModulo& operand) const{ //asserting MOD is prime
+        TSModulo operator/(const TSModulo& operand) const{ //debug_asserting MOD is prime
             return TSModulo(val * inverse(operand));
         };
     };
@@ -715,7 +715,7 @@ namespace mytl{
 		}
 
 		TSModulo<MOD> value() const {
-			assert((has_value()));
+			debug_assert((has_value()));
 			if (!has_value()) {
                 TSModulo<MOD>* dummy = nullptr;
 				return *dummy;
@@ -941,7 +941,7 @@ public:
 	}
 
 	typename Op::T query(pair<ll, ll> query_range) {
-		assert(range.first <= query_range.first && query_range.second <= range.second);
+		debug_assert(range.first <= query_range.first && query_range.second <= range.second);
 		return __query(query_range.first - range.first, query_range.second - range.first + 1);
 	}
 	
@@ -950,7 +950,7 @@ public:
 	}
 
 	void modify(pair<ll, ll> modify_range, typename Op::Change value) {
-		assert(range.first <= modify_range.first && modify_range.second <= range.second);
+		debug_assert(range.first <= modify_range.first && modify_range.second <= range.second);
 		__modify(modify_range.first - range.first, modify_range.second - range.first + 1, value);
 	}
 

@@ -20,7 +20,7 @@ public:
 		return power(x, CURRENT_MOD - 2);
 	};
 	Modulo(ll initVal) {
-		assert(CURRENT_MOD != 0);
+		debug_assert(CURRENT_MOD != 0);
 		if (-CURRENT_MOD < initVal && initVal < CURRENT_MOD) {
 			val = initVal;
 		}
@@ -54,7 +54,7 @@ public:
 	Modulo operator*(const ll& operand) const {
 		return Modulo(val*operand);
 	};
-	Modulo operator/(const ll& operand) const { //asserting MOD is prime
+	Modulo operator/(const ll& operand) const { //debug_asserting MOD is prime
 		return Modulo(inverse(operand) * val);
 	};
 
@@ -68,7 +68,7 @@ public:
 	Modulo operator*(const Modulo& operand) const {
 		return Modulo(val*operand.get());
 	};
-	Modulo operator/(const Modulo& operand) const { //asserting MOD is prime
+	Modulo operator/(const Modulo& operand) const { //debug_asserting MOD is prime
 		return Modulo(inverse(operand) * val);
 	};
 };

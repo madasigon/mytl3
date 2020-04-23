@@ -10,7 +10,7 @@ namespace mytl{
 
 template<typename T, typename Pred>
 T discrete_binary_search(T l, T r, Pred f){
-	assert(f(l));
+	debug_assert(f(l));
     while(l < r){
         T pivot = (l+r+1)/2;
         if(!f(pivot)) r = pivot-1;

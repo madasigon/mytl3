@@ -170,7 +170,7 @@ public:
 	}
 
 	typename Op::T query(pair<ll, ll> query_range) {
-		assert(range.first <= query_range.first && query_range.second <= range.second);
+		debug_assert(range.first <= query_range.first && query_range.second <= range.second);
 		return __query(query_range.first - range.first, query_range.second - range.first + 1);
 	}
 	
@@ -179,7 +179,7 @@ public:
 	}
 
 	void modify(pair<ll, ll> modify_range, typename Op::Change value) {
-		assert(range.first <= modify_range.first && modify_range.second <= range.second);
+		debug_assert(range.first <= modify_range.first && modify_range.second <= range.second);
 		__modify(modify_range.first - range.first, modify_range.second - range.first + 1, value);
 	}
 

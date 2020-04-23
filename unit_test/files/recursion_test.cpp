@@ -50,9 +50,9 @@ void korte() {
 }
 
 void recursion_test(){
-    assert(slow(30) == natural(30));
-    assert(slow(30) == ordered(30));
-    assert(slow(30) == unordered(30));
-	assert(15 == grid(15, 16));
+    debug_assert(slow(30) == natural(30));
+    debug_assert(slow(30) == ordered(30));
+    debug_assert(slow(30) == unordered(30));
+	debug_assert(15 == grid(15, 16));
 
 }

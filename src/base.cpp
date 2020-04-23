@@ -36,6 +36,12 @@ using PairOf = pair<T,T>;
 
 using Void = tuple<>;
 
+#ifdef __OPTIMIZE__
+#define debug_assert(expression) 
+#else
+#define debug_assert(expression) assert(expression)
+#endif
+
 //ENDCOPY
 
 

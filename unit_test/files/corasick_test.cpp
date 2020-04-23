@@ -37,7 +37,7 @@ void corasick_test() {
 		}
 	}
 
-	assert((matches == vector<ll>{2, 1, 1, 1, 1, 0}));
+	debug_assert((matches == vector<ll>{2, 1, 1, 1, 1, 0}));
 	
 
 }
