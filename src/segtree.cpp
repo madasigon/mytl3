@@ -157,7 +157,7 @@ public:
 		t.resize(n * 2);
 		d.resize(n, Op::identity());
 		for (ll i = 0; i < n; i++) {
-			t[i + n] = getter(i);
+			t[i + n] = getter(i+range.first);
 		}
 		for (ll i = n - 1; i > 0; i--) t[i] = t[i * 2] + t[i * 2 + 1];
 		h = 0;
@@ -172,6 +172,7 @@ public:
 	typename Op::T query(pair<ll, ll> query_range) {
 		return __query(query_range.first - range.first, query_range.second - range.first + 1);
 	}
+	
 	void modify(pair<ll, ll> modify_range, typename Op::Change value) {
 		__modify(modify_range.first - range.first, modify_range.second - range.first + 1, value);
 	}
