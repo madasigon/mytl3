@@ -173,8 +173,16 @@ public:
 		return __query(query_range.first - range.first, query_range.second - range.first + 1);
 	}
 	
+	typename Op::T query_single(ll query_point) {
+		return query({ query_point, query_point });
+	}
+
 	void modify(pair<ll, ll> modify_range, typename Op::Change value) {
 		__modify(modify_range.first - range.first, modify_range.second - range.first + 1, value);
+	}
+
+	void modify_single(ll modify_point, typename Op::Change value) {
+		return modify({ modify_point, modify_point }, value);
 	}
 
 };
