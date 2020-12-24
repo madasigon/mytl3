@@ -1,7 +1,5 @@
 {
-    "python.pythonPath": "/home/gitpod/.pyenv/shims/python3",
-    //"C_Cpp.errorSquiggles": "Enabled",
-    "files.exclude":{
+    "files.exclude": {
         "**/.git": true,
         "**/.svn": true,
         "**/.hg": true,
@@ -44,6 +42,7 @@
         "utility": "cpp",
         "valarray": "cpp",
         "iostream": "cpp",
-        "optional": "cpp"
+        "optional": "cpp",
+        "string": "cpp"
     }
 }

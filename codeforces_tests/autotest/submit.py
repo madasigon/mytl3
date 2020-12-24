@@ -59,7 +59,8 @@ class Codeforces(webdriver.Firefox):
         el = self.find_element_by_xpath("//*[contains(text(), \"Last submissions\")]/..//tbody")
         return " ".join(el.text.split("\n")[1].split()[3:])
     def waiting(self):
-        try:
+        self.refresh()
+        try:   
             self.by_css(".verdict-waiting")
             return True
         except NoSuchElementException:
