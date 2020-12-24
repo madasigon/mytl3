@@ -7,7 +7,7 @@
                 "${workspaceFolder}/src"
             ],
             "defines": [],
-            "compilerPath": "C:\\Program Files (x86)\\CodeBlocks\\MinGW\bin\\g++",
+            "compilerPath": "C:\\MinGW\bin\\g++",
             "cStandard": "c11",
             "cppStandard": "c++14",
             "intelliSenseMode": "gcc-x64"
