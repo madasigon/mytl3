@@ -6,18 +6,8 @@ using namespace std;
 
 
 
-using Cora = mytl::Corasick<mytl::CharTrie<26> >;
+using Cora = mytl::Corasick<char>;
 
-string path(Cora::Node *n) {
-	string res = "";
-	while (n != nullptr) {
-		res.push_back(n->last);
-		n = n->parent;
-	}
-	res.pop_back();
-	reverse(res.begin(), res.end());
-	return res;
-}
 
 
 
@@ -29,11 +19,11 @@ void corasick_test() {
 	string bigword = "abcdefghia";
 
 	vector<ll> matches(dict.size());
-	auto n = trie.trie.root;
+	auto n = trie.root;
 	for (ll i = 0; i < bigword.size(); i++) {
-		n = Cora::go(n, bigword[i]);
-		for (auto elem : Cora::current_matches(n)) {
-			matches[elem-1]++;
+		n = trie.go(n, bigword[i]);
+		for (auto elem : trie.hits(n)) {
+			matches[elem]++;
 		}
 	}
 

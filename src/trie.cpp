@@ -7,91 +7,43 @@
 //STARTCOPY
 namespace mytl{
 
-template<typename Op_>
-struct Trie {
-	struct Node;
-	using Op = Op_;
-	using T = typename Op::T;
-	using Info = typename Op::template Info<Node>;
-	using Next_Container = typename Op::template Next<Node*>;
+template<typename T, typename C = map<T, void*>, typename Data = tuple<>>
+struct TrieNode {
 
-	struct Node : Info {
-		Node *parent;
-		T last;
-		Next_Container next;
-		need_int leaf = 0;
-		Node *jump(T c) {
-			if (next.contains(c)) {
-				return next[c];
-			}
-			else return nullptr;
-		}
-
-		Node(Node *parent, T last) : parent{ parent }, last{ last } {}
-	};
-
-	Node *root = new Node(nullptr, T());
-
-	template<typename C>
-	Node *insert_word(C word, need_int leaf_flag = 1) {
-		Node *curr = root;
-		for (T c : word) {
-			if (!curr->next.contains(c)) {
-				curr->next[c] = new Node(curr, c);
-			}
-			curr = curr->next[c];
-		}
-		curr->leaf = leaf_flag;
-		return curr;
-	}
-
-	template<typename C>
-	Node* jump_path(Node* node, C path) {
-		for (T c : path) {
-			if (node == nullptr) return node;
-			node = node->jump(c);
-		}
-		return node;
-	}
-
-	template<typename C>
-	bool contains_word(C word) {
-		Node *res = jump_path(root, word);
-		return res && res->leaf;
-	}
+    TrieNode* parent = nullptr;
+    T label;
+    C next = C();
 
 
+    Data data = Data();
+
+    TrieNode() {}
+    TrieNode(TrieNode* parent, T label) : parent{ parent }, label{ label } {}
+
+
+    TrieNode* jump(T c) {
+        if (next[c] == nullptr) {
+            next[c] = new TrieNode(this, c);
+        }
+        return (TrieNode*)next[c];
+    }
+
+    
+    TrieNode* traverse(const vector<T>& s, function<void(Data&)> operation = [](Data &data) {}) {
+        TrieNode* curr = this;
+
+        operation(curr->data);
+        for (T c : s) {
+            curr = curr->jump(c);
+            operation(curr->data);
+        }
+        return curr;
+    }
+
+    TrieNode* traverse(const string& s, function<void(Data&)> operation = [](Data& data) {}) {
+        return traverse(vector<char>(s.begin(), s.end()), operation);
+    }
 };
-
-
-template<need_int ALPHABETSIZE>
-struct Basic_Char_Trie_Op {
-	using T = char;
-
-	template<typename Node>
-	struct Info {
-	};
-
-	template<typename N>
-	struct Next {
-		N next[ALPHABETSIZE] = {};
-
-		N& operator[](char i) {
-			return next[i - 'a'];
-		}
-
-		bool contains(char i) {
-			return operator[](i) != nullptr;
-		}
-
-	};
-
-};
-
-
-template<need_int ALPHABET_SIZE>
-using CharTrie = Trie<Basic_Char_Trie_Op<ALPHABET_SIZE> >;
-
 
 }
 //ENDCOPY

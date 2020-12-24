@@ -173,185 +173,150 @@ struct optional {
 }
 namespace mytl{
 
-template<typename Op_>
-struct Trie {
-	struct Node;
-	using Op = Op_;
-	using T = typename Op::T;
-	using Info = typename Op::template Info<Node>;
-	using Next_Container = typename Op::template Next<Node*>;
+template<typename T, typename C = map<T, void*>, typename Data = tuple<>>
+struct TrieNode {
 
-	struct Node : Info {
-		Node *parent;
-		T last;
-		Next_Container next;
-		need_int leaf = 0;
-		Node *jump(T c) {
-			if (next.contains(c)) {
-				return next[c];
-			}
-			else return nullptr;
-		}
-
-		Node(Node *parent, T last) : parent{ parent }, last{ last } {}
-	};
-
-	Node *root = new Node(nullptr, T());
-
-	template<typename C>
-	Node *insert_word(C word, need_int leaf_flag = 1) {
-		Node *curr = root;
-		for (T c : word) {
-			if (!curr->next.contains(c)) {
-				curr->next[c] = new Node(curr, c);
-			}
-			curr = curr->next[c];
-		}
-		curr->leaf = leaf_flag;
-		return curr;
-	}
-
-	template<typename C>
-	Node* jump_path(Node* node, C path) {
-		for (T c : path) {
-			if (node == nullptr) return node;
-			node = node->jump(c);
-		}
-		return node;
-	}
-
-	template<typename C>
-	bool contains_word(C word) {
-		Node *res = jump_path(root, word);
-		return res && res->leaf;
-	}
+    TrieNode* parent = nullptr;
+    T label;
+    C next = C();
 
 
+    Data data = Data();
+
+    TrieNode() {}
+    TrieNode(TrieNode* parent, T label) : parent{ parent }, label{ label } {}
+
+
+    TrieNode* jump(T c) {
+        if (next[c] == nullptr) {
+            next[c] = new TrieNode(this, c);
+        }
+        return (TrieNode*)next[c];
+    }
+
+    
+    TrieNode* traverse(const vector<T>& s, function<void(Data&)> operation = [](Data &data) {}) {
+        TrieNode* curr = this;
+
+        operation(curr->data);
+        for (T c : s) {
+            curr = curr->jump(c);
+            operation(curr->data);
+        }
+        return curr;
+    }
+
+    TrieNode* traverse(const string& s, function<void(Data&)> operation = [](Data& data) {}) {
+        return traverse(vector<char>(s.begin(), s.end()), operation);
+    }
 };
-
-
-template<need_int ALPHABETSIZE>
-struct Basic_Char_Trie_Op {
-	using T = char;
-
-	template<typename Node>
-	struct Info {
-	};
-
-	template<typename N>
-	struct Next {
-		N next[ALPHABETSIZE] = {};
-
-		N& operator[](char i) {
-			return next[i - 'a'];
-		}
-
-		bool contains(char i) {
-			return operator[](i) != nullptr;
-		}
-
-	};
-
-};
-
-
-template<need_int ALPHABET_SIZE>
-using CharTrie = Trie<Basic_Char_Trie_Op<ALPHABET_SIZE> >;
-
 
 }
 namespace mytl{
 
-template<typename BaseTrie>
+template<typename T, typename C = map<T, void*>>
 struct Corasick {
+    struct Data {
+        void* next_left = nullptr;
+        void* link = nullptr;
+        void* exit_link = nullptr;
+        C go;
+        vector<need_int> hits;
+    };
 
-	struct Corasick_Op : BaseTrie::Op {
-		using T = typename BaseTrie::Op::T;
+    using State = TrieNode<T, C, Data>;
 
-		template<typename N>
-		struct Info {
-			N* next_leaf_d = nullptr;
-			N* link_d = nullptr;
-			typename BaseTrie::Op::template Next<N*> go_d;
-		};
-	};
-
-	using MyTrie = Trie<Corasick_Op>;
-	using Node = typename MyTrie::Node;
-	using T = typename Corasick_Op::T;
-
-	MyTrie trie;
-
-	static Node* go(Node *node, T c) {
-		if (!node->go_d.contains(c)) {
-			if (node->next.contains(c)) {
-				node->go_d[c] = node->next[c];
-			}
-			else if (node->parent == nullptr) {
-				node->go_d[c] = node;
-			}
-			else {
-				node->go_d[c] = go(link(node), c);
-			}
-		}
-		return node->go_d[c];
-	};
-
-	static Node* link(Node *node) {
-		if (node->link_d == nullptr) {
-			if (node->parent == nullptr) {
-				node->link_d = node;
-			}
-			else if (node->parent->parent == nullptr) {
-				node->link_d = node->parent;
-			}
-			else {
-				node->link_d = go(link(node->parent), node->last);
-			}
-		}
-		return node->link_d;
-	}
-
-	static Node* next_leaf(Node *node) {
-		if (node->next_leaf_d == nullptr) {
-			if (node->parent == nullptr) {
-				node->next_leaf_d = node;
-			}
-			else {
-				if (link(node)->leaf) {
-					node->next_leaf_d = link(node);
-				}
-				else {
-					node->next_leaf_d = next_leaf(link(node));
-					if (!node->next_leaf_d->leaf) {
-						node->next_leaf_d = node;
-					}
-				}
-			}
-		}
-		return node->next_leaf_d;
-	}
-
-	static vector<need_int> current_matches(Node* node) {
-		vector<need_int> res;
-		if (node->leaf) res.push_back(node->leaf);
-		while (next_leaf(node) != node) {
-			node = next_leaf(node);
-			res.push_back(node->leaf);
-		}
-		return res;
-	}
-
-	Node *root = trie.root;
+    State *root = new State;
+    
 
 
-	template<typename C>
-	Corasick(C dictionary) {
-		need_int i = 0;
-		for (auto word : dictionary) {
-			trie.insert_word(word, ++i);
-		}
-	}
+    State* link(State *curr) {
+        void*& kulcs = curr->data.link;
+        if (kulcs == nullptr) {
+            if (curr == root || curr->parent == root) {
+                kulcs = root;
+            }
+            else {
+                kulcs = go(link(curr->parent), curr->label);
+            }
+        }
+        return (State*)kulcs;
+    }
+    State* go(State* curr, T c) {
+        void*& kulcs = curr->data.go[c];
+        if (kulcs == nullptr) {
+            if (curr->next[c] != nullptr) {
+                kulcs = curr->next[c];
+            }
+            else {
+                if (curr->parent == nullptr) {
+                    kulcs = root;
+                }
+                else {
+                    kulcs = go(link(curr), c);
+                }
+            }
+        }
+        return (State*)kulcs;
+    }
+
+    State* exit_link(State* curr) {
+        State*& kulcs = (State*&)curr->data.exit_link;
+
+        if (kulcs == nullptr) {
+            if (curr == root) {
+                kulcs = nullptr;
+            }
+            else {
+                if (!link(curr)->data.hits.empty()) kulcs = link(curr);
+                else kulcs = exit_link(link(curr));
+            }
+        }
+        return kulcs;
+    }
+
+
+public:
+
+    template<typename Word>
+    Corasick(const vector<Word>& words) {
+        for (need_int i = 0; i < words.size(); i++) {
+            root->traverse(words[i])->data.hits.push_back(i);
+        }
+    }
+
+    State* step(State* currstate, T c) {
+        return go(currstate, c);
+    }
+
+    State* initial_state() {
+        return root;
+    }
+
+    vector<need_int> hits(State* currstate) {
+        State* curr = currstate;
+
+        vector<need_int> res;
+
+        while (curr != nullptr) {
+            res.insert(res.end(), curr->data.hits.begin(), curr->data.hits.end());
+            curr = exit_link(curr);
+        }
+
+        return res;
+    }
+
+    need_int num_hits(State* currstate) {
+        State* curr = currstate;
+
+        need_int ans = 0;
+
+        while (curr != nullptr) {
+            ans += curr->data.hits.size();
+            curr = exit_link(curr);
+        }
+        return ans;
+    }
 
 };
 
