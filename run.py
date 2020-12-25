@@ -9,9 +9,9 @@ from autotest.util import write_file
 
 
 def test(*args):
-    cf = Codeforces(*secret.credentials)
+    cf = Codeforces()
     all_accepted = True
-    for file, result in list(run_test(cf, config.LIBRARY_PATH, config.SRC_PATH, config.DST_PATH)):
+    for file, result in run_test(cf, config.LIBRARY_PATH, config.SRC_PATH, config.DST_PATH).items():
         print(file.split("/")[-1], "->", result)
         all_accepted = all_accepted and result == "Accepted"
     

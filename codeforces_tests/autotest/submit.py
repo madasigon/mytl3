@@ -5,104 +5,68 @@ from selenium.common.exceptions import ElementClickInterceptedException, NoSuchE
 from functools import wraps
 from .util import *
 import getpass
+import subprocess
+from threading import Thread, Event
 
-@curried(2)
-def at(s, f):
-    @wraps(f)
-    def wrapped_f(self, *args, **kwargs):
-        self.get("{}/{}".format(self.root, s.format(*args)))
-        return f(self, *args, **kwargs)
-    return wrapped_f
 
-class Codeforces(webdriver.Firefox):
-    root = "http://codeforces.com"
-    
-    by_css = webdriver.Firefox.find_element_by_css_selector
-    
-    def get_(self, from_root):
-        return self.get(self.root+from_root)
-    
-    @at("/enter")
-    def login(self, handle, pw):
-        self.handle = handle
-        self.by_css("#handleOrEmail").send_keys(handle)
-        self.by_css("#password").send_keys(pw)
-        sleep(1)
-        self.by_css("#password").send_keys(u'\ue007')
-        sleep(3)
-    
-    
-    @at("/problemset/problem/{}/{}")
-    def submit_solution(self, number, letter, path):
-        try:
-            self.by_css(".close").click()
-        except NoSuchElementException:
-            pass
+class CustomDict(dict):
+
+    def __str__(self):
+        return "\n".join(k + ": " + v for k,v in self.items())
+
+    def __setitem__(self, k, v):
+        super().__setitem__(k, v)
+        print("===================")
+        print(self)
+
+class Codeforces():
+    def submit_solution(self, problem, path, d, sent_event):
+        d[path] = "Submitting"
+        command = "cf submit -f "+path+ " " + problem
+        p = subprocess.Popen(command, stdout=subprocess.PIPE)
+        
         while 1:
-            try:
-                self.by_css("select[name=\"programTypeId\"] > option[value=\"54\"]").click()
-                break
-            except ElementClickInterceptedException:
+            sent = True
+            l = p.stdout.readline()
+            if l.find(b"status") != -1:
+                d[path] = l.split(b"status: ")[1][:-1].decode()
+            elif l.find(b"You have submitted exactly the same code before") != -1:
+                d[path] = "Resubmission"
+            elif l.find(b"Submit failed") != -1:
+                d[path] = "Failed to submit."
+            elif l.find(b"Too many requests") > -1:
+                d[path] = "Too many requests."
+            else:
+                sent = False
+
+            if sent:
                 pass
+                sent_event.set()
+            
+            if not l:
+                return
 
-        self.by_css("input[name=\"sourceFile\"]").send_keys(path)
-
-
-        self.by_css("input.submit[value=\"Submit\"]").click()
-
-        
-        
-
-    
-    @at("/problemset/problem/{}/{}")
-    def current_status(self, number, letter):
-        el = self.find_element_by_xpath("//*[contains(text(), \"Last submissions\")]/..//tbody")
-        return " ".join(el.text.split("\n")[1].split()[3:])
-    def waiting(self):
-        self.refresh()
-        try:   
-            self.by_css(".verdict-waiting")
-            return True
-        except NoSuchElementException:
-            return False
-    
-    def sleep_until(self, pred):
-        while not pred():
-            sleep(0.2)
-    
-    #def get_last_n_results(self, n):
-    #    self.get_("/submissions/{}".format(self.handle))
-    #    self.sleep_until(lambda: not self.waiting())
-    #return [el.by_css(":nth-child(6)").text for el in self.find_elements_by_css_selector(".highlighted-row")[:n]] #verdict-waiting
     
     def check_n_solutions(self, solutions):
-        solutions = list(solutions)
-        for (task_id, path) in solutions:
-            self.submit_solution(*task_id, path)
-        
-        sleep(1)
-        self.get_("/submissions/{}".format(self.handle))
-        self.sleep_until(lambda: not self.waiting())
-        sleep(2)
-        return [self.current_status(a,b) for ((a, b), _) in solutions]
+        d = CustomDict({solution: "Waiting to upload" for solution in solutions})
+        print(d)
+
+        tasks = []
+        import time
+        for path in solutions:
+            sent = Event()
+            tasks.append(Thread(target=self.submit_solution, args=(self.which_problem(path), path, d, sent)))
+            tasks[-1].daemon = True
+            tasks[-1].start()
+            sent.wait()
+
+        for t in tasks:
+            t.join()
+        return d
 
     @staticmethod
     def which_problem(filename):
-        sp = filename.split(".")
-        assert(len(sp) >= 3)
-        return sp[-3], sp[-2]
-
-    def test_directory(self, dst_path):
-        paths = abs_list(dst_path)
-        problems = list(map(self.which_problem, filename_list(dst_path)))
-        res = self.check_n_solutions(zip(problems, paths))
-        return list(zip(paths, res))
-
-    def __init__(self, un, pw):
-        options = Options()
-        if getpass.getuser() == "gitpod": options.add_argument("--headless")
-        super(Codeforces, self).__init__(options=options)
-        self.login(un, pw)
+        return filename.split(".")[-2]
 
 
 

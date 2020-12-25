@@ -2,6 +2,7 @@ from .populate import *
 from .submit import *
 from .util import *
 import os
+import time
 
 def sync(library_path, src_path, dst_path):
     library = collect_dir(library_path)
@@ -18,7 +19,19 @@ def ask(text, type_):
 def run_test(cf, library_path, src_path, dst_path):
     sync(library_path, src_path, dst_path)
     
-    return cf.test_directory(dst_path)
+    paths = abs_list(dst_path)
+
+    def stampise(content):
+        if content.split("\n")[0].startswith("//") and content.split("\n")[0].find("20") != -1:
+            return "/n".join(["//" + time.ctime()] + content.split("\n")[1:])
+        else:
+            return "//" + time.ctime() + "\n" + content
+
+    for path in paths:
+        
+        transform(stampise, path, path)
+
+    return cf.check_n_solutions(paths)
 
     
 
