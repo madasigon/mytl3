@@ -39,6 +39,7 @@ jobs:
         run: |
           mkdir ~/.config/cf
           touch ~/.config/cf/config
+          echo 'cpp=61' >> ~/.config/cf/config
           echo ${{ secrets.ONE }} >> ~/.config/cf/config
           echo ${{ secrets.TWO }} >> ~/.config/cf/config
           echo ${{ secrets.THREE }} >> ~/.config/cf/config
