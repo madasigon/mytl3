@@ -28,8 +28,9 @@ jobs:
         run: python run.py extract
       
       - name: Check git status
-        run: git status -s
-        run: python run.py is_extracted
+        run: |
+          git status -s
+          python run.py is_extracted
       
   # This workflow contains a single job called "build"
   codeforces-uploads:
