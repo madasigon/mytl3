@@ -9,7 +9,7 @@ import multiprocessing
 
 def submit(path):
     prob = "".join(path.split('.')[-3:-1])
-    command = f'/home/gkiss/go/bin/cf submit {path} -prob={prob}'
+    command = f'./cf submit {path} -prob={prob}'
     output = subprocess.run(command.split(), capture_output=True)
     if output.returncode != 0:
         raise RuntimeError((output.returncode, output.stderr))
