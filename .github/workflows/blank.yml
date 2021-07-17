@@ -45,4 +45,7 @@ jobs:
           echo ${{ secrets.THREE }} >> ~/.config/cf/config
           cat ~/.config/cf/config
           ./cf login
+        
+      - name: Submit to Codeforces
+        run: python run.py precommit
 
