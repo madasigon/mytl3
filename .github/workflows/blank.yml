@@ -47,5 +47,5 @@ jobs:
           ./cf login
         
       - name: Submit to Codeforces
-      - run: python run.py precommit
+        run: python run.py precommit
 
