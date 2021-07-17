@@ -17,6 +17,18 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
+  extracted_
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/setup-python@v2.2.2 
+      
+      - name: Extract
+        run: python run.py extract
+      
+      - name: Check git status
+        run: git status -s
+      
   # This workflow contains a single job called "build"
   codeforces-uploads:
     # The type of runner that the job will run on
