@@ -15,10 +15,10 @@ def ask(text, type_):
     print(text)
     return type_(input())
 
-def run_test(cf, library_path, src_path, dst_path):
+def run_test(library_path, src_path, dst_path):
     sync(library_path, src_path, dst_path)
     
-    return cf.test_directory(dst_path)
+    return test_directory(dst_path)
 
     
 

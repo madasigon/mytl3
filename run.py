@@ -1,21 +1,15 @@
 import sys
 
 sys.path.insert(0, "./codeforces_tests/")
-from autotest import Codeforces, run_test, collect_dir, sync
+from autotest import run_test, collect_dir, sync
 import autotest.config as config
-import autotest.config.secret as secret
 import os
 from autotest.util import write_file
 
 
 def test(*args):
-    cf = Codeforces(*secret.credentials)
-    all_accepted = True
-    for file, result in list(run_test(cf, config.LIBRARY_PATH, config.SRC_PATH, config.DST_PATH)):
-        print(file.split("/")[-1], "->", result)
-        all_accepted = all_accepted and result == "Accepted"
-    
-    if all_accepted:
+    results = run_test(config.LIBRARY_PATH, config.SRC_PATH, config.DST_PATH)
+    if set([b for a, b in results]) == {'ACCEPTED'}:
         print("Great! All accepted.")
     else:
         print("Not great! Not all accepted.")
