@@ -32,7 +32,8 @@ jobs:
       
       - name: Check git status
         run: |
-          git status -s
+          echo 'Diff:'
+          git diff
           python run.py is_extracted
       
   # This workflow contains a single job called "build"
