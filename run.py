@@ -1,5 +1,7 @@
 import sys
 
+import git
+
 sys.path.insert(0, "./codeforces_tests/")
 from autotest import run_test, collect_dir, sync
 import autotest.config as config
@@ -49,11 +51,22 @@ void {name}_test(){{
 
 }}""")
 
+def is_extracted(*args):
+    extract_to_templates()
+    if git.Repo("./").is_dirty():
+        print("Error: Git directory is dirty, so I assume library is not extracted!")
+        sys.exit(1)
+    else:
+        print("All extracted.")
+
+
+
 available_operations = {
     "test": test,
     "extract": extract_to_templates,
     "precommit": before_commit,
-    "add_module": add_module
+    "add_module": add_module,
+    "is_extracted": is_extracted
 }
 
 
