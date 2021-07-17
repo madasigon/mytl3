@@ -17,24 +17,24 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  extracted:
-    runs-on: ubuntu-latest
-    
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2.2.2 
-
-      - name: Install Python Requirements
-        run: if [ -f requirements.txt ]; then python -m pip install -r requirements.txt; fi 
-      
-      - name: Extract
-        run: python run.py extract
-      
-      - name: Check git status
-        run: |
-          echo 'Diff:'
-          git diff
-          python run.py is_extracted
+#  extracted:
+#    runs-on: ubuntu-latest
+#    
+#    steps:
+#      - uses: actions/checkout@v2
+#      - uses: actions/setup-python@v2.2.2 
+#
+#      - name: Install Python Requirements
+#        run: if [ -f requirements.txt ]; then python -m pip install -r requirements.txt; fi 
+#      
+#      - name: Extract
+#        run: python run.py extract
+#      
+#      - name: Check git status
+#        run: |
+#          echo 'Diff:'
+#          git diff
+#         python run.py is_extracted
       
   # This workflow contains a single job called "build"
   codeforces-uploads:
