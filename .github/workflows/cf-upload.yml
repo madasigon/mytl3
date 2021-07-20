@@ -37,7 +37,7 @@ jobs:
 #         python run.py is_extracted
       
   # This workflow contains a single job called "build"
-  extract:
+  is-extracted:
     runs-on: ubuntu-latest
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
