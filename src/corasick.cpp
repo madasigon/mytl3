@@ -11,6 +11,7 @@ namespace mytl{
 template<typename BaseTrie>
 struct Corasick {
 
+
 	struct Corasick_Op : BaseTrie::Op {
 		using T = typename BaseTrie::Op::T;
 
