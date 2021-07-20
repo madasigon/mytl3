@@ -70,4 +70,7 @@ jobs:
 
       - name: Submit to Codeforces
         run: python run.py precommit
+      
+      - name: Check if PythonGit works
+        run: python gitprind_debug.py
 
