@@ -48,8 +48,9 @@ jobs:
     
     - name: Install Python Requirements
       run: if [ -f requirements.txt ]; then python -m pip install -r requirements.txt; fi
-    - name: Check if pythongit works
-      run: python gitprint_debug.py
+    
+    - name: Check if extracted
+      run: python run.py check-extracted
 
 
   codeforces-uploads:
@@ -65,9 +66,6 @@ jobs:
       
       - name: Install Python Requirements
         run: if [ -f requirements.txt ]; then python -m pip install -r requirements.txt; fi
-
-      - name: Check if extracted
-        run: python run.py check-extracted
 
 
       - name: Install cf-tool

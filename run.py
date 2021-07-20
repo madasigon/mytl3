@@ -59,12 +59,9 @@ def check_extracted(*args):
 
     if r.is_dirty():
         print('Looks like templates haven\'nt been extracted, repushing now (exiting with fail).')
-        r.index.add(f'{config.TEMPLATE_PATH}/')
-        r.index.commit('extract')
-        r.remotes['origin'].push()
-        sys.exit(0)
+        sys.exit(1)
     else:
-        print("All extracted. Proceeding with tests.")
+        print("All extracted.")
     
 
 
