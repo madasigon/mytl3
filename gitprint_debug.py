@@ -1,6 +1,6 @@
 from git import Repo
 
-git = Repo('./').git
+r = Repo('./')
 
-print(git.status())
-print(git.is_dirty())
+print(r.git.status())
+print(r.is_dirty())
