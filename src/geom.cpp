@@ -6,6 +6,7 @@
 //STARTCOPY
 namespace mytl{
 
+
 struct Point{
     ll x, y;
 
