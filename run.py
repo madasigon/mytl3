@@ -52,20 +52,19 @@ void {name}_test(){{
 
 }}""")
 
-def github_ci(*args):
+def check_extracted(*args):
     extract_to_templates()
     
     r = Repo('./')
 
     if r.is_dirty():
-        print('Looks like template\'s haven\'nt been extracted, repushing now (exiting with fail)')
+        print('Looks like templates haven\'nt been extracted, repushing now (exiting with fail).')
         r.index.add(f'{config.TEMPLATE_PATH}/')
         r.index.commit('extract')
         r.remotes['origin'].push()
         sys.exit(0)
     else:
         print("All extracted. Proceeding with tests.")
-        return test(*args)
     
 
 
@@ -75,7 +74,7 @@ available_operations = {
     "extract": extract_to_templates,
     "precommit": before_commit,
     "add_module": add_module,
-    "github-ci": github_ci
+    "check-extracted": check_extracted
 }
 
 

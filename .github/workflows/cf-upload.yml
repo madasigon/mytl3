@@ -63,6 +63,13 @@ jobs:
       - uses: actions/setup-go@v2.1.3
       - uses: actions/setup-python@v2.2.2
       
+      - name: Install Python Requirements
+        run: if [ -f requirements.txt ]; then python -m pip install -r requirements.txt; fi
+
+      - name: Check if extracted
+        run: python run.py check-extracted
+
+
       - name: Install cf-tool
         run: |
           wget https://github.com/Komosa/cf_binaries/raw/master/cf_linux_amd64
@@ -80,8 +87,7 @@ jobs:
           cat ~/.config/cf/config
           ./cf login
       
-      - name: Install Python Requirements
-        run: if [ -f requirements.txt ]; then python -m pip install -r requirements.txt; fi
+      
 
       - name: Submit to Codeforces
-        run: python run.py github-ci
+        run: python run.py test
