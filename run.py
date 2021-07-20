@@ -58,7 +58,7 @@ def check_extracted(*args):
     r = Repo('./')
 
     if r.is_dirty():
-        print('Looks like templates haven\'nt been extracted, repushing now (exiting with fail).')
+        print('Looks like templates haven\'nt been extracted, exiting with fail.')
         sys.exit(1)
     else:
         print("All extracted.")
