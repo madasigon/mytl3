@@ -52,11 +52,11 @@ jobs:
     - name: Check if extracted
       run: | 
         python run.py extract
+        git config user.name "Github CI"
+        git config user.email "you@example.com"
         git status
         git add templates/
         git commit -m"extract"
-        git config user.name "Github CI"
-        git config user.email "you@example.com"
         git push
         python run.py check-extracted
         
