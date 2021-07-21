@@ -53,6 +53,7 @@ jobs:
       run: | 
         python run.py extract
         git status
+        git diff
         python run.py check-extracted
         
 
