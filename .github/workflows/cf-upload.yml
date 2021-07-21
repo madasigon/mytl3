@@ -55,8 +55,8 @@ jobs:
         git status
         git add templates/
         git commit -m"extract"
+                git config --global user.name "Github CI"
         git config --global user.email "you@example.com"
-        git config --global user.name "Github CI"
         git push
         python run.py check-extracted
         
