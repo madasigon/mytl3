@@ -63,12 +63,17 @@ def check_extracted(*args):
     else:
         print("All extracted.")
     
+def extract_and_add_to_commit(*args):
+    extract_to_templates(*args)
+    
+    r = Repo('./')
 
-
+    r.index.add(config.TEMPLATE_PATH)
 
 available_operations = {
     "test": test,
     "extract": extract_to_templates,
+    "git-hook": extract_and_add_to_commit,
     "precommit": before_commit,
     "add_module": add_module,
     "check-extracted": check_extracted
