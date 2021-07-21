@@ -51,8 +51,10 @@ jobs:
     
     - name: Check if extracted
       run: | 
-        python run.py check-extracted
+        python run.py extract
         git status
+        python run.py check-extracted
+        
 
 
   codeforces-uploads:
