@@ -17,7 +17,6 @@
 #include <string>
 #endif
 
-
 using namespace std;
 
 using unsigned_int = unsigned int;
