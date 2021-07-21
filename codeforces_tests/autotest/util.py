@@ -42,8 +42,7 @@ def transform(f, src, dst):
     write_file(dst)(f(read_file(src)))
 
 def filename_list(directory):
-    result = filter(lambda s: s.split(".")[-1] == "cpp", list(next(os.walk(directory))[2]))
-    result = list(result)
+    result = list(filter(lambda s: s.split(".")[-1] == "cpp", list(next(os.walk(directory))[2])))
     result.sort()
     return result
 
