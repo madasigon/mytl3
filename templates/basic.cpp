@@ -17,6 +17,7 @@
 #include <string>
 #endif
 
+
 using namespace std;
 
 using unsigned_int = unsigned int;
@@ -264,7 +265,6 @@ namespace mytl{
 template<typename BaseTrie>
 struct Corasick {
 
-
 	struct Corasick_Op : BaseTrie::Op {
 		using T = typename BaseTrie::Op::T;
 
@@ -358,7 +358,6 @@ struct Corasick {
 
 }
 namespace mytl{
-
 
 struct Point{
     ll x, y;
