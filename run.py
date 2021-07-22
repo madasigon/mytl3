@@ -1,6 +1,7 @@
 import sys
 
-import git
+from git import Repo
+
 
 sys.path.insert(0, "./codeforces_tests/")
 from autotest import run_test, collect_dir, sync
@@ -51,22 +52,31 @@ void {name}_test(){{
 
 }}""")
 
-def is_extracted(*args):
+def check_extracted(*args):
     extract_to_templates()
-    if git.Repo("./").is_dirty():
-        print("Error: Git directory is dirty, so I assume library is not extracted!")
+    
+    r = Repo('./')
+
+    if r.is_dirty():
+        print('Looks like templates haven\'nt been extracted, exiting with fail.')
         sys.exit(1)
     else:
         print("All extracted.")
+    
+def extract_and_add_to_commit(*args):
+    extract_to_templates(*args)
+    
+    r = Repo('./')
 
-
+    r.index.add(config.TEMPLATE_PATH)
 
 available_operations = {
     "test": test,
     "extract": extract_to_templates,
+    "git-hook": extract_and_add_to_commit,
     "precommit": before_commit,
     "add_module": add_module,
-    "is_extracted": is_extracted
+    "check-extracted": check_extracted
 }
 
 

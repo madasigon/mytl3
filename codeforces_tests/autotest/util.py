@@ -42,7 +42,9 @@ def transform(f, src, dst):
     write_file(dst)(f(read_file(src)))
 
 def filename_list(directory):
-    return  filter(lambda s: s.split(".")[-1] == "cpp", list(next(os.walk(directory))[2]))
+    result = list(filter(lambda s: s.split(".")[-1] == "cpp", list(next(os.walk(directory))[2])))
+    result.sort()
+    return result
 
 def abs_list(directory):
     return [os.path.join(os.path.abspath(directory), filename) for filename in filename_list(directory)]
