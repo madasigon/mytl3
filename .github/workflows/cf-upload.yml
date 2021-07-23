@@ -38,6 +38,9 @@ jobs:
       
   # This workflow contains a single job called "build"
   cpp-unit-tests:
+    runs-on: ubuntu-latest
+
+    steps:
     - uses: actions/checkout@v2
 
     - name: Compile Unit Tests
