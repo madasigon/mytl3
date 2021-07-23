@@ -37,6 +37,15 @@ jobs:
 #         python run.py is_extracted
       
   # This workflow contains a single job called "build"
+  cpp-unit-tests:
+    - uses: actions/checkout@v2
+
+    - name: Compile Unit Tests
+      run: g++ -g unit_test/main.cpp -o a.out -std=c++14 -Isrc -Iunit_test/files
+    
+    - name: Run Unit Tests
+      run: ./a.out
+
   is-extracted:
     runs-on: ubuntu-latest
     steps:
