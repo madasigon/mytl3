@@ -32,10 +32,16 @@ using PairOf = pair<T,T>;
 
 using Void = tuple<>;
 
+struct DebugAssertionError{
+    string msg;
+    DebugAssertionError(string msg) : msg{msg} {};
+};
+
 #ifdef __OPTIMIZE__
 #define debug_assert(expression) 
 #else
-#define debug_assert(expression) assert(expression)
+#define debug_assert(expression) if(!(expression)) throw DebugAssertionError("Assertion error: expression")
+
 #endif
 
 namespace mytl{

@@ -1,3 +1,5 @@
+#define CATCH_CONFIG_MAIN
+#include "catch.hpp"
 #include "base.cpp"
 
 #include "convenience_test.cpp"
@@ -15,19 +17,6 @@
 #include "trie_test.cpp"
 #include "corasick_test.cpp"
 
-MAIN main(){
-    convenience_test();
-    geom_test();
-    instant_zero_test();
-    modulo_test();
-    modulo_typesafe_test();
-    pow_test();
-    recursion_test();
-    segtree_test();
-    io_test();
-    binary_search_test();
-    tracker_test();
-    corasick_test();
-    container_test();
-	trie_test();
+TEST_CASE("Dummy", "[dummy]"){
+    REQUIRE(1 == 1);
 }
