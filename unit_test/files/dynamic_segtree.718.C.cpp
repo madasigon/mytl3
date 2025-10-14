@@ -794,7 +794,10 @@ struct DynamicSegtree {
 	Change pending = Op::identity();
 	Range my_range;
 	
-	DynamicSegtree(Range range) : my_range{range}, partial{ Op::initial(range) } {};
+	DynamicSegtree(Range range) {
+		my_range = range;
+		partial = Op::initial(range);
+	};
 
 	
 	
@@ -981,28 +984,109 @@ T max(T a, T b){return std::max(a,b);}
 
 }
 //ENDCOPY
-struct Case;
+
+using Par = pair<ll, ll>;
+using ParPar = pair<Par, Par>;
+
+ll M = 1000000007;
+
+Par operator+(Par a, Par b) {
+	Par res = { (a.first + b.first), a.second + b.second };
+	return { res.first%M, res.second%M };
+}
+Par operator*(Par a, ParPar b) {
+	Par res = { b.first.first*a.first + b.first.second*a.second, b.second.first*a.first + b.second.second*a.second };
+	return { res.first%M, res.second%M };
+}
+ParPar operator*(ParPar a_, ParPar b_) {
+	ll a = a_.first.first,
+		b = a_.first.second,
+		c = a_.second.first,
+		d = a_.second.second,
+		e = b_.first.first,
+		f = b_.first.second,
+		g = b_.second.first,
+		h = b_.second.second;
+	ParPar res = { { e*a + f * c, e*b + f * d },{ g*a + h * c, g*b + h * d } };
+	return { { res.first.first%M, res.first.second%M },{ res.second.first%M, res.second.second%M } };
+}
+
+struct Custom_Op {
+	using T = Par;
+	using Change = ParPar;
+
+	static Change identity() {
+		return { { 1, 0 },{ 0,1 } };
+	}
+	static T zero() {
+		return { 0, 0 };
+	}
 
 
+	static T reduce(T a, T b) {
+		T res = a + b;
+		return res;
+	}
 
-struct Case{
-    
-    void main(){
-        
-    }
+	static T apply(ll k, T a, Change c) {
+		T res = a * c;
+		return res;
+	}
+
+	static Change push(Change a, Change b) {
+		return a * b;
+	}
+	static T initial(pair<ll,ll> r) {
+		raise(2);
+		return T();
+	}
+
 };
 
+
+ll n, m;
+
+ParPar hatv(ll kitevo) {
+	ParPar res = Custom_Op::identity();
+	ParPar alap = { { 0,1 },{ 1,1 } };
+	while (kitevo > 0) {
+		if (kitevo % 2 == 1) res = res * alap;
+		alap = alap * alap;
+		kitevo /= 2;
+	}
+	return res;
+}
+
+vector<ll> be(200001);
+
+typename Custom_Op::T initer(ll index) {
+	return Par{ 1,1 } *hatv(be[index] - 1);
+}
+
+
 MAIN main() {
+	//freopen("be.txt", "r", stdin);
 	ios_base::sync_with_stdio(false);
-#ifdef _MSC_VER
-#if 1
-	freopen("be.txt", "r", stdin);
-#endif
-#endif // _MSC_VER
-    ll T;
-    cin>>T;
-    for(ll i=1; i<=T; i++){
-        cout<<"Case #"<<i<<": ";
-        Case().main();
-    }
+	cin >> n >> m;
+	for (ll i = 1; i <= n; i++) {
+		cin >> be[i];
+	}
+	mytl::DynamicSegtree<Custom_Op> node({ 1,n }, initer);
+
+
+	for (ll i = 1; i <= m; i++) {
+		ll mode;
+		cin >> mode;
+		if (mode == 1) {
+			ll l, r, x;
+			cin >> l >> r >> x;
+			node.update({ l,r }, hatv(x));
+		}
+		else {
+			ll l, r;
+			cin >> l >> r;
+			cout << node.query({ l, r }).first << endl;
+		}
+	}
+	return 0;
 }

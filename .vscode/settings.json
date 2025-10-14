@@ -43,6 +43,15 @@
         "valarray": "cpp",
         "iostream": "cpp",
         "optional": "cpp",
-        "string": "cpp"
+        "string": "cpp",
+        "numeric": "cpp",
+        "random": "cpp",
+        "generator": "cpp",
+        "ranges": "cpp",
+        "forward_list": "cpp",
+        "unordered_map": "cpp",
+        "unordered_set": "cpp",
+        "iterator": "cpp",
+        "regex": "cpp"
     }
 }

@@ -6,188 +6,84 @@
 //STARTCOPY
 namespace mytl{
 template<class Op>
-struct IntervalTree : Op::Range {
-	using Range = typename Op::Range;
+struct DynamicSegtree {
 	using T = typename Op::T;
 	using Change = typename Op::Change;
-	using Range::singleton;
-	using Range::inside;
-	using Range::intersect;
-	using Range::leftHalf;
-	using Range::rightHalf;
+	using Range = pair<ll, ll>;
 
-	IntervalTree *left_child = NULL, *right_child = NULL;
+	DynamicSegtree<Op> *left_child = NULL, *right_child = NULL;
 
 	T partial;
 	Change pending = Op::identity();
+	Range my_range;
+	
+	DynamicSegtree(Range range) : my_range{range}, partial{ Op::initial(range) } {};
 
-	IntervalTree(Range range) : Range(range), partial{ Op::initial(range) } {};
+	
+	
+	
 
-	T query(Range range, Change change) {
-		return query_(range, change).first;
+	DynamicSegtree(Range range, function<T(ll)> getter) {
+		my_range = range;
+		if(range.first == range.second){
+			partial = getter(range.first);
+		}
+		else{
+			pair<ll,ll> range_left_half = {my_range.first, (my_range.first + my_range.second)/2};
+			pair<ll,ll> range_right_half = {range_left_half.second + 1, my_range.second};
+
+			if (left_child == NULL) left_child = (new DynamicSegtree(range_left_half,getter));
+			if (right_child == NULL) right_child = (new DynamicSegtree(range_right_half,getter));
+			partial = Op::reduce(left_child->partial, right_child->partial);
+		}
+
 	}
+
 
 	void add(Change change) {
 		pending = Op::push(pending, change);
 	}
 
-	void prepare() {
-		if (!singleton()) {
-			if (left_child == NULL) left_child = (new IntervalTree(leftHalf()));
-			if (right_child == NULL) right_child = (new IntervalTree(rightHalf()));
+	void flush() {
+		if (my_range.first < my_range.second) {
+			pair<ll,ll> range_left_half = {my_range.first, (my_range.first + my_range.second)/2};
+			pair<ll,ll> range_right_half = {range_left_half.second + 1, my_range.second};
+
+			if (left_child == NULL) left_child = (new DynamicSegtree(range_left_half));
+			if (right_child == NULL) right_child = (new DynamicSegtree(range_right_half));
 			left_child->add(pending);
 			right_child->add(pending);
 		}
-		partial = Op::apply(*this, partial, pending);
+		partial = Op::apply(my_range.second - my_range.first+1, partial, pending);
 		pending = Op::identity();
 	}
 
-	pair<T, T> query_(Range range, Change change) {
-		//cout<<range<<" "<<*this<<endl;
-		prepare();
-		if (inside(range)) {
+	T _update(Range range, Change change) {
+		if (range.first <= my_range.first && my_range.second <= range.second) {
 			add(change);
-			prepare();
-			return { partial, Op::zero() };
+			flush();
+			return partial;
 		}
-		if (!intersect(range)) {
-			//cout<<"n"<<range<<" "<<*this<<endl;
-			return { Op::zero(), partial };
-		}
-
-		auto from_left = left_child->query_(range, change);
-		auto from_right = right_child->query_(range, change);
-		//cout<<from_right.first<<endl;
-		auto needed = Op::reduce(from_left.first, from_right.first), rest = Op::reduce(from_left.second, from_right.second);
-		partial = Op::reduce(needed, rest);
-		return { needed, rest };
-	}
-
-	T build_from(const function<T(ll)>& getter) {
-		prepare();
-		pending = Op::identity();
-		if (singleton()) partial = getter(this->l);
-		else partial = Op::reduce(left_child->build_from(getter), right_child->build_from(getter));
+		flush();
+		if (range.first > my_range.second || range.second < my_range.first)  return partial;
+		
+		auto from_left = left_child->_update(range, change);
+		auto from_right = right_child->_update(range, change);
+		partial = Op::reduce(from_left, from_right);
 		return partial;
 	}
+	void update(Range range, Change change) {
+		_update(range, change);
+	}
 
+	T query(Range range) {
+		if(range.second < my_range.first || my_range.second < range.first) return Op::zero();
+		flush();
+		if(range.first <= my_range.first && my_range.second <= range.second) return partial;
+		return Op::reduce(left_child->query(range), right_child->query(range));
+	}
 };
 
-
-template<typename Op>
-class SegmentTree {
-public:
-	const pair<ll, ll> range;
-private:
-	vector<typename Op::T> t;
-	vector<typename Op::Change> d;
-	ll n;
-	ll h;
-
-	void __calc(ll p, ll k) {
-		t[p] = Op::apply(k, Op::reduce(t[p * 2], t[p * 2 + 1]), d[p]);
-	}
-
-	void __apply(ll p, typename Op::Change value, ll k) {
-		t[p] = Op::apply(k, t[p], value);
-		if (p < n) d[p] = Op::push(d[p], value);
-	}
-
-	void __build(ll l, ll r) {
-		ll k = 2;
-		l += n;
-		r += n - 1;
-		for (; l > 1; k *= 2) {
-			l /= 2;
-			r /= 2;
-			for (ll i = r; i >= l; i--) __calc(i, k);
-		}
-	}
-
-	void __push(ll l, ll r) {
-		ll s = h;
-		ll k = 1 << (h - 1);
-
-		l += n;
-		r += n - 1;
-		for (; s > 0; s--, k /= 2) {
-			for (ll i = l >> s; i <= r >> s; i++) {
-				__apply(i * 2, d[i], k);
-				__apply(i * 2 + 1, d[i], k);
-				d[i] = Op::identity();
-			}
-		}
-	}
-
-	void __modify(ll l, ll r, typename Op::Change value) {
-		__push(l, l + 1);
-		__push(r - 1, r);
-		ll l0 = l, r0 = r, k = 1;
-
-		l += n;
-		r += n;
-		for (; l < r; l /= 2, r /= 2, k *= 2) {
-			if (l & 1) __apply(l++, value, l);
-			if (r & 1) __apply(--r, value, k);
-		}
-		__build(l0, l0 + 1);
-		__build(r0 - 1, r0);
-	}
-
-	typename Op::T __query(ll l, ll r) {
-		__push(l, l + 1);
-		__push(r - 1, r);
-		typename Op::T resl = Op::zero(), resr = Op::zero();
-
-		l += n;
-		r += n;
-
-		for (; l < r; l /= 2, r /= 2) {
-			if (l & 1)  resl = Op::reduce(resl, t[l++]);
-			if (r & 1) resr = Op::reduce(t[--r], resr);
-		}
-		return Op::reduce(resl, resr);
-
-	}
-
-public:
-
-	SegmentTree(pair<ll, ll> range, const function<typename Op::T(ll)>& getter) : range{ range } {
-		n = range.second - range.first + 1;
-		t.resize(n * 2);
-		d.resize(n, Op::identity());
-		for (ll i = 0; i < n; i++) {
-			t[i + n] = getter(i+range.first);
-		}
-		for (ll i = n - 1; i > 0; i--) t[i] = t[i * 2] + t[i * 2 + 1];
-		h = 0;
-		ll new_n = n;
-		while (new_n > 0) {
-			h++;
-			new_n /= 2;
-		}
-
-	}
-
-	typename Op::T query(pair<ll, ll> query_range) {
-		debug_assert(range.first <= query_range.first && query_range.second <= range.second);
-		return __query(query_range.first - range.first, query_range.second - range.first + 1);
-	}
-	
-	typename Op::T query_single(ll query_point) {
-		return query({ query_point, query_point });
-	}
-
-	void modify(pair<ll, ll> modify_range, typename Op::Change value) {
-		debug_assert(range.first <= modify_range.first && modify_range.second <= range.second);
-		__modify(modify_range.first - range.first, modify_range.second - range.first + 1, value);
-	}
-
-	void modify_single(ll modify_point, typename Op::Change value) {
-		return modify({ modify_point, modify_point }, value);
-	}
-
-};
 
 
 template<typename T_, typename Range_>

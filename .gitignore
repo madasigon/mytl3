@@ -14,5 +14,6 @@ venv/
 dev/
 unit_test/a.exe
 
-a.out
-a.exe
+
+*.exe
+*.out

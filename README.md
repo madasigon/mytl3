@@ -49,5 +49,5 @@ Further examples are in the `codeforces_tests` folder: these are correct solutio
 Copy `templates/basic.cpp` into your editor and you can start making your solution right away (by modifying the `main` function).
 
 # Contribute
-- *Very easy:* if you use the library to solve a Codeforces problem, your solution becomes a test after you copy it under the path `codeforces_tests/{any_name}.{contest_number}/{problem_letter}.cpp`.
+- *Very easy:* if you use the library to solve a Codeforces problem, your solution becomes a test after you copy it under the path `codeforces_tests/{any_name}.{contest_number}.{problem_letter}.cpp`.
 - To add/change the functionality itself, fork and make a pull request.
