@@ -29,7 +29,7 @@ struct DynamicSegtree {
 			partial = getter(range.first);
 		}
 		else{
-			pair<ll,ll> range_left_half = {my_range.first, (my_range.first + my_range.second)/2};
+			pair<ll,ll> range_left_half = {my_range.first, my_range.first + (my_range.second - my_range.first)/2};
 			pair<ll,ll> range_right_half = {range_left_half.second + 1, my_range.second};
 
 			if (left_child == NULL) left_child = (new DynamicSegtree(range_left_half,getter));
@@ -46,7 +46,7 @@ struct DynamicSegtree {
 
 	void flush() {
 		if (my_range.first < my_range.second) {
-			pair<ll,ll> range_left_half = {my_range.first, (my_range.first + my_range.second)/2};
+			pair<ll,ll> range_left_half = {my_range.first, my_range.first + (my_range.second - my_range.first)/2};
 			pair<ll,ll> range_right_half = {range_left_half.second + 1, my_range.second};
 
 			if (left_child == NULL) left_child = (new DynamicSegtree(range_left_half));

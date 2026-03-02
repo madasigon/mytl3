@@ -1,3 +1,4 @@
+
 //STARTCOPY
 #ifndef _MSC_VER
 #include<bits/stdc++.h>
@@ -981,54 +982,136 @@ struct Corasick {
 }
 //ENDCOPY
 
+ll gcd(ll a, ll b) {
+while (min(a, b) > 0) {
+if (b < a) swap(a, b);
+b = b % a;
+}
+return max(a, b);
+}
+
+ll sign(ll x) {
+if (x < 0) return -1;
+else if (x == 0) return 0;
+else return 1;
+}
+
+ll ceil_divide(ll a, ll b) {
+ll res = a / b;
+if (a % b != 0) res++;
+return res;
+}
+
+struct MaxTrack {
+map<char, ll> m;
+
+ll pos_count = 0;
 
 
+void update(char key, ll value) {
+    pos_count += ll(value > 0) - ll(m[key] > 0);
+    m[key] = value;
+}
+ll get(char key) {
+    return m[key];
+}
 
-ll n,m, x;
+};
+
+using MOD107 = mytl::TSModulo<1000000007>;
+
+MOD107 range_product(ll a, ll b) {
+MOD107 ans = 1;
+for (ll i = a; i <= b; i++) {
+ans = ans * i;
+}
+return ans;
+}
+
+const ll M = 1000000LL;
+vector<ll> smallest_prime_divisor(M + 1, -1);
+
+struct MaxMaxOps {
+using T = ll;
+using Change = ll;
+
+static Change identity() {
+    return 0;
+}
+static T zero() {
+    return 0;
+}
 
 
+static T reduce(T a, T b) {
+    return max(a, b);
+}
 
-ll a[20001], b[20001], kum_a[20001], kum_b[20001];
+static T apply(ll k, T a, Change c) {
+    return max(a, c);
+}
 
-using T = mytl::Tracker<ll, mytl::min>;
-vector<T> best_a(20001), best_b(20001);
+static Change push(Change a, Change b) {
+    return max(a, b);
+}
 
-MAIN main(){
-    ios_base::sync_with_stdio(false);
-    cin>>n>>m;
+static Change initial(pair<ll, ll> r) {
+    return 0LL;
+}
 
-    for(ll i=1; i<=n; i++){
-        cin>>a[i];
-        kum_a[i] = kum_a[i-1] + a[i];
-    }
+};
+//SegmentTree<SegtreeOps> example_segtree({ 1,10 }, [](ll x) {return x; });
 
-    for(ll i=1; i<=m; i++){
-        cin>>b[i];
-        kum_b[i] = kum_b[i-1] + b[i];
-    }
-    cin>>x;
+struct Case {
 
-
-    for(ll i=0; i<n; i++){
-        for(ll hossz=1; i+hossz<=n; hossz++){
-            best_a[hossz].update(kum_a[i+hossz] - kum_a[i]);
+ll sub(vector<ll> a) {
+    unordered_map<ll, ll> occurrences;
+    ll ans = 0;
+    for (auto elem : a) {
+        if (elem % 5 == 0) {
+            ans += occurrences[elem / 5 * 7] * occurrences[elem / 5 * 3];
         }
+        occurrences[elem]++;
     }
-    for(ll i=0; i<m; i++){
-        for(ll hossz=1; i+hossz<=m; hossz++){
-            best_b[hossz].update(kum_b[i+hossz] - kum_b[i]);
-        }
-    }
-
-    mytl::Tracker<ll, mytl::max> ans;
-    ans.update(0);
-    for(ll i=1; i<=n; i++){
-        for(ll j=1; j<=m; j++){
-            if(best_a[i].value()*best_b[j].value() <= x) ans.update(i*j);
-        }
-    }
+    return ans;
+}
 
 
-    cout<<ans.value()<<endl;
+void main() {
+    mytl::DynamicSegtree<MaxMaxOps> best({ -1,1e9 + 1 });
+    ll n;
+    cin >> n;
+    vector<pair<ll, ll> > a(n);
+    for (ll i = 0; i < n; i++) {
+        cin >> a[i].first >> a[i].second;
+        a[i].second *= -1;
+    }
+    sort(a.begin(), a.end());
+
+    for (auto p : a) {
+        p.second *= -1;
+        best.update({ p.second,p.second }, best.query({ -1,p.second - 1 }) + 1);
+
+    }
+    cout<<best.query({0,1e9+1})<<endl;
+
+
+}
+
+};
+
+MAIN main() {
+ios_base::sync_with_stdio(false);
+cin.tie(NULL);
+
+string mode;
+
+ll T;
+T = 1;
+//cin >> T;
+//cout<<T<<endl;
+for (ll i = 1; i <= T; i++) {
+    Case().main();
+}
 
 }
