@@ -1,0 +1,10 @@
+FROM python:3.11-slim
+
+# Install cfcli-py-tool (the most recently maintained option)
+RUN pip install --no-cache-dir cfcli-py-tool
+
+WORKDIR /workspace
+
+CMD ["/bin/bash"]
+
+

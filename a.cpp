@@ -27,8 +27,8 @@ struct Ops{
 template<typename ElementType, typename OperationType>
 struct Segtree{
   using Policy = Ops<ElementType, OperationType>;
-  using ElementType = typename Policy::ElementType;
-  using OperationType = typename Policy::OperationType;
+//   using ElementType = typename Policy::ElementType;
+//   using OperationType = typename Policy::OperationType;
   Ops<ElementType, OperationType> policy;
 
   void main(){

@@ -40,54 +40,6 @@ using Void = tuple<>;
 
 namespace mytl{
 
-template<typename T, typename R, typename F=function<R(T)> >
-vector<R> fmap(F f, const vector<T>& t){
-    vector<R> res;
-    for(auto elem : t) res.push_back(f(elem));
-    return res;
-}
-
-template<typename T>
-vector<T> forrange(T n, T from){
-    vector<T> res(n);
-    iota(res.begin(), res.end(), from);
-    return res;
-}
-
-template<typename F>
-void repeat(need_int n, const F& callback){
-    for(need_int _ : forrange(n,0)) callback();
-}
-
-
-
-#define WATCH(x) cout << (#x) << " is " << (x) << endl
-}
-namespace mytl{
-
-template<typename T, typename Pred>
-T discrete_binary_search(T l, T r, Pred f){
-	debug_assert(f(l));
-    while(l < r){
-        T pivot = (l+r+1)/2;
-        if(!f(pivot)) r = pivot-1;
-		else l = pivot;
-    }
-    return l;
-}
-
-template<typename T, typename Pred>
-T continuous_binary_search(T l, T r, need_int iterations, Pred f){
-    mytl::repeat(iterations,[&](){
-        T pivot = (l+r)/2;
-        if(f(pivot)) l = pivot;
-        else r = pivot;
-    });
-    return l;
-}
-}
-namespace mytl{
-
 template<typename T>
 struct LazyVector : vector<T> {
 	inline typename vector<T>::reference operator[](need_int i) {
@@ -173,189 +125,51 @@ struct optional {
 }
 namespace mytl{
 
-template<typename Op_>
-struct Trie {
-	struct Node;
-	using Op = Op_;
-	using T = typename Op::T;
-	using Info = typename Op::template Info<Node>;
-	using Next_Container = typename Op::template Next<Node*>;
+template<typename T, typename R, typename F=function<R(T)> >
+vector<R> fmap(F f, const vector<T>& t){
+    vector<R> res;
+    for(auto elem : t) res.push_back(f(elem));
+    return res;
+}
 
-	struct Node : Info {
-		Node *parent;
-		T last;
-		Next_Container next;
-		need_int leaf = 0;
-		Node *jump(T c) {
-			if (next.contains(c)) {
-				return next[c];
-			}
-			else return nullptr;
-		}
+template<typename T>
+vector<T> forrange(T n, T from){
+    vector<T> res(n);
+    iota(res.begin(), res.end(), from);
+    return res;
+}
 
-		Node(Node *parent, T last) : parent{ parent }, last{ last } {}
-	};
-
-	Node *root = new Node(nullptr, T());
-
-	template<typename C>
-	Node *insert_word(C word, need_int leaf_flag = 1) {
-		Node *curr = root;
-		for (T c : word) {
-			if (!curr->next.contains(c)) {
-				curr->next[c] = new Node(curr, c);
-			}
-			curr = curr->next[c];
-		}
-		curr->leaf = leaf_flag;
-		return curr;
-	}
-
-	template<typename C>
-	Node* jump_path(Node* node, C path) {
-		for (T c : path) {
-			if (node == nullptr) return node;
-			node = node->jump(c);
-		}
-		return node;
-	}
-
-	template<typename C>
-	bool contains_word(C word) {
-		Node *res = jump_path(root, word);
-		return res && res->leaf;
-	}
+template<typename F>
+void repeat(need_int n, const F& callback){
+    for(need_int _ : forrange(n,0)) callback();
+}
 
 
-};
 
-
-template<need_int ALPHABETSIZE>
-struct Basic_Char_Trie_Op {
-	using T = char;
-
-	template<typename Node>
-	struct Info {
-	};
-
-	template<typename N>
-	struct Next {
-		N next[ALPHABETSIZE] = {};
-
-		N& operator[](char i) {
-			return next[i - 'a'];
-		}
-
-		bool contains(char i) {
-			return operator[](i) != nullptr;
-		}
-
-	};
-
-};
-
-
-template<need_int ALPHABET_SIZE>
-using CharTrie = Trie<Basic_Char_Trie_Op<ALPHABET_SIZE> >;
-
-
+#define WATCH(x) cout << (#x) << " is " << (x) << endl
 }
 namespace mytl{
 
-template<typename BaseTrie>
-struct Corasick {
+template<typename T, typename Pred>
+T discrete_binary_search(T l, T r, Pred f){
+	debug_assert(f(l));
+    while(l < r){
+        T pivot = (l+r+1)/2;
+        if(!f(pivot)) r = pivot-1;
+		else l = pivot;
+    }
+    return l;
+}
 
-	struct Corasick_Op : BaseTrie::Op {
-		using T = typename BaseTrie::Op::T;
-
-		template<typename N>
-		struct Info {
-			N* next_leaf_d = nullptr;
-			N* link_d = nullptr;
-			typename BaseTrie::Op::template Next<N*> go_d;
-		};
-	};
-
-	using MyTrie = Trie<Corasick_Op>;
-	using Node = typename MyTrie::Node;
-	using T = typename Corasick_Op::T;
-
-	MyTrie trie;
-
-	static Node* go(Node *node, T c) {
-		if (!node->go_d.contains(c)) {
-			if (node->next.contains(c)) {
-				node->go_d[c] = node->next[c];
-			}
-			else if (node->parent == nullptr) {
-				node->go_d[c] = node;
-			}
-			else {
-				node->go_d[c] = go(link(node), c);
-			}
-		}
-		return node->go_d[c];
-	};
-
-	static Node* link(Node *node) {
-		if (node->link_d == nullptr) {
-			if (node->parent == nullptr) {
-				node->link_d = node;
-			}
-			else if (node->parent->parent == nullptr) {
-				node->link_d = node->parent;
-			}
-			else {
-				node->link_d = go(link(node->parent), node->last);
-			}
-		}
-		return node->link_d;
-	}
-
-	static Node* next_leaf(Node *node) {
-		if (node->next_leaf_d == nullptr) {
-			if (node->parent == nullptr) {
-				node->next_leaf_d = node;
-			}
-			else {
-				if (link(node)->leaf) {
-					node->next_leaf_d = link(node);
-				}
-				else {
-					node->next_leaf_d = next_leaf(link(node));
-					if (!node->next_leaf_d->leaf) {
-						node->next_leaf_d = node;
-					}
-				}
-			}
-		}
-		return node->next_leaf_d;
-	}
-
-	static vector<need_int> current_matches(Node* node) {
-		vector<need_int> res;
-		if (node->leaf) res.push_back(node->leaf);
-		while (next_leaf(node) != node) {
-			node = next_leaf(node);
-			res.push_back(node->leaf);
-		}
-		return res;
-	}
-
-	Node *root = trie.root;
-
-
-	template<typename C>
-	Corasick(C dictionary) {
-		need_int i = 0;
-		for (auto word : dictionary) {
-			trie.insert_word(word, ++i);
-		}
-	}
-
-};
-
-
+template<typename T, typename Pred>
+T continuous_binary_search(T l, T r, need_int iterations, Pred f){
+    mytl::repeat(iterations,[&](){
+        T pivot = (l+r)/2;
+        if(f(pivot)) l = pivot;
+        else r = pivot;
+    });
+    return l;
+}
 }
 namespace mytl{
 
@@ -978,6 +792,192 @@ template<typename T>
 T min(T a, T b){return std::min(a,b);}
 template<typename T>
 T max(T a, T b){return std::max(a,b);}
+
+}
+namespace mytl{
+
+template<typename Op_>
+struct Trie {
+	struct Node;
+	using Op = Op_;
+	using T = typename Op::T;
+	using Info = typename Op::template Info<Node>;
+	using Next_Container = typename Op::template Next<Node*>;
+
+	struct Node : Info {
+		Node *parent;
+		T last;
+		Next_Container next;
+		need_int leaf = 0;
+		Node *jump(T c) {
+			if (next.contains(c)) {
+				return next[c];
+			}
+			else return nullptr;
+		}
+
+		Node(Node *parent, T last) : parent{ parent }, last{ last } {}
+	};
+
+	Node *root = new Node(nullptr, T());
+
+	template<typename C>
+	Node *insert_word(C word, need_int leaf_flag = 1) {
+		Node *curr = root;
+		for (T c : word) {
+			if (!curr->next.contains(c)) {
+				curr->next[c] = new Node(curr, c);
+			}
+			curr = curr->next[c];
+		}
+		curr->leaf = leaf_flag;
+		return curr;
+	}
+
+	template<typename C>
+	Node* jump_path(Node* node, C path) {
+		for (T c : path) {
+			if (node == nullptr) return node;
+			node = node->jump(c);
+		}
+		return node;
+	}
+
+	template<typename C>
+	bool contains_word(C word) {
+		Node *res = jump_path(root, word);
+		return res && res->leaf;
+	}
+
+
+};
+
+
+template<need_int ALPHABETSIZE>
+struct Basic_Char_Trie_Op {
+	using T = char;
+
+	template<typename Node>
+	struct Info {
+	};
+
+	template<typename N>
+	struct Next {
+		N next[ALPHABETSIZE] = {};
+
+		N& operator[](char i) {
+			return next[i - 'a'];
+		}
+
+		bool contains(char i) {
+			return operator[](i) != nullptr;
+		}
+
+	};
+
+};
+
+
+template<need_int ALPHABET_SIZE>
+using CharTrie = Trie<Basic_Char_Trie_Op<ALPHABET_SIZE> >;
+
+
+}
+namespace mytl{
+
+template<typename BaseTrie>
+struct Corasick {
+
+	struct Corasick_Op : BaseTrie::Op {
+		using T = typename BaseTrie::Op::T;
+
+		template<typename N>
+		struct Info {
+			N* next_leaf_d = nullptr;
+			N* link_d = nullptr;
+			typename BaseTrie::Op::template Next<N*> go_d;
+		};
+	};
+
+	using MyTrie = Trie<Corasick_Op>;
+	using Node = typename MyTrie::Node;
+	using T = typename Corasick_Op::T;
+
+	MyTrie trie;
+
+	static Node* go(Node *node, T c) {
+		if (!node->go_d.contains(c)) {
+			if (node->next.contains(c)) {
+				node->go_d[c] = node->next[c];
+			}
+			else if (node->parent == nullptr) {
+				node->go_d[c] = node;
+			}
+			else {
+				node->go_d[c] = go(link(node), c);
+			}
+		}
+		return node->go_d[c];
+	};
+
+	static Node* link(Node *node) {
+		if (node->link_d == nullptr) {
+			if (node->parent == nullptr) {
+				node->link_d = node;
+			}
+			else if (node->parent->parent == nullptr) {
+				node->link_d = node->parent;
+			}
+			else {
+				node->link_d = go(link(node->parent), node->last);
+			}
+		}
+		return node->link_d;
+	}
+
+	static Node* next_leaf(Node *node) {
+		if (node->next_leaf_d == nullptr) {
+			if (node->parent == nullptr) {
+				node->next_leaf_d = node;
+			}
+			else {
+				if (link(node)->leaf) {
+					node->next_leaf_d = link(node);
+				}
+				else {
+					node->next_leaf_d = next_leaf(link(node));
+					if (!node->next_leaf_d->leaf) {
+						node->next_leaf_d = node;
+					}
+				}
+			}
+		}
+		return node->next_leaf_d;
+	}
+
+	static vector<need_int> current_matches(Node* node) {
+		vector<need_int> res;
+		if (node->leaf) res.push_back(node->leaf);
+		while (next_leaf(node) != node) {
+			node = next_leaf(node);
+			res.push_back(node->leaf);
+		}
+		return res;
+	}
+
+	Node *root = trie.root;
+
+
+	template<typename C>
+	Corasick(C dictionary) {
+		need_int i = 0;
+		for (auto word : dictionary) {
+			trie.insert_word(word, ++i);
+		}
+	}
+
+};
+
 
 }
 //ENDCOPY

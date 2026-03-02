@@ -1,0 +1,23 @@
+FROM ubuntu:22.04
+
+# Install wget to download the Linux binary
+RUN apt-get update && apt-get install -y \
+    wget \
+    && rm -rf /var/lib/apt/lists/*
+
+# Download the LINUX version (not Darwin/macOS)
+# The cf-darwin-amd64 in parent folder won't work in Docker
+RUN wget https://github.com/lcian/codeforces-cli/releases/download/v1.1.0/cf_1.1.0_linux_amd64.tar.gz -O /tmp/cf.tar.gz && \
+    tar -xzf /tmp/cf.tar.gz -C /tmp/ && \
+    mv /tmp/cf /usr/local/bin/cf && \
+    chmod +x /usr/local/bin/cf && \
+    rm /tmp/cf.tar.gz
+
+# Create config directory
+RUN mkdir -p /root/.config/cf
+
+WORKDIR /workspace
+
+# Entry point for interactive testing
+CMD ["/bin/bash"]
+

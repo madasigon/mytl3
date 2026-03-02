@@ -1,0 +1,5 @@
+{
+	"dependencies": {
+		"mcp-chrome-bridge": "^1.0.31"
+	}
+}

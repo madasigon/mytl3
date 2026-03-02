@@ -1,0 +1,10 @@
+FROM python:3.11-slim
+
+# Install cf-submit
+RUN pip install --no-cache-dir cf-submit
+
+WORKDIR /workspace
+
+CMD ["/bin/bash"]
+
+

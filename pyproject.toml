@@ -1,0 +1,15 @@
+[project]
+name = "mytl-util"
+version = "0.1.0"
+description = "Library code injection utility for mytl3"
+requires-python = ">=3.10"
+
+[project.scripts]
+mytl-util = "python_util.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["python_util"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

@@ -30,4 +30,6 @@ MAIN main(){
     corasick_test();
     container_test();
 	trie_test();
+    
+    cout<<"All tests passed!"<<endl;
 }

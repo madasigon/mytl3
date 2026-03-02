@@ -7,9 +7,12 @@ codeforces_temp/
 
 codeforces_tests/*
 !codeforces_tests/*.cpp
-!codeforces_tests/autotest
 
+.venv/
 venv/
+*.egg-info/
+dist/
+build/
 
 dev/
 unit_test/a.exe
@@ -17,3 +20,6 @@ unit_test/a.exe
 
 *.exe
 *.out
+node_modules
+
+build/
